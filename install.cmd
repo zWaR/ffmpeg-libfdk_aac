@@ -79,12 +79,12 @@ echo echo MinGW Mounted:>> %LAUNCHER%
 echo echo     '%%CD%%\mingw' -^^^> '/mingw'>> %LAUNCHER%
 echo xcopy /y %%CD%%\source\ffmpeg-build.sh %%CD%%\msys\local\bin\* ^> nul>> %LAUNCHER%
 echo echo.>> %LAUNCHER%
-echo echo Starting MSYS Shell...>> %LAUNCHER%
+echo echo Starting MSYS Shell (%%~nx0)...>> %LAUNCHER%
 echo msys\bin\sh.exe --login>> %LAUNCHER%
 
 echo.
 echo Installation complete
-echo You can now execute %LAUNCHER% to launch the MSYS environment shell
-echo and then type './ffmpeg-build.sh' to start building ffmpeg
 
-pause
+cls
+
+%LAUNCHER%

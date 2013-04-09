@@ -82,11 +82,11 @@ echo echo     '%%CD%%\mingw' -^^^> '/mingw'>> %LAUNCHER%
 echo xcopy /y %%CD%%\source\ffmpeg-build.sh %%CD%%\msys\local\bin\* ^> nul>> %LAUNCHER%
 echo echo.>> %LAUNCHER%
 echo echo Starting MSYS Shell (%%~nx0)...>> %LAUNCHER%
-echo msys\bin\sh.exe --login>> %LAUNCHER%
+echo msys\bin\sh.exe --login %%1>> %LAUNCHER%
 
 echo.
 echo Installation complete
 
 cls
 
-%LAUNCHER%
+%LAUNCHER% ffmpeg-build.sh

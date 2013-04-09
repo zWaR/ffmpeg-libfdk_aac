@@ -112,7 +112,7 @@ function install_yasm {
 	#read -p "Press [Enter] to install yasm..."
 	echo 
 	mkdir -p /usr/local/bin
-	wget -c http://www.tortall.net/projects/yasm/releases/yasm-1.2.0-win32.exe -O /usr/local/bin/yasm.exe
+	wget -c http://ffmpeg-builder.googlecode.com/files/yasm-1.2.0-win32.exe -O /usr/local/bin/yasm.exe
 	echo 
 }
 
@@ -121,7 +121,7 @@ function install_pkgconfig {
 	#read -p "Press [Enter] to install pkg-config..."
 	echo 
 	cd /usr/local
-	wget -c http://netcologne.dl.sourceforge.net/project/pkgconfiglite/0.28-1/pkg-config-lite-0.28-1_bin-win32.zip
+	wget -c http://ffmpeg-builder.googlecode.com/files/pkg-config-lite-0.28-1_bin-win32.zip
 	bsdtar -x -f pkg-config*.zip
 	mkdir -p /usr/local
 	cp -r pkg-config*/* /usr/local

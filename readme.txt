@@ -1,12 +1,19 @@
-1. Installing MinGW32 and MSYS
+http://ffmpeg-builder.googlecode.com
+
+1. Installing MinGW32/MSYS and building ffmpeg
 
    + launch the 'install.cmd' (web installer)
-   + wait until the installation is complete
+   + after ~15 minutes the installation is complete
+   + the 'ffmpeg-build.sh' script is executed automatically
+   + after ~30 minutes the build processes should be finished
+   + the executable can be found in 'msys\local\bin\ffmpeg.exe'
+   
+
+2. Re-building ffmpeg
+
+   + modify the script 'source\ffmpeg-build.sh' depending on your needs (i.e. x264 8bit instead of 10bit, ...)
    + launch the 'msys-shell.cmd' to start the MSYS shell
-
-2. Building FFmpeg
-
-   + in the msys shell type 'ffmpeg-build.sh'
-   + you have to press 'Enter' to build each package
+   + in the MSYS shell type 'ffmpeg-build.sh'
    + watch out for errors during/after each package build
-   + after success, ffmpeg is stored in 'msys\local\bin\ffmpeg.exe'
+   + after ~30 minutes the build processes should be finished
+   + the executable can be found in 'msys\local\bin\ffmpeg.exe'

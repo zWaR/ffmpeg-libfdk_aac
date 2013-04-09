@@ -488,8 +488,8 @@ function build_x264 {
 		echo 
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/x264-0.129.tar.bz2
-		bsdtar -x -f *x264*.tar.*
-		cd x264*
+		bsdtar -x -f x264*.tar.*
+		cd x264-snapshot*
 		# NOTE: x264 threads must be same regarding to ffmpeg
 		# i.e.
 		# when ffmpeg is compiled with --enable-w32threads [default on mingw]

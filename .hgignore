@@ -1,0 +1,6 @@
+syntax: glob
+packet-manager/var/lib/mingw-get/data/manifest*
+packet-manager/var/lib/mingw-get/data/sysroot*
+mingw
+msys
+msys-shell.cmd

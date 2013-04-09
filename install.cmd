@@ -77,8 +77,7 @@ echo echo     PATH.='%%CD%%\packet-manager'>> %LAUNCHER%
 echo echo %%CD%%\mingw /mingw^> msys\etc\fstab>> %LAUNCHER%
 echo echo MinGW Mounted:>> %LAUNCHER%
 echo echo     '%%CD%%\mingw' -^^^> '/mingw'>> %LAUNCHER%
-echo mkdir %%CD%%\msys\local\bin>> %LAUNCHER%
-echo copy %%CD%%\source\ffmpeg-build.sh %%CD%%\msys\local\bin\ffmpeg-build.sh>> %LAUNCHER%
+echo xcopy /y %%CD%%\source\ffmpeg-build.sh %%CD%%\msys\local\bin\* ^> nul>> %LAUNCHER%
 echo echo.>> %LAUNCHER%
 echo echo Starting MSYS Shell...>> %LAUNCHER%
 echo msys\bin\sh.exe --login>> %LAUNCHER%

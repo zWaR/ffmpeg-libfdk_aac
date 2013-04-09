@@ -33,7 +33,9 @@ echo.
 %PKT_MANAGER% install mingw32-gcc-g++-bin
 %PKT_MANAGER% install mingw32-make-bin
 
-:: TODO: copy some mingw32 dll's to the cc1.exe directory to prevent errors
+xcopy /y /q mingw\bin\libgmp-10.dll mingw\libexec\gcc\mingw32\4.7.2\* > nul
+xcopy /y /q mingw\bin\libmpc-2.dll mingw\libexec\gcc\mingw32\4.7.2\* > nul
+xcopy /y /q mingw\bin\libmpfr-1.dll mingw\libexec\gcc\mingw32\4.7.2\* > nul
 
 echo.
 echo +++ INSTALL MSYS +++

@@ -95,7 +95,7 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 # arg1 = install directory, arg2 = package url
 function install_package {
 	echo 
-	read -p "Press [Enter] to install $(basename $2)..."
+	#read -p "Press [Enter] to install $(basename $2)..."
 	echo 
 	WD=$(pwd)
 	mkdir -p $1
@@ -109,7 +109,7 @@ function install_package {
 
 function install_yasm {
 	echo 
-	read -p "Press [Enter] to install yasm..."
+	#read -p "Press [Enter] to install yasm..."
 	echo 
 	mkdir -p /usr/local/bin
 	wget -c http://www.tortall.net/projects/yasm/releases/yasm-1.2.0-win32.exe -O /usr/local/bin/yasm.exe
@@ -118,7 +118,7 @@ function install_yasm {
 
 function install_pkgconfig {
 	echo 
-	read -p "Press [Enter] to install pkg-config..."
+	#read -p "Press [Enter] to install pkg-config..."
 	echo 
 	cd /usr/local
 	wget -c http://netcologne.dl.sourceforge.net/project/pkgconfiglite/0.28-1/pkg-config-lite-0.28-1_bin-win32.zip
@@ -133,11 +133,11 @@ function build_zlib {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-zlib" ]]
 	then
 		echo 
-		echo "Library zlib is required for: ffmpeg"
-		read -p "Press [Enter] to build zlib..."
+		#echo "Library zlib is required for: ffmpeg"
+		#read -p "Press [Enter] to build zlib..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://zlib.net/zlib-1.2.7.tar.bz2
+		wget -c http://ffmpeg-builder.googlecode.com/files/zlib-1.2.7.tar.bz2
 		bsdtar -x -f zlib*.tar.*
 		cd zlib*
 		make -f win32/Makefile.gcc
@@ -152,11 +152,11 @@ function build_bzip2 {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-bzlib" ]]
 	then
 		echo 
-		echo "Library bzip2 is required for: ffmpeg"
-		read -p "Press [Enter] to build bzip2..."
+		#echo "Library bzip2 is required for: ffmpeg"
+		#read -p "Press [Enter] to build bzip2..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
+		wget -c http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
 		bsdtar -x -f bzip2*.tar.*
 		cd bzip2*
 		make
@@ -171,10 +171,10 @@ function build_expat {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
 	then
 		echo 
-		echo "Library expat is optional for: ffmpeg->fontconfig, ffmpeg->libass->fontconfig"
-		read -p "Press [Enter] to build expat..."
+		#echo "Library expat is optional for: ffmpeg->fontconfig, ffmpeg->libass->fontconfig"
+		#read -p "Press [Enter] to build expat..."
 		cd $BUILD_DIR
-		wget -c http://netcologne.dl.sourceforge.net/project/expat/expat/2.1.0/expat-2.1.0.tar.gz
+		wget -c http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
 		bsdtar -x -f expat*.tar.*
 		cd expat*
 		./configure $CONFIGURE_ALL_FLAGS
@@ -195,18 +195,17 @@ function build_xml2 {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libbluray" ]]
 	then
 		echo 
-		echo "Library libxml2 is required for: ffmpeg->libbluray, ffmpeg->fontconfig, ffmpeg->libass->fontconfig"
-		read -p "Press [Enter] to build libxml2..."
+		#echo "Library libxml2 is required for: ffmpeg->libbluray, ffmpeg->fontconfig, ffmpeg->libass->fontconfig"
+		#read -p "Press [Enter] to build libxml2..."
 		echo 
 		cd $BUILD_DIR
-		wget -c ftp://xmlsoft.org/libxml2/libxml2-2.9.0.tar.gz
+		wget -c http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
 		bsdtar -x -f libxml2*.tar.*
 		cd libxml2*
 		./configure $CONFIGURE_ALL_FLAGS --without-debug
 		make
 		make install
 
-		#ln -s $PKG_CONFIG_PATH/libxml-2.0.pc $PKG_CONFIG_PATH/libxml2.pc
 		pkg-config libxml-2.0 >/dev/null 2>&1
 		if [ $? != 0 ]
 		then
@@ -226,11 +225,11 @@ function build_freetype {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfreetype" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
 	then
 		echo 
-		echo "Library freetype is required for: ffmpeg, ffmpeg->fontconfig, ffmpeg->libass, ffmpeg->libass->harfbuzz"
-		read -p "Press [Enter] to build freetype..."
+		#echo "Library freetype is required for: ffmpeg, ffmpeg->fontconfig, ffmpeg->libass, ffmpeg->libass->harfbuzz"
+		#read -p "Press [Enter] to build freetype..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://netcologne.dl.sourceforge.net/project/freetype/freetype2/2.4.11/freetype-2.4.11.tar.bz2
+		wget -c http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
 		bsdtar -x -f freetype*.tar.*
 		cd freetype*
 		./configure $CONFIGURE_ALL_FLAGS
@@ -253,10 +252,10 @@ function build_fribidi {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
 	then
 		echo 
-		echo "Library fribidi is required for: ffmpeg->libass"
-		read -p "Press [Enter] to build fribidi..."
+		#echo "Library fribidi is required for: ffmpeg->libass"
+		#read -p "Press [Enter] to build fribidi..."
 		cd $BUILD_DIR
-		wget -c http://fribidi.org/download/fribidi-0.19.5.tar.bz2
+		wget -c http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
 		bsdtar -x -f fribidi*.tar.*
 		cd fribidi*
 		# fix for static build
@@ -284,11 +283,11 @@ function build_fontconfig {
 		# TODO: important note about the font configuration directory in windows:
 		# http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=10&t=318&start=10
 		echo 
-		echo "Library fontconfig is required for: ffmpeg, ffmpeg->libass"
-		read -p "Press [Enter] to build fontconfig..."
+		#echo "Library fontconfig is required for: ffmpeg, ffmpeg->libass"
+		#read -p "Press [Enter] to build fontconfig..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://www.freedesktop.org/software/fontconfig/release/fontconfig-2.10.92.tar.bz2
+		wget -c http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
 		bsdtar -x -f fontconfig*.tar.*
 		cd fontconfig*
 		./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
@@ -314,11 +313,11 @@ function build_ass {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
 	then
 		echo 
-		echo "Library libass is required for: ffmpeg"
-		read -p "Press [Enter] to build libass..."
+		#echo "Library libass is required for: ffmpeg"
+		#read -p "Press [Enter] to build libass..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://libass.googlecode.com/files/libass-0.10.1.tar.xz
+		wget -c http://ffmpeg-builder.googlecode.com/files/libass-0.10.1.tar.xz
 		bsdtar -x -f libass*.tar.*
 		cd libass*
 		./configure $CONFIGURE_ALL_FLAGS
@@ -331,11 +330,11 @@ function build_faac {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfaac" ]]
 	then
 		echo 
-		echo "Library fontconfig is required for: ffmpeg"
-		read -p "Press [Enter] to build faac..."
+		#echo "Library fontconfig is required for: ffmpeg"
+		#read -p "Press [Enter] to build faac..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://netcologne.dl.sourceforge.net/project/faac/faac-src/faac-1.28/faac-1.28.tar.bz2
+		wget -c http://ffmpeg-builder.googlecode.com/files/faac-1.28.tar.bz2
 		bsdtar -x -f faac*.tar.*
 		cd faac*
 		./configure $CONFIGURE_ALL_FLAGS --without-mp4v2
@@ -348,11 +347,11 @@ function build_fdkaac {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfdk_aac" ]]
 	then
 		echo 
-		echo "Library fdk-aac is required for: ffmpeg"
-		read -p "Press [Enter] to build fdk-aac..."
+		#echo "Library fdk-aac is required for: ffmpeg"
+		#read -p "Press [Enter] to build fdk-aac..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://netcologne.dl.sourceforge.net/project/opencore-amr/fdk-aac/fdk-aac-0.1.1.tar.gz
+		wget -c http://ffmpeg-builder.googlecode.com/files/fdk-aac-0.1.1.tar.gz
 		bsdtar -x -f fdk-aac*.tar.*
 		cd fdk-aac*
 		./configure $CONFIGURE_ALL_FLAGS
@@ -365,11 +364,11 @@ function build_lame {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libmp3lame" ]]
 	then
 		echo 
-		echo "Library mp3lame is required for: ffmpeg"
-		read -p "Press [Enter] to build lame..."
+		#echo "Library mp3lame is required for: ffmpeg"
+		#read -p "Press [Enter] to build lame..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://netcologne.dl.sourceforge.net/project/lame/lame/3.99/lame-3.99.5.tar.gz
+		wget -c http://ffmpeg-builder.googlecode.com/files/lame-3.99.5.tar.gz
 		bsdtar -x -f lame*.tar.*
 		cd lame*
 		./configure $CONFIGURE_ALL_FLAGS --disable-frontend
@@ -382,11 +381,11 @@ function build_ogg {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvorbis" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
 	then
 		echo 
-		echo "Library libogg is required for: ffmpeg->libvorbis, ffmpeg->libtheora"
-		read -p "Press [Enter] to build libogg..."
+		#echo "Library libogg is required for: ffmpeg->libvorbis, ffmpeg->libtheora"
+		#read -p "Press [Enter] to build libogg..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://downloads.xiph.org/releases/ogg/libogg-1.3.0.tar.xz
+		wget -c http://ffmpeg-builder.googlecode.com/files/libogg-1.3.0.tar.xz
 		bsdtar -x -f libogg*.tar.*
 		cd libogg*
 		./configure $CONFIGURE_ALL_FLAGS
@@ -406,11 +405,11 @@ function build_vorbis {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvorbis" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
 	then
 		echo 
-		echo "Library libvorbis is required for: ffmpeg, ffmpeg->libtheora"
-		read -p "Press [Enter] to build libvorbis..."
+		#echo "Library libvorbis is required for: ffmpeg, ffmpeg->libtheora"
+		#read -p "Press [Enter] to build libvorbis..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.3.tar.xz
+		wget -c http://ffmpeg-builder.googlecode.com/files/libvorbis-1.3.3.tar.xz
 		bsdtar -x -f libvorbis*.tar.*
 		cd libvorbis*
 		./configure $CONFIGURE_ALL_FLAGS # --with-ogg=/usr/local
@@ -430,11 +429,11 @@ function build_theora {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
 	then
 		echo 
-		echo "Library libtheora is required for: ffmpeg"
-		read -p "Press [Enter] to build libtheora..."
+		#echo "Library libtheora is required for: ffmpeg"
+		#read -p "Press [Enter] to build libtheora..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://downloads.xiph.org/releases/theora/libtheora-1.1.1.tar.bz2
+		wget -c http://ffmpeg-builder.googlecode.com/files/libtheora-1.1.1.tar.bz2
 		bsdtar -x -f libtheora*.tar.*
 		cd libtheora*
 		./configure $CONFIGURE_ALL_FLAGS --disable-examples # --disable-oggtest --disable-vorbistest --disable-sdltest --with-ogg=/usr/local --with-vorbis=/usr/local
@@ -447,11 +446,11 @@ function build_xvid {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libxvid" ]]
 	then
 		echo 
-		echo "Library xvid is required for: ffmpeg"
-		read -p "Press [Enter] to build xvid..."
+		#echo "Library xvid is required for: ffmpeg"
+		#read -p "Press [Enter] to build xvid..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://downloads.xvid.org/downloads/xvidcore-1.3.2.tar.bz2
+		wget -c http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
 		bsdtar -x -f xvid*.tar.*
 		cd xvid*/build/generic
 		./configure $CONFIGURE_ALL_FLAGS
@@ -467,11 +466,11 @@ function build_vpx {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvpx" ]]
 	then
 		echo 
-		echo "Library vpx is required for: ffmpeg"
-		read -p "Press [Enter] to build libvpx..."
+		#echo "Library vpx is required for: ffmpeg"
+		#read -p "Press [Enter] to build libvpx..."
 		echo 
 		cd $BUILD_DIR
-		wget -c http://netcologne.dl.sourceforge.net/project/ffmpegbuilder/packages/libvpx-1.2.0-b9ce430.tar.bz2
+		wget -c http://ffmpeg-builder.googlecode.com/files/libvpx-1.2.0.tar.bz2
 		bsdtar -x -f libvpx*.tar.*
 		cd libvpx*
 		./configure $CONFIGURE_ALL_FLAGS --enable-runtime-cpu-detect --enable-vp8 --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
@@ -484,11 +483,11 @@ function build_x264 {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libx264" ]]
 	then
 		echo 
-		echo "Library x264 is required for: ffmpeg"
-		read -p "Press [Enter] to build x264..."
+		#echo "Library x264 is required for: ffmpeg"
+		#read -p "Press [Enter] to build x264..."
 		echo 
 		cd $BUILD_DIR
-		wget -c ftp://ftp.videolan.org/pub/x264/snapshots/last_stable_x264.tar.bz2
+		wget -c http://ffmpeg-builder.googlecode.com/files/x264-0.129.tar.bz2
 		bsdtar -x -f *x264*.tar.*
 		cd x264*
 		# NOTE: x264 threads must be same regarding to ffmpeg
@@ -505,11 +504,11 @@ function build_bluray {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libbluray" ]]
 	then
 		echo 
-		echo "Library bluray is required for: ffmpeg"
-		read -p "Press [Enter] to build bluray..."
+		#echo "Library bluray is required for: ffmpeg"
+		#read -p "Press [Enter] to build bluray..."
 		echo 
 		cd $BUILD_DIR
-		wget -c ftp://ftp.videolan.org/pub/contrib/libbluray-0.2.3.tar.bz2
+		wget -c http://ffmpeg-builder.googlecode.com/files/libbluray-0.2.3.tar.bz2
 		bsdtar -x -f libbluray*.tar.*
 		cd libbluray*
 		./configure $CONFIGURE_ALL_FLAGS --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
@@ -520,11 +519,11 @@ function build_bluray {
 
 function build_ffmpeg {
 	echo 
-	echo "All required libraries have been compiled."
-	read -p "Press [Enter] to build ffmpeg..."
+	#echo "All required libraries have been compiled."
+	#read -p "Press [Enter] to build ffmpeg..."
 	echo 
 	cd $BUILD_DIR
-	wget -c http://ffmpeg.org/releases/ffmpeg-1.2.tar.bz2
+	wget -c http://ffmpeg-builder.googlecode.com/files/ffmpeg-1.2.tar.bz2
 	bsdtar -x -f ffmpeg*.tar.*
 	cd ffmpeg*
 	./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS

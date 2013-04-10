@@ -12,9 +12,9 @@ BUILD_DIR="/usr/local/src"
 CONFIGURE_ALL_FLAGS="--disable-shared --enable-static"
 CONFIGURE_FFMPEG_FLAGS="\
 --enable-runtime-cpudetect \
---enable-w32threads \
 --disable-debug \
 "
+#--enable-w32threads \
 
 CONFIGURE_FFMPEG_CODEC_FLAGS="\
 --enable-gpl \
@@ -92,35 +92,25 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 #~ [-] --enable-x11grab         enable X11 grabbing [no]
 #~ [+] --enable-zlib            enable zlib [autodetect]
 
-# arg1 = install directory, arg2 = package url
-function install_package {
-	echo 
-	#read -p "Press [Enter] to install $(basename $2)..."
-	echo 
-	WD=$(pwd)
-	mkdir -p $1
-	cd $1
-	wget -c $2
-	bsdtar -x -f *.tar.*
-	rm $(basename $2)
-	cd $WD
-	echo 
+function install_packages() {
+	apt-get update
+	# install avconv and libav-extra libraries
+	apt-get install libav-tools libavdevice-extra-53 libavformat-extra-53 libavcodec-extra-53 libavfilter-extra-2 libavutil-extra-51 libswscale-extra-2 libpostproc-extra-52
+	# uninstall 'fake' ffmpeg package, libav libraries and libav-dev packages
+	apt-get autoremove ffmpeg libavdevice53 libavformat53 libavcodec53 libavfilter2 libavutil51 libswscale2 libpostproc52
+	apt-get autoremove libavdevice-dev libavformat-dev libavcodec-dev libavfilter-dev libavutil-dev libswscale-dev libpostproc-dev
 }
 
-function install_yasm {
-	mkdir -p /usr/local/bin
-	wget -c http://ffmpeg-builder.googlecode.com/files/yasm-1.2.0-win32.exe -O /usr/local/bin/yasm.exe
-	echo 
-}
-
-function install_pkgconfig {
-	cd /usr/local
-	wget -c http://ffmpeg-builder.googlecode.com/files/pkg-config-lite-0.28-1_bin-win32.zip
-	bsdtar -x -f pkg-config*.zip
-	mkdir -p /usr/local
-	cp -r pkg-config*/* /usr/local
-	rm -r pkg-config*
-	echo 
+function build_yasm {
+	cd $BUILD_DIR
+	rm -r yasm*
+	wget http://www.tortall.net/projects/yasm/releases/yasm-1.2.0.tar.gz
+	tar -xzvf yasm*.tar.*
+	cd yasm*
+	./configure
+	make
+	make install
+	#checkinstall --pkgname="yasm" --pkgversion="$(cat version)" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 }
 
 function build_zlib {
@@ -128,13 +118,12 @@ function build_zlib {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/zlib-1.2.7.tar.bz2
-		bsdtar -x -f zlib*.tar.*
+		tar -xjvf zlib*.tar.*
 		cd zlib*
-		make -f win32/Makefile.gcc
-		mkdir -p /usr/local/include
-		cp zlib.h zconf.h /usr/local/include
-		mkdir -p /usr/local/lib
-		cp libz.a /usr/local/lib
+		./configure
+		make
+		make install
+		#checkinstall --pkgname="zlib-dev" --pkgversion="1.2.7" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -143,13 +132,11 @@ function build_bzip2 {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
-		bsdtar -x -f bzip2*.tar.*
+		tar -xzvf bzip2*.tar.*
 		cd bzip2*
 		make
-		mkdir -p /usr/local/include
-		cp bzlib.h /usr/local/include
-		mkdir -p /usr/local/lib
-		cp libbz2.a /usr/local/lib
+		make install
+		#checkinstall --pkgname="libbz2-dev" --pkgversion="1.0.6" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -158,11 +145,12 @@ function build_expat {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
-		bsdtar -x -f expat*.tar.*
+		tar -xzvf expat*.tar.*
 		cd expat*
 		./configure $CONFIGURE_ALL_FLAGS
 		make
 		make install
+		#checkinstall --pkgname="libexpat-dev" --pkgversion="2.1.0" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 
 		pkg-config expat >/dev/null 2>&1
 		if [ $? != 0 ]
@@ -179,11 +167,12 @@ function build_xml2 {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
-		bsdtar -x -f libxml2*.tar.*
+		tar -xzvf libxml2*.tar.*
 		cd libxml2*
 		./configure $CONFIGURE_ALL_FLAGS --without-debug
 		make
 		make install
+		#checkinstall --pkgname="libxml2-dev" --pkgversion="2.9.0" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 
 		pkg-config libxml-2.0 >/dev/null 2>&1
 		if [ $? != 0 ]
@@ -205,11 +194,12 @@ function build_freetype {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
-		bsdtar -x -f freetype*.tar.*
+		tar -xjvf freetype*.tar.*
 		cd freetype*
 		./configure $CONFIGURE_ALL_FLAGS
 		make
 		make install
+		#checkinstall --pkgname="libfreetype-dev" --pkgversion="2.4.11" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 
 		pkg-config freetype2 >/dev/null 2>&1
 		if [ $? != 0 ]
@@ -228,17 +218,12 @@ function build_fribidi {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
-		bsdtar -x -f fribidi*.tar.*
+		tar -xjvf fribidi*.tar.*
 		cd fribidi*
-		# fix for static build
-		sed -i -e  's/__declspec(dllimport)//g' lib/fribidi-common.h
 		./configure $CONFIGURE_ALL_FLAGS --disable-debug
-		make -C charset
-		# fixing lib/Makefile directly before make -C lib, or it will be overwritten by another configure process
-		sed -i -e  's/am__append_1 =/#am__append_1 =/g' lib/Makefile
-		make -C lib
 		make
 		make install
+		#checkinstall --pkgname="libfribidi-dev" --pkgversion="0.19.5" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 
 		pkg-config fribidi >/dev/null 2>&1
 		if [ $? != 0 ]
@@ -256,11 +241,12 @@ function build_fontconfig {
 		# http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=10&t=318&start=10
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
-		bsdtar -x -f fontconfig*.tar.*
+		tar -xjvf fontconfig*.tar.*
 		cd fontconfig*
 		./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
 		make
 		make install
+		#checkinstall --pkgname="fontconfig-dev" --pkgversion="2.10.92" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 
 		pkg-config fontconfig >/dev/null 2>&1
 		if [ $? != 0 ]
@@ -275,16 +261,17 @@ function build_fontconfig {
 	fi
 }
 
-function build_ass {
+function build_libass {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/libass-0.10.1.tar.xz
-		bsdtar -x -f libass*.tar.*
+		tar -xJvf libass*.tar.*
 		cd libass*
 		./configure $CONFIGURE_ALL_FLAGS
 		make
 		make install
+		#checkinstall --pkgname="libass-dev" --pkgversion="0.10.1" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -293,11 +280,12 @@ function build_faac {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/faac-1.28.tar.bz2
-		bsdtar -x -f faac*.tar.*
+		tar -xjvf faac*.tar.*
 		cd faac*
 		./configure $CONFIGURE_ALL_FLAGS --without-mp4v2
 		make
 		make install
+		#checkinstall --pkgname="libfaac-dev" --pkgversion="1.28" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -306,11 +294,12 @@ function build_fdkaac {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/fdk-aac-0.1.1.tar.gz
-		bsdtar -x -f fdk-aac*.tar.*
+		tar -xzvf fdk-aac*
 		cd fdk-aac*
 		./configure $CONFIGURE_ALL_FLAGS
 		make
 		make install
+		#checkinstall --pkgname="libfdk-aac-dev" --pkgversion="0.1.1" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -319,11 +308,12 @@ function build_lame {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/lame-3.99.5.tar.gz
-		bsdtar -x -f lame*.tar.*
+		tar -xzvf lame*.tar.*
 		cd lame*
 		./configure $CONFIGURE_ALL_FLAGS --disable-frontend
 		make
 		make install
+		#checkinstall --pkgname="libmp3lame-dev" --pkgversion="3.99.5" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -332,11 +322,12 @@ function build_ogg {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/libogg-1.3.0.tar.xz
-		bsdtar -x -f libogg*.tar.*
+		tar -xJvf libogg*.tar.*
 		cd libogg*
 		./configure $CONFIGURE_ALL_FLAGS
 		make
 		make install
+		#checkinstall --pkgname="libogg-dev" --pkgversion="1.3.0" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 
 		pkg-config ogg >/dev/null 2>&1
 		if [ $? != 0 ]
@@ -352,11 +343,12 @@ function build_vorbis {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/libvorbis-1.3.3.tar.xz
-		bsdtar -x -f libvorbis*.tar.*
+		tar -xJvf libvorbis*.tar.*
 		cd libvorbis*
 		./configure $CONFIGURE_ALL_FLAGS # --with-ogg=/usr/local
 		make
 		make install
+		#checkinstall --pkgname="libvorbis-dev" --pkgversion="1.3.3" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 
 		pkg-config vorbis >/dev/null 2>&1
 		if [ $? != 0 ]
@@ -372,11 +364,12 @@ function build_theora {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/libtheora-1.1.1.tar.bz2
-		bsdtar -x -f libtheora*.tar.*
+		tar -xjvf libtheora*.tar.*
 		cd libtheora*
 		./configure $CONFIGURE_ALL_FLAGS --disable-examples # --disable-oggtest --disable-vorbistest --disable-sdltest --with-ogg=/usr/local --with-vorbis=/usr/local
 		make
 		make install
+		#checkinstall --pkgname="libtheora-dev" --pkgversion="1.1.1" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -385,14 +378,12 @@ function build_xvid {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
-		bsdtar -x -f xvid*.tar.*
+		tar -xjvf xvid*.tar.*
 		cd xvid*/build/generic
 		./configure $CONFIGURE_ALL_FLAGS
-		sed -i -e 's/-mno-cygwin//g' platform.inc
 		make
 		make install
-		rm /usr/local/lib/xvidcore.dll
-		ln -s /usr/local/lib/xvidcore.a /usr/local/lib/libxvidcore.a
+		#checkinstall --pkgname="libxvidcore-dev" --pkgversion="1.3.2" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -401,11 +392,12 @@ function build_vpx {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/libvpx-1.2.0.tar.bz2
-		bsdtar -x -f libvpx*.tar.*
+		tar -xjvf libvpx*.tar.*
 		cd libvpx*
 		./configure $CONFIGURE_ALL_FLAGS --enable-runtime-cpu-detect --enable-vp8 --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
 		make
 		make install
+		#checkinstall --pkgname="libvpx-dev" --pkgversion="1.2.0" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -414,15 +406,16 @@ function build_x264 {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/x264-0.129.tar.bz2
-		bsdtar -x -f x264*.tar.*
+		tar -xjvf x264*.tar.*
 		cd x264-snapshot*
 		# NOTE: x264 threads must be same regarding to ffmpeg
 		# i.e.
 		# when ffmpeg is compiled with --enable-w32threads [default on mingw]
 		# then x264 also needs to be compiled with --enable-win32thread
-		./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli --enable-win32thread
+		./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli # --enable-win32thread
 		make
 		make install
+		#checkinstall --pkgname="libx264-dev" --pkgversion="0.129" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -431,42 +424,36 @@ function build_bluray {
 	then
 		cd $BUILD_DIR
 		wget -c http://ffmpeg-builder.googlecode.com/files/libbluray-0.2.3.tar.bz2
-		bsdtar -x -f libbluray*.tar.*
+		tar -xjvf libbluray*.tar.*
 		cd libbluray*
 		./configure $CONFIGURE_ALL_FLAGS --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
 		make
 		make install
+		#checkinstall --pkgname="libbluray-dev" --pkgversion="0.2.3" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
 function build_ffmpeg {
 	cd $BUILD_DIR
 	wget -c http://ffmpeg-builder.googlecode.com/files/ffmpeg-1.2.tar.bz2
-	bsdtar -x -f ffmpeg*.tar.*
+	tar -xjvf ffmpeg*.tar.*
 	cd ffmpeg*
 	./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS
 	make
 	make install
+	#checkinstall --pkgname="ffmpeg" --pkgversion="$(cat VERSION)" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 }
 
 function build_all {
-
-	mkdir -p $BUILD_DIR
-
-	install_yasm
-	install_pkgconfig
-
+	build_yasm
 	build_zlib
 	build_bzip2
 	build_expat
 	build_xml2
 	build_freetype
-
 	build_fribidi
 	build_fontconfig
-	# TODO: add harfbuzz shaper for libass?
-	build_ass
-
+	build_libass
 	build_faac
 	build_fdkaac
 	build_lame
@@ -477,8 +464,10 @@ function build_all {
 	build_vpx
 	build_x264
 	build_bluray
-
 	build_ffmpeg
 }
 
+# su root
+
+#install_packages
 build_all

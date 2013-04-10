@@ -4,18 +4,17 @@
 
 export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
 export CFLAGS="-g -O2 -I/usr/local/include"
-export LDFLAGS="-s -L/usr/local/lib"
+export LDFLAGS="-s"
 
 # local variables
 
 BUILD_DIR="/usr/local/src"
 CONFIGURE_ALL_FLAGS="--disable-shared --enable-static"
+CONFIGURE_FFMPEG_LIBS=""
 CONFIGURE_FFMPEG_FLAGS="\
 --enable-runtime-cpudetect \
 --disable-debug \
 "
-#--enable-w32threads \
-
 CONFIGURE_FFMPEG_CODEC_FLAGS="\
 --enable-gpl \
 --enable-nonfree \
@@ -92,13 +91,43 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 #~ [-] --enable-x11grab         enable X11 grabbing [no]
 #~ [+] --enable-zlib            enable zlib [autodetect]
 
-function install_packages() {
-	apt-get update
-	# install avconv and libav-extra libraries
-	apt-get install libav-tools libavdevice-extra-53 libavformat-extra-53 libavcodec-extra-53 libavfilter-extra-2 libavutil-extra-51 libswscale-extra-2 libpostproc-extra-52
-	# uninstall 'fake' ffmpeg package, libav libraries and libav-dev packages
-	apt-get autoremove ffmpeg libavdevice53 libavformat53 libavcodec53 libavfilter2 libavutil51 libswscale2 libpostproc52
-	apt-get autoremove libavdevice-dev libavformat-dev libavcodec-dev libavfilter-dev libavutil-dev libswscale-dev libpostproc-dev
+function remove_dev_debs {
+
+	read -p "
+Some packages are searching for installed development debian packages.
+i.e. libxml2 is looking for liblzma-dev (shared!). If this package is
+found, the dependency is dragged into the library. When building ffmpeg
+this dependency may also be required and needs to be passed to the linker
+when linking ffmpeg.
+
+Make sure your system don't have any development packages installed that
+might interfere with packages from this build
+
+Press [Enter] to uninstall *-dev packages or [Ctrl + c] to quit..."
+
+	# comment shared dependencies which are currently unused (i.e. expat)
+	# or seems 'future' consistent with their ABI (application binary interface)
+
+	apt-get autoremove yasm
+	#apt-get autoremove zlib1g-dev
+	#apt-get autoremove libbz2-dev
+	#apt-get autoremove liblzma-dev
+	#apt-get autoremove libexpat1-dev
+	#apt-get autoremove libxml2-dev
+	#apt-get autoremove libfreetype6-dev
+	#apt-get autoremove libfribidi-dev
+	#apt-get autoremove libfontconfig1-dev
+	apt-get autoremove libass-dev
+	apt-get autoremove libfaac-dev
+	apt-get autoremove libfdk-aac-dev
+	apt-get autoremove libmp3lame-dev
+	apt-get autoremove libtheora-dev
+	apt-get autoremove libvorbis-dev
+	apt-get autoremove libogg-dev
+	apt-get autoremove libxvidcore-dev
+	apt-get autoremove libvpx-dev
+	apt-get autoremove libx264.*-dev
+	apt-get autoremove libbluray-dev
 }
 
 function build_yasm {
@@ -110,81 +139,97 @@ function build_yasm {
 	./configure
 	make
 	make install
-	#checkinstall --pkgname="yasm" --pkgversion="$(cat version)" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 }
 
 function build_zlib {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-zlib" ]]
 	then
-		cd $BUILD_DIR
-		wget -c http://ffmpeg-builder.googlecode.com/files/zlib-1.2.7.tar.bz2
-		tar -xjvf zlib*.tar.*
-		cd zlib*
-		./configure
-		make
-		make install
-		#checkinstall --pkgname="zlib-dev" --pkgversion="1.2.7" --backup=no --nodoc --deldoc=yes --fstrans=no --default
+		if [ $ENVIRONMENT = "deb" ]
+		then
+			apt-get install zlib1g-dev
+		else
+			cd $BUILD_DIR
+			wget -c http://ffmpeg-builder.googlecode.com/files/zlib-1.2.7.tar.bz2
+			tar -xjvf zlib*.tar.*
+			cd zlib*
+			./configure
+			make
+			make install
+		fi
 	fi
 }
 
 function build_bzip2 {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-bzlib" ]]
 	then
-		cd $BUILD_DIR
-		wget -c http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
-		tar -xzvf bzip2*.tar.*
-		cd bzip2*
-		make
-		make install
-		#checkinstall --pkgname="libbz2-dev" --pkgversion="1.0.6" --backup=no --nodoc --deldoc=yes --fstrans=no --default
+		if [ $ENVIRONMENT = "deb" ]
+		then
+			apt-get install libbz2-dev
+		else
+			cd $BUILD_DIR
+			wget -c http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
+			tar -xzvf bzip2*.tar.*
+			cd bzip2*
+			make
+			make install
+		fi
 	fi
 }
 
 function build_expat {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
 	then
-		cd $BUILD_DIR
-		wget -c http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
-		tar -xzvf expat*.tar.*
-		cd expat*
-		./configure $CONFIGURE_ALL_FLAGS
-		make
-		make install
-		#checkinstall --pkgname="libexpat-dev" --pkgversion="2.1.0" --backup=no --nodoc --deldoc=yes --fstrans=no --default
-
-		pkg-config expat >/dev/null 2>&1
-		if [ $? != 0 ]
+		if [ $ENVIRONMENT = "deb" ]
 		then
-			export EXPAT_CFLAGS="-I/usr/local/include"
-			export EXPAT_LIBS="-L/usr/local/lib -lexpat"
+			apt-get install libexpat1-dev
+		else
+			cd $BUILD_DIR
+			wget -c http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
+			tar -xzvf expat*.tar.*
+			cd expat*
+			./configure $CONFIGURE_ALL_FLAGS
+			make
+			make install
+
+			pkg-config expat >/dev/null 2>&1
+			# NOTE: when package config fails, export the lib dependencies to variables
+			if [ $? != 0 ]
+			then
+				export EXPAT_CFLAGS="-I/usr/local/include"
+				export EXPAT_LIBS="-L/usr/local/lib -lexpat"
+			fi
 		fi
 	fi
 }
 
 function build_xml2 {
-	# TODO: add support for libxml2...
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libbluray" ]]
 	then
-		cd $BUILD_DIR
-		wget -c http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
-		tar -xzvf libxml2*.tar.*
-		cd libxml2*
-		./configure $CONFIGURE_ALL_FLAGS --without-debug
-		make
-		make install
-		#checkinstall --pkgname="libxml2-dev" --pkgversion="2.9.0" --backup=no --nodoc --deldoc=yes --fstrans=no --default
-
-		pkg-config libxml-2.0 >/dev/null 2>&1
-		if [ $? != 0 ]
+		if [ $ENVIRONMENT = "deb" ]
 		then
-			export LIBXML2_CFLAGS="-I/usr/local/include/libxml2  -DLIBXML_STATIC"
-			export LIBXML2_LIBS="-L/usr/local/lib -lxml2 -lz -lws2_32"
-			export XML2_INCLUDEDIR="-I/usr/local/include/libxml2"
-			export XML2_LIBDIR="-L/usr/local/lib"
-			export XML2_LIBS="-lxml2 -lz -lws2_32"
+			apt-get install libxml2-dev
 		else
-			# NOTE: modify libxml2.pc so it will return private libs even when called without --static
-			sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static libxml-2.0)|g" $PKG_CONFIG_PATH/libxml-2.0.pc
+			cd $BUILD_DIR
+			wget -c http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
+			tar -xzvf libxml2*.tar.*
+			cd libxml2*
+			./configure $CONFIGURE_ALL_FLAGS --without-debug
+			make
+			make install
+
+			pkg-config libxml-2.0 >/dev/null 2>&1
+			# NOTE: when package config fails, export the lib dependencies to variables
+			if [ $? != 0 ]
+			then
+				export LIBXML2_CFLAGS="-I/usr/local/include/libxml2  -DLIBXML_STATIC"
+				export LIBXML2_LIBS="-L/usr/local/lib -lxml2 -lz -lws2_32"
+				export XML2_INCLUDEDIR="-I/usr/local/include/libxml2"
+				export XML2_LIBDIR="-L/usr/local/lib"
+				export XML2_LIBS="-lxml2 -lz -lws2_32"
+			else
+				# NOTE: modify libxml2.pc so it will return private libs even when called without --static
+				sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static libxml-2.0)|g" $PKG_CONFIG_PATH/libxml-2.0.pc
+			fi
 		fi
 	fi
 }
@@ -192,23 +237,28 @@ function build_xml2 {
 function build_freetype {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfreetype" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
 	then
-		cd $BUILD_DIR
-		wget -c http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
-		tar -xjvf freetype*.tar.*
-		cd freetype*
-		./configure $CONFIGURE_ALL_FLAGS
-		make
-		make install
-		#checkinstall --pkgname="libfreetype-dev" --pkgversion="2.4.11" --backup=no --nodoc --deldoc=yes --fstrans=no --default
-
-		pkg-config freetype2 >/dev/null 2>&1
-		if [ $? != 0 ]
+		if [ $ENVIRONMENT = "deb" ]
 		then
-			export FREETYPE_CFLAGS="-I/usr/local/include -I/usr/local/include/freetype2"
-			export FREETYPE_LIBS="-L/usr/local/lib -lfreetype -lz"
+			apt-get install libfreetype6-dev
 		else
-			# NOTE: modify lfreetype.pc so it will return private libs even when called without --static
-			sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static freetype2)|g" $PKG_CONFIG_PATH/freetype2.pc
+			cd $BUILD_DIR
+			wget -c http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
+			tar -xjvf freetype*.tar.*
+			cd freetype*
+			./configure $CONFIGURE_ALL_FLAGS
+			make
+			make install
+
+			pkg-config freetype2 >/dev/null 2>&1
+			# NOTE: when package config fails, export the lib dependencies to variables
+			if [ $? != 0 ]
+			then
+				export FREETYPE_CFLAGS="-I/usr/local/include -I/usr/local/include/freetype2"
+				export FREETYPE_LIBS="-L/usr/local/lib -lfreetype -lz"
+			else
+				# NOTE: modify lfreetype.pc so it will return private libs even when called without --static
+				sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static freetype2)|g" $PKG_CONFIG_PATH/freetype2.pc
+			fi
 		fi
 	fi
 }
@@ -216,20 +266,25 @@ function build_freetype {
 function build_fribidi {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
 	then
-		cd $BUILD_DIR
-		wget -c http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
-		tar -xjvf fribidi*.tar.*
-		cd fribidi*
-		./configure $CONFIGURE_ALL_FLAGS --disable-debug
-		make
-		make install
-		#checkinstall --pkgname="libfribidi-dev" --pkgversion="0.19.5" --backup=no --nodoc --deldoc=yes --fstrans=no --default
-
-		pkg-config fribidi >/dev/null 2>&1
-		if [ $? != 0 ]
+		if [ $ENVIRONMENT = "deb" ]
 		then
-			export FRIBIDI_CFLAGS="-I/usr/local/include/fribidi"
-			export FRIBIDI_LIBS="-L/usr/local/lib -lfribidi"
+			apt-get install libfribidi-dev
+		else
+			cd $BUILD_DIR
+			wget -c http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
+			tar -xjvf fribidi*.tar.*
+			cd fribidi*
+			./configure $CONFIGURE_ALL_FLAGS --disable-debug
+			make
+			make install
+
+			pkg-config fribidi >/dev/null 2>&1
+			# NOTE: when package config fails, export the lib dependencies to variables
+			if [ $? != 0 ]
+			then
+				export FRIBIDI_CFLAGS="-I/usr/local/include/fribidi"
+				export FRIBIDI_LIBS="-L/usr/local/lib -lfribidi"
+			fi
 		fi
 	fi
 }
@@ -237,31 +292,37 @@ function build_fribidi {
 function build_fontconfig {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
 	then
-		# TODO: important note about the font configuration directory in windows:
-		# http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=10&t=318&start=10
-		cd $BUILD_DIR
-		wget -c http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
-		tar -xjvf fontconfig*.tar.*
-		cd fontconfig*
-		./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
-		make
-		make install
-		#checkinstall --pkgname="fontconfig-dev" --pkgversion="2.10.92" --backup=no --nodoc --deldoc=yes --fstrans=no --default
-
-		pkg-config fontconfig >/dev/null 2>&1
-		if [ $? != 0 ]
+		if [ $ENVIRONMENT = "deb" ]
 		then
-			export FONTCONFIG_CFLAGS="-I/usr/local/include"
-			export FONTCONFIG_LIBS="-L/usr/local/lib -lfontconfig $XML2_LIBS $FREETYPE_LIBS"
-			#export FONTCONFIG_LIBS="-L/usr/local/lib -lfontconfig -lexpat -lfreetype"
+			apt-get install libfontconfig1-dev
 		else
-			# NOTE: modify fontconfig.pc so it will return private libs even when called without --static
-			sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static fontconfig)|g" $PKG_CONFIG_PATH/fontconfig.pc
+			# TODO: important note about the font configuration directory in windows:
+			# http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=10&t=318&start=10
+			cd $BUILD_DIR
+			wget -c http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
+			tar -xjvf fontconfig*.tar.*
+			cd fontconfig*
+			./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
+			make
+			make install
+
+			pkg-config fontconfig >/dev/null 2>&1
+			# NOTE: when package config fails, export the lib dependencies to variables
+			if [ $? != 0 ]
+			then
+				export FONTCONFIG_CFLAGS="-I/usr/local/include"
+				export FONTCONFIG_LIBS="-L/usr/local/lib -lfontconfig $XML2_LIBS $FREETYPE_LIBS"
+				# TODO: deceide if libxml or expat was used, and export corresponding lib dependencies...
+				#export FONTCONFIG_LIBS="-L/usr/local/lib -lfontconfig -lexpat -lfreetype"
+			else
+				# NOTE: modify fontconfig.pc so it will return private libs even when called without --static
+				sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static fontconfig)|g" $PKG_CONFIG_PATH/fontconfig.pc
+			fi
 		fi
 	fi
 }
 
-function build_libass {
+function build_ass {
 	if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
 	then
 		cd $BUILD_DIR
@@ -271,7 +332,6 @@ function build_libass {
 		./configure $CONFIGURE_ALL_FLAGS
 		make
 		make install
-		#checkinstall --pkgname="libass-dev" --pkgversion="0.10.1" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -285,7 +345,6 @@ function build_faac {
 		./configure $CONFIGURE_ALL_FLAGS --without-mp4v2
 		make
 		make install
-		#checkinstall --pkgname="libfaac-dev" --pkgversion="1.28" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -299,7 +358,6 @@ function build_fdkaac {
 		./configure $CONFIGURE_ALL_FLAGS
 		make
 		make install
-		#checkinstall --pkgname="libfdk-aac-dev" --pkgversion="0.1.1" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -313,7 +371,6 @@ function build_lame {
 		./configure $CONFIGURE_ALL_FLAGS --disable-frontend
 		make
 		make install
-		#checkinstall --pkgname="libmp3lame-dev" --pkgversion="3.99.5" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -327,9 +384,9 @@ function build_ogg {
 		./configure $CONFIGURE_ALL_FLAGS
 		make
 		make install
-		#checkinstall --pkgname="libogg-dev" --pkgversion="1.3.0" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 
 		pkg-config ogg >/dev/null 2>&1
+		# NOTE: when package config fails, export the lib dependencies to variables
 		if [ $? != 0 ]
 		then
 			export OGG_CFLAGS="-I/usr/local/include"
@@ -345,12 +402,12 @@ function build_vorbis {
 		wget -c http://ffmpeg-builder.googlecode.com/files/libvorbis-1.3.3.tar.xz
 		tar -xJvf libvorbis*.tar.*
 		cd libvorbis*
-		./configure $CONFIGURE_ALL_FLAGS # --with-ogg=/usr/local
+		./configure $CONFIGURE_ALL_FLAGS
 		make
 		make install
-		#checkinstall --pkgname="libvorbis-dev" --pkgversion="1.3.3" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 
 		pkg-config vorbis >/dev/null 2>&1
+		# NOTE: when package config fails, export the lib dependencies to variables
 		if [ $? != 0 ]
 		then
 			export VORBIS_CFLAGS="-I/usr/local/include"
@@ -366,10 +423,9 @@ function build_theora {
 		wget -c http://ffmpeg-builder.googlecode.com/files/libtheora-1.1.1.tar.bz2
 		tar -xjvf libtheora*.tar.*
 		cd libtheora*
-		./configure $CONFIGURE_ALL_FLAGS --disable-examples # --disable-oggtest --disable-vorbistest --disable-sdltest --with-ogg=/usr/local --with-vorbis=/usr/local
+		./configure $CONFIGURE_ALL_FLAGS --disable-examples
 		make
 		make install
-		#checkinstall --pkgname="libtheora-dev" --pkgversion="1.1.1" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -383,7 +439,6 @@ function build_xvid {
 		./configure $CONFIGURE_ALL_FLAGS
 		make
 		make install
-		#checkinstall --pkgname="libxvidcore-dev" --pkgversion="1.3.2" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -397,7 +452,6 @@ function build_vpx {
 		./configure $CONFIGURE_ALL_FLAGS --enable-runtime-cpu-detect --enable-vp8 --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
 		make
 		make install
-		#checkinstall --pkgname="libvpx-dev" --pkgversion="1.2.0" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -412,10 +466,14 @@ function build_x264 {
 		# i.e.
 		# when ffmpeg is compiled with --enable-w32threads [default on mingw]
 		# then x264 also needs to be compiled with --enable-win32thread
-		./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli # --enable-win32thread
+		if [ $ENVIRONMENT = "mingw" ]
+		then
+			./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli --enable-win32thread
+		else
+			./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli
+		fi
 		make
 		make install
-		#checkinstall --pkgname="libx264-dev" --pkgversion="0.129" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 	fi
 }
 
@@ -429,7 +487,8 @@ function build_bluray {
 		./configure $CONFIGURE_ALL_FLAGS --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
 		make
 		make install
-		#checkinstall --pkgname="libbluray-dev" --pkgversion="0.2.3" --backup=no --nodoc --deldoc=yes --fstrans=no --default
+		# NOTE: libbluray depends on "-lxml2 -ldl" so we need to link ffmpeg against those libs
+		CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lxml2 -ldl"
 	fi
 }
 
@@ -438,14 +497,17 @@ function build_ffmpeg {
 	wget -c http://ffmpeg-builder.googlecode.com/files/ffmpeg-1.2.tar.bz2
 	tar -xjvf ffmpeg*.tar.*
 	cd ffmpeg*
-	./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS
+	./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --extra-libs="$CONFIGURE_FFMPEG_LIBS"
 	make
 	make install
-	#checkinstall --pkgname="ffmpeg" --pkgversion="$(cat VERSION)" --backup=no --nodoc --deldoc=yes --fstrans=no --default
 }
 
 function build_all {
+
+	mkdir -p $BUILD_DIR
+
 	build_yasm
+	#install_pkgconfig
 	build_zlib
 	build_bzip2
 	build_expat
@@ -453,7 +515,8 @@ function build_all {
 	build_freetype
 	build_fribidi
 	build_fontconfig
-	build_libass
+	# TODO: add harfbuzz shaper for libass?
+	build_ass
 	build_faac
 	build_fdkaac
 	build_lame
@@ -467,7 +530,28 @@ function build_all {
 	build_ffmpeg
 }
 
-# su root
+read -p "
+Please select your environment:
 
-#install_packages
+[deb] for Debian/Ubuntu/Mint
+[mingw] for windows MinGW/MSYS
+
+Environment [deb]: " ENVIRONMENT
+
+if [ ! $ENVIRONMENT ]
+then
+	ENVIRONMENT="deb"
+fi
+
+# NOTE: ffmpeg autoenables w32threads on mingw
+#if [ $ENVIRONMENT = "mingw" ]
+#then
+#	CONFIGURE_FFMPEG_FLAGS="$CONFIGURE_FFMPEG_FLAGS --enable-w32threads"
+#fi
+
+if [ $ENVIRONMENT = "deb" ]
+then
+	remove_dev_debs
+fi
+
 build_all

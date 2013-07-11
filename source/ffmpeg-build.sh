@@ -413,7 +413,7 @@ function build_x264 {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libx264" ]]
     then
         cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/x264-0.130.tar.bz2
+        wget -c http://ffmpeg-builder.googlecode.com/files/x264-0.133.tar.bz2
         bsdtar -x -f x264*.tar.*
         cd x264-snapshot*
         # NOTE: x264 threads must be same regarding to ffmpeg
@@ -441,7 +441,7 @@ function build_bluray {
 
 function build_ffmpeg {
     cd $BUILD_DIR
-    wget -c http://ffmpeg-builder.googlecode.com/files/ffmpeg-1.2.1.tar.bz2
+    wget -c http://ffmpeg-builder.googlecode.com/files/ffmpeg-2.0.tar.bz2
     bsdtar -x -f ffmpeg*.tar.*
     cd ffmpeg*
     ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS

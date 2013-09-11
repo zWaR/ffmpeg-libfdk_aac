@@ -4,7 +4,7 @@
 
 export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
 export CFLAGS="-g -O2 -I/usr/local/include"
-export LDFLAGS="-s"
+export LDFLAGS="-s -L/usr/local/lib"
 
 # local variables
 
@@ -141,6 +141,19 @@ function build_yasm {
     make install
 }
 
+function install_pkgconfig {
+    if [ $ENVIRONMENT = "mingw" ]
+    then
+        cd /usr/local
+        wget -c http://ffmpeg-builder.googlecode.com/files/pkg-config-lite-0.28-1.tar.bz2
+        tar -xjvf pkg-config-lite-*.tar.*
+        mkdir -p /usr/local
+        cp -r pkg-config*/* /usr/local
+        rm -r pkg-config*
+        echo
+    fi
+}
+
 function build_zlib {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-zlib" ]]
     then
@@ -222,7 +235,7 @@ function build_expat {
                 export EXPAT_LIBS="-L/usr/local/lib -lexpat"
             fi
         else
-            #
+            echo ERROR
         fi
     fi
 }
@@ -257,7 +270,7 @@ function build_xml2 {
                 sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static libxml-2.0)|g" $PKG_CONFIG_PATH/libxml-2.0.pc
             fi
         else
-            #
+            echo ERROR
         fi
     fi
 }
@@ -289,7 +302,7 @@ function build_freetype {
                 sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static freetype2)|g" $PKG_CONFIG_PATH/freetype2.pc
             fi
         else
-            #
+            echo ERROR
         fi
     fi
 }
@@ -348,7 +361,8 @@ function build_fontconfig {
         if [ $ENVIRONMENT = "deb" ]
         then
             apt-get install libfontconfig1-dev
-        else
+        elif [ $ENVIRONMENT = "mingw" ]
+        then
             # TODO: important note about the font configuration directory in windows:
             # http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=10&t=318&start=10
             cd $BUILD_DIR
@@ -371,6 +385,8 @@ function build_fontconfig {
                 # NOTE: modify fontconfig.pc so it will return private libs even when called without --static
                 sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static fontconfig)|g" $PKG_CONFIG_PATH/fontconfig.pc
             fi
+        else
+            echo ERROR
         fi
     fi
 }
@@ -485,13 +501,30 @@ function build_theora {
 function build_xvid {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libxvid" ]]
     then
-        cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
-        tar -xjvf xvid*.tar.*
-        cd xvid*/build/generic
-        ./configure $CONFIGURE_ALL_FLAGS
-        make
-        make install
+        if [ $ENVIRONMENT = "deb" ]
+        then
+            cd $BUILD_DIR
+            wget -c http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
+            tar -xjvf xvid*.tar.*
+            cd xvid*/build/generic
+            ./configure $CONFIGURE_ALL_FLAGS
+            make
+            make install
+        elif [ $ENVIRONMENT = "mingw" ]
+        then
+            cd $BUILD_DIR
+            wget -c http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
+            bsdtar -x -f xvid*.tar.*
+            cd xvid*/build/generic
+            ./configure $CONFIGURE_ALL_FLAGS
+            sed -i -e 's/-mno-cygwin//g' platform.inc
+            make
+            make install
+            rm /usr/local/lib/xvidcore.dll
+            ln -s /usr/local/lib/xvidcore.a /usr/local/lib/libxvidcore.a
+        else
+            echo ERROR
+        fi
     fi
 }
 
@@ -550,7 +583,15 @@ function build_ffmpeg {
     wget -c http://ffmpeg-builder.googlecode.com/files/ffmpeg-2.0.1.tar.bz2
     tar -xjvf ffmpeg*.tar.*
     cd ffmpeg*
-    ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --extra-libs="$CONFIGURE_FFMPEG_LIBS"
+    if [ $ENVIRONMENT = "deb" ]
+    then
+        ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --extra-libs="$CONFIGURE_FFMPEG_LIBS"
+    elif [ $ENVIRONMENT = "mingw" ]
+    then
+        ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --enable-w32threads --extra-libs="$CONFIGURE_FFMPEG_LIBS"
+    else
+        echo ERROR
+    fi
     make
     make install
 }
@@ -559,29 +600,28 @@ function build_all {
 
     mkdir -p $BUILD_DIR
 
-#    build_yasm
-    #install_pkgconfig
+    build_yasm
+    install_pkgconfig
     build_zlib
-#    build_bzip2
-#    build_expat
-#FIXME: libxml2 can't find zlib when running this script
-#    build_xml2
-#    build_freetype
-#    build_fribidi
-#   build_fontconfig
+    build_bzip2
+    build_expat
+    build_xml2
+    build_freetype
+    build_fribidi
+    build_fontconfig
     # TODO: add harfbuzz shaper for libass?
-#    build_ass
-#    build_faac
-#    build_fdkaac
-#    build_lame
-#    build_ogg
-#    build_vorbis
-#    build_theora
-#    build_xvid
-#    build_vpx
-#    build_x264
-#    build_bluray
-#    build_ffmpeg
+    build_ass
+    build_faac
+    build_fdkaac
+    build_lame
+    build_ogg
+    build_vorbis
+    build_theora
+    build_xvid
+    build_vpx
+    build_x264
+    build_bluray
+    build_ffmpeg
 }
 
 read -p "

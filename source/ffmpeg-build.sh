@@ -159,7 +159,13 @@ function build_zlib {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            apt-get install zlib1g-dev
+            cd $BUILD_DIR
+            wget -c http://ffmpeg-builder.googlecode.com/files/zlib-1.2.7.tar.bz2
+            tar -xjvf zlib*.tar.*
+            cd zlib*
+            ./configure
+            make
+            make install
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR

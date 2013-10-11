@@ -163,8 +163,8 @@ function build_zlib {
             wget -c http://ffmpeg-builder.googlecode.com/files/zlib-1.2.7.tar.bz2
             tar -xjvf zlib*.tar.*
             cd zlib*
-            ./configure
-            make
+            ./configure --static
+            make libz.a
             make install
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
@@ -182,8 +182,8 @@ function build_zlib {
             wget -c http://ffmpeg-builder.googlecode.com/files/zlib-1.2.7.tar.bz2
             tar -xjvf zlib*.tar.*
             cd zlib*
-            ./configure
-            make
+            ./configure --static
+            make libz.a
             make install
         fi
     fi

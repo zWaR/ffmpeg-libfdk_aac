@@ -270,7 +270,27 @@ function build_xml2 {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            apt-get install libxml2-dev
+            cd $BUILD_DIR
+            wget -c http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
+            tar -xzvf libxml2*.tar.*
+            cd libxml2*
+            ./configure $CONFIGURE_ALL_FLAGS --without-debug
+            make
+            make install
+
+            pkg-config libxml-2.0 >/dev/null 2>&1
+            # NOTE: when package config fails, export the lib dependencies to variables
+            if [ $? != 0 ]
+            then
+                export LIBXML2_CFLAGS="-I/usr/local/include/libxml2 -DLIBXML_STATIC"
+                export LIBXML2_LIBS="-L/usr/local/lib -lxml2 -lz -lws2_32"
+                export XML2_INCLUDEDIR="-I/usr/local/include/libxml2"
+                export XML2_LIBDIR="-L/usr/local/lib"
+                export XML2_LIBS="-lxml2 -lz -lws2_32"
+            else
+                # NOTE: modify libxml2.pc so it will return private libs even when called without --static
+                sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static libxml-2.0)|g" $PKG_CONFIG_PATH/libxml-2.0.pc
+            fi
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR

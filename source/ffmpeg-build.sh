@@ -376,7 +376,7 @@ function build_fribidi {
         then
             cd $BUILD_DIR
             wget -c http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
-            bsdtar -x -f fribidi*.tar.*
+            tar -xjvf fribidi*.tar.*
             cd fribidi*
             # fix for static build
             #sed -i -e  's/__declspec(dllimport)//g' lib/fribidi-common.h
@@ -398,7 +398,7 @@ function build_fribidi {
         then
             cd $BUILD_DIR
             wget -c http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
-            bsdtar -x -f fribidi*.tar.*
+            tar -xjvf fribidi*.tar.*
             cd fribidi*
             # fix for static build
             sed -i -e  's/__declspec(dllimport)//g' lib/fribidi-common.h
@@ -614,7 +614,7 @@ function build_xvid {
         then
             cd $BUILD_DIR
             wget -c http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
-            bsdtar -x -f xvid*.tar.*
+            tar -xjvf xvid*.tar.*
             cd xvid*/build/generic
             ./configure $CONFIGURE_ALL_FLAGS
             sed -i -e 's/-mno-cygwin//g' platform.inc

@@ -109,14 +109,14 @@ Press [Enter] to uninstall *-dev packages or [Ctrl + c] to quit..."
     # or seems 'future' consistent with their ABI (application binary interface)
 
     apt-get autoremove yasm
-    #apt-get autoremove zlib1g-dev
-    #apt-get autoremove libbz2-dev
-    #apt-get autoremove liblzma-dev
-    #apt-get autoremove libexpat1-dev
-    #apt-get autoremove libxml2-dev
-    #apt-get autoremove libfreetype6-dev
-    #apt-get autoremove libfribidi-dev
-    #apt-get autoremove libfontconfig1-dev
+    apt-get autoremove zlib1g-dev
+    apt-get autoremove libbz2-dev
+    apt-get autoremove liblzma-dev
+    apt-get autoremove libexpat1-dev
+    apt-get autoremove libxml2-dev
+    apt-get autoremove libfreetype6-dev
+    apt-get autoremove libfribidi-dev
+    apt-get autoremove libfontconfig1-dev
     apt-get autoremove libass-dev
     apt-get autoremove libfaac-dev
     apt-get autoremove libfdk-aac-dev
@@ -142,7 +142,7 @@ function build_yasm {
 }
 
 function install_pkgconfig {
-    if [ $ENVIRONMENT = "mingw" ]
+    if [ "$ENVIRONMENT" == "mingw" ]
     then
         cd /usr/local
         wget -c http://ffmpeg-builder.googlecode.com/files/pkg-config-lite-0.28-1.tar.bz2
@@ -157,10 +157,10 @@ function install_pkgconfig {
 function build_zlib {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-zlib" ]]
     then
-        if [ $ENVIRONMENT = "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ]
         then
             apt-get install zlib1g-dev
-        elif [ $ENVIRONMENT = "mingw" ]
+        elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
             wget -c http://ffmpeg-builder.googlecode.com/files/zlib-1.2.7.tar.bz2
@@ -186,10 +186,10 @@ function build_zlib {
 function build_bzip2 {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-bzlib" ]]
     then
-        if [ $ENVIRONMENT = "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ]
         then
             apt-get install libbz2-dev
-        elif [ $ENVIRONMENT = "mingw" ]
+        elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
             wget -c http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
@@ -214,10 +214,10 @@ function build_bzip2 {
 function build_expat {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
-        if [ $ENVIRONMENT = "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ]
         then
             apt-get install libexpat1-dev
-        elif [ $ENVIRONMENT = "mingw" ]
+        elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
             wget -c http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
@@ -243,10 +243,10 @@ function build_expat {
 function build_xml2 {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libbluray" ]]
     then
-        if [ $ENVIRONMENT = "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ]
         then
             apt-get install libxml2-dev
-        elif [ $ENVIRONMENT = "mingw" ]
+        elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
             wget -c http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
@@ -278,10 +278,10 @@ function build_xml2 {
 function build_freetype {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfreetype" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
-        if [ $ENVIRONMENT = "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ]
         then
             apt-get install libfreetype6-dev
-        elif [ $ENVIRONMENT = "mingw" ]
+        elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
             wget -c http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
@@ -310,10 +310,10 @@ function build_freetype {
 function build_fribidi {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
-        if [ $ENVIRONMENT = "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ]
         then
             apt-get install libfribidi-dev
-        elif [ $ENVIRONMENT = "mingw" ]
+        elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
             wget -c http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
@@ -358,10 +358,10 @@ function build_fribidi {
 function build_fontconfig {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
-        if [ $ENVIRONMENT = "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ]
         then
             apt-get install libfontconfig1-dev
-        elif [ $ENVIRONMENT = "mingw" ]
+        elif [ "$ENVIRONMENT" == "mingw" ]
         then
             # TODO: important note about the font configuration directory in windows:
             # http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=10&t=318&start=10
@@ -501,7 +501,7 @@ function build_theora {
 function build_xvid {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libxvid" ]]
     then
-        if [ $ENVIRONMENT = "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ]
         then
             cd $BUILD_DIR
             wget -c http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
@@ -510,7 +510,7 @@ function build_xvid {
             ./configure $CONFIGURE_ALL_FLAGS
             make
             make install
-        elif [ $ENVIRONMENT = "mingw" ]
+        elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
             wget -c http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
@@ -552,11 +552,21 @@ function build_x264 {
         # i.e.
         # when ffmpeg is compiled with --enable-w32threads [default on mingw]
         # then x264 also needs to be compiled with --enable-win32thread
-        if [ $ENVIRONMENT = "mingw" ]
+        if [ "$ENVIRONMENT" == "mingw" ]
         then
-            ./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli --enable-win32thread
+            if [ "$BITDEPTH" == "10" ]
+            then
+                ./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli --enable-win32thread
+            else
+                ./configure $CONFIGURE_ALL_FLAGS --enable-strip --disable-cli --enable-win32thread
+            fi
         else
-            ./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli
+            if [ "$BITDEPTH" == "10" ]
+            then
+                ./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli
+            else
+                ./configure $CONFIGURE_ALL_FLAGS --enable-strip --disable-cli
+            fi
         fi
         make
         make install
@@ -580,13 +590,13 @@ function build_bluray {
 
 function build_ffmpeg {
     cd $BUILD_DIR
-    wget -c http://ffmpeg-builder.googlecode.com/files/ffmpeg-2.0.1.tar.bz2
+    wget -c http://ffmpeg-builder.googlecode.com/files/ffmpeg-2.0.2.tar.bz2
     tar -xjvf ffmpeg*.tar.*
     cd ffmpeg*
-    if [ $ENVIRONMENT = "deb" ]
+    if [ "$ENVIRONMENT" == "deb" ]
     then
         ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --extra-libs="$CONFIGURE_FFMPEG_LIBS"
-    elif [ $ENVIRONMENT = "mingw" ]
+    elif [ "$ENVIRONMENT" == "mingw" ]
     then
         ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --enable-w32threads --extra-libs="$CONFIGURE_FFMPEG_LIBS"
     else
@@ -627,8 +637,8 @@ function build_all {
 read -p "
 Please select your environment:
 
-[deb] for Debian/Ubuntu/Mint
-[mingw] for windows MinGW/MSYS
+    [deb]   for Debian/Ubuntu/Mint
+    [mingw] for windows MinGW/MSYS
 
 Environment [deb]: " ENVIRONMENT
 
@@ -638,14 +648,27 @@ then
 fi
 
 # NOTE: ffmpeg autoenables w32threads on mingw
-#if [ $ENVIRONMENT = "mingw" ]
+#if [ "$ENVIRONMENT" == "mingw" ]
 #then
 #   CONFIGURE_FFMPEG_FLAGS="$CONFIGURE_FFMPEG_FLAGS --enable-w32threads"
 #fi
 
-if [ $ENVIRONMENT = "deb" ]
+if [ "$ENVIRONMENT" == "deb" ]
 then
     remove_dev_debs
+fi
+
+read -p "
+Please select the bit depth for x264 encoding:
+
+    [8]  for 8-Bit
+    [10] for 10-Bit
+
+Bit Depth [8]: " BITDEPTH
+
+if [ "$BITDEPTH" != "10" ]
+then
+    BITDEPTH="8"
 fi
 
 build_all

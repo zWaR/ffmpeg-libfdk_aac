@@ -194,7 +194,12 @@ function build_bzip2 {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            apt-get install libbz2-dev
+            cd $BUILD_DIR
+            wget -c http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
+            tar -xzvf bzip2*.tar.*
+            cd bzip2*
+            make
+            make install
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR

@@ -441,7 +441,26 @@ function build_fontconfig {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            apt-get install libfontconfig1-dev
+            cd $BUILD_DIR
+            wget -c http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
+            tar -xjvf fontconfig*.tar.*
+            cd fontconfig*
+            ./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
+            make
+            make install
+
+            pkg-config fontconfig >/dev/null 2>&1
+            # NOTE: when package config fails, export the lib dependencies to variables
+            if [ $? != 0 ]
+            then
+                export FONTCONFIG_CFLAGS="-I/usr/local/include"
+                export FONTCONFIG_LIBS="-L/usr/local/lib -lfontconfig $XML2_LIBS $FREETYPE_LIBS"
+                # TODO: deceide if libxml or expat was used, and export corresponding lib dependencies...
+                #export FONTCONFIG_LIBS="-L/usr/local/lib -lfontconfig -lexpat -lfreetype"
+            else
+                # NOTE: modify fontconfig.pc so it will return private libs even when called without --static
+                sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static fontconfig)|g" $PKG_CONFIG_PATH/fontconfig.pc
+            fi
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             # TODO: important note about the font configuration directory in windows:

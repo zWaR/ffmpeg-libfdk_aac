@@ -374,7 +374,26 @@ function build_fribidi {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            apt-get install libfribidi-dev
+            cd $BUILD_DIR
+            wget -c http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
+            bsdtar -x -f fribidi*.tar.*
+            cd fribidi*
+            # fix for static build
+            #sed -i -e  's/__declspec(dllimport)//g' lib/fribidi-common.h
+            ./configure $CONFIGURE_ALL_FLAGS --disable-debug
+            make -C charset
+            # fixing lib/Makefile directly before make -C lib, or it will be overwritten by another configure process
+            sed -i -e  's/am__append_1 =/#am__append_1 =/g' lib/Makefile
+            make -C lib
+            make
+            make install
+
+            pkg-config fribidi >/dev/null 2>&1
+            if [ $? != 0 ]
+            then
+                export FRIBIDI_CFLAGS="-I/usr/local/include/fribidi"
+                export FRIBIDI_LIBS="-L/usr/local/lib -lfribidi"
+            fi
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR

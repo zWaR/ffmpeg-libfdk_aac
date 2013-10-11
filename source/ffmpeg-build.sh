@@ -227,7 +227,21 @@ function build_expat {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            apt-get install libexpat1-dev
+            cd $BUILD_DIR
+            wget -c http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
+            tar -xzvf expat*.tar.*
+            cd expat*
+            ./configure $CONFIGURE_ALL_FLAGS
+            make
+            make install
+
+            pkg-config expat >/dev/null 2>&1
+            # NOTE: when package config fails, export the lib dependencies to variables
+            if [ $? != 0 ]
+            then
+                export EXPAT_CFLAGS="-I/usr/local/include"
+                export EXPAT_LIBS="-L/usr/local/lib -lexpat"
+            fi
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR

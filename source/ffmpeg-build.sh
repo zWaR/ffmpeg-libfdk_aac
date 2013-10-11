@@ -447,7 +447,7 @@ function build_ogg {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvorbis" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
         cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/libogg-1.3.0.tar.xz
+        wget -c http://ffmpeg-builder.googlecode.com/files/libogg-1.3.1.tar.xz
         tar -xJvf libogg*.tar.*
         cd libogg*
         ./configure $CONFIGURE_ALL_FLAGS

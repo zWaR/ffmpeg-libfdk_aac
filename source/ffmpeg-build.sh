@@ -710,27 +710,27 @@ function build_all {
 
     mkdir -p $BUILD_DIR
 
-#    build_yasm
-#    install_pkgconfig
-#    build_zlib
-#    build_bzip2
-#    build_expat
-#    build_xml2
-#    build_freetype
-#    build_fribidi
-#    build_fontconfig
-#    # TODO: add harfbuzz shaper for libass?
-#    build_ass
-#    build_faac
-#    build_fdkaac
-#    build_lame
-#    build_ogg
-#    build_vorbis
-#    build_theora
-#    build_xvid
-#    build_vpx
-#    build_x264
-#    build_bluray
+    build_yasm
+    install_pkgconfig
+    build_zlib
+    build_bzip2
+    build_expat
+    build_xml2
+    build_freetype
+    build_fribidi
+    build_fontconfig
+    # TODO: add harfbuzz shaper for libass?
+    build_ass
+    build_faac
+    build_fdkaac
+    build_lame
+    build_ogg
+    build_vorbis
+    build_theora
+    build_xvid
+    build_vpx
+    build_x264
+    build_bluray
     build_ffmpeg
 }
 

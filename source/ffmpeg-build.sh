@@ -133,7 +133,7 @@ Press [Enter] to uninstall *-dev packages or [Ctrl + c] to quit..."
 function build_yasm {
     cd $BUILD_DIR
     rm -r yasm*
-    wget http://www.tortall.net/projects/yasm/releases/yasm-1.2.0.tar.gz
+    wget -N http://www.tortall.net/projects/yasm/releases/yasm-1.2.0.tar.gz
     tar -xzvf yasm*.tar.*
     cd yasm*
     ./configure
@@ -145,7 +145,7 @@ function install_pkgconfig {
     if [ "$ENVIRONMENT" == "mingw" ]
     then
         cd /usr/local
-        wget -c http://ffmpeg-builder.googlecode.com/files/pkg-config-lite-0.28-1.tar.bz2
+        wget -N http://ffmpeg-builder.googlecode.com/files/pkg-config-lite-0.28-1.tar.bz2
         tar -xjvf pkg-config-lite-*.tar.*
         mkdir -p /usr/local
         cp -r pkg-config*/* /usr/local
@@ -160,8 +160,8 @@ function build_zlib {
         if [ "$ENVIRONMENT" == "deb" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/zlib-1.2.7.tar.bz2
-            tar -xjvf zlib*.tar.*
+            wget -N http://ffmpeg-builder.googlecode.com/files/zlib-1.2.8.tar.xz
+            tar -xJvf zlib*.tar.*
             cd zlib*
             ./configure --static
             make libz.a
@@ -169,8 +169,8 @@ function build_zlib {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/zlib-1.2.7.tar.bz2
-            tar -xjvf zlib*.tar.*
+            wget -N http://ffmpeg-builder.googlecode.com/files/zlib-1.2.8.tar.xz
+            tar -xJvf zlib*.tar.*
             cd zlib*
             make -f win32/Makefile.gcc
             mkdir -p /usr/local/include
@@ -179,8 +179,8 @@ function build_zlib {
             cp libz.a /usr/local/lib
         else
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/zlib-1.2.7.tar.bz2
-            tar -xjvf zlib*.tar.*
+            wget -N http://ffmpeg-builder.googlecode.com/files/zlib-1.2.8.tar.xz
+            tar -xJvf zlib*.tar.*
             cd zlib*
             ./configure --static
             make libz.a
@@ -195,7 +195,7 @@ function build_bzip2 {
         if [ "$ENVIRONMENT" == "deb" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
+            wget -N http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
             tar -xzvf bzip2*.tar.*
             cd bzip2*
             make
@@ -203,7 +203,7 @@ function build_bzip2 {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
+            wget -N http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
             tar -xzvf bzip2*.tar.*
             cd bzip2*
             make
@@ -213,7 +213,7 @@ function build_bzip2 {
             cp libbz2.a /usr/local/lib
         else
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
+            wget -N http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
             tar -xzvf bzip2*.tar.*
             cd bzip2*
             make
@@ -228,7 +228,7 @@ function build_expat {
         if [ "$ENVIRONMENT" == "deb" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
+            wget -N http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
             tar -xzvf expat*.tar.*
             cd expat*
             ./configure $CONFIGURE_ALL_FLAGS
@@ -245,7 +245,7 @@ function build_expat {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
+            wget -N http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
             tar -xzvf expat*.tar.*
             cd expat*
             ./configure $CONFIGURE_ALL_FLAGS
@@ -271,7 +271,7 @@ function build_xml2 {
         if [ "$ENVIRONMENT" == "deb" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
+            wget -N http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
             tar -xzvf libxml2*.tar.*
             cd libxml2*
             ./configure $CONFIGURE_ALL_FLAGS --without-debug
@@ -294,7 +294,7 @@ function build_xml2 {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
+            wget -N http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
             tar -xzvf libxml2*.tar.*
             cd libxml2*
             ./configure $CONFIGURE_ALL_FLAGS --without-debug
@@ -326,7 +326,7 @@ function build_freetype {
         if [ "$ENVIRONMENT" == "deb" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
+            wget -N http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
             tar -xjvf freetype*.tar.*
             cd freetype*
             ./configure $CONFIGURE_ALL_FLAGS
@@ -346,7 +346,7 @@ function build_freetype {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
+            wget -N http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
             tar -xjvf freetype*.tar.*
             cd freetype*
             ./configure $CONFIGURE_ALL_FLAGS
@@ -375,7 +375,7 @@ function build_fribidi {
         if [ "$ENVIRONMENT" == "deb" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
+            wget -N http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
             tar -xjvf fribidi*.tar.*
             cd fribidi*
             # fix for static build
@@ -397,7 +397,7 @@ function build_fribidi {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
+            wget -N http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
             tar -xjvf fribidi*.tar.*
             cd fribidi*
             # fix for static build
@@ -418,7 +418,7 @@ function build_fribidi {
             fi
         else
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
+            wget -N http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
             tar -xjvf fribidi*.tar.*
             cd fribidi*
             ./configure $CONFIGURE_ALL_FLAGS --disable-debug
@@ -442,7 +442,7 @@ function build_fontconfig {
         if [ "$ENVIRONMENT" == "deb" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
+            wget -N http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
             tar -xjvf fontconfig*.tar.*
             cd fontconfig*
             ./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
@@ -466,7 +466,7 @@ function build_fontconfig {
             # TODO: important note about the font configuration directory in windows:
             # http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=10&t=318&start=10
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
+            wget -N http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
             tar -xjvf fontconfig*.tar.*
             cd fontconfig*
             ./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
@@ -495,7 +495,7 @@ function build_ass {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
         cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/libass-0.10.1.tar.xz
+        wget -N http://ffmpeg-builder.googlecode.com/files/libass-0.10.1.tar.xz
         tar -xJvf libass*.tar.*
         cd libass*
         ./configure $CONFIGURE_ALL_FLAGS
@@ -508,7 +508,7 @@ function build_faac {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfaac" ]]
     then
         cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/faac-1.28.tar.bz2
+        wget -N http://ffmpeg-builder.googlecode.com/files/faac-1.28.tar.bz2
         tar -xjvf faac*.tar.*
         cd faac*
         ./configure $CONFIGURE_ALL_FLAGS --without-mp4v2
@@ -521,7 +521,7 @@ function build_fdkaac {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfdk_aac" ]]
     then
         cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/fdk-aac-0.1.2.tar.gz
+        wget -N http://ffmpeg-builder.googlecode.com/files/fdk-aac-0.1.2.tar.gz
         tar -xzvf fdk-aac*
         cd fdk-aac*
         ./configure $CONFIGURE_ALL_FLAGS
@@ -534,7 +534,7 @@ function build_lame {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libmp3lame" ]]
     then
         cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/lame-3.99.5.tar.gz
+        wget -N http://ffmpeg-builder.googlecode.com/files/lame-3.99.5.tar.gz
         tar -xzvf lame*.tar.*
         cd lame*
         ./configure $CONFIGURE_ALL_FLAGS --disable-frontend
@@ -547,7 +547,7 @@ function build_ogg {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvorbis" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
         cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/libogg-1.3.1.tar.xz
+        wget -N http://ffmpeg-builder.googlecode.com/files/libogg-1.3.1.tar.xz
         tar -xJvf libogg*.tar.*
         cd libogg*
         ./configure $CONFIGURE_ALL_FLAGS
@@ -568,7 +568,7 @@ function build_vorbis {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvorbis" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
         cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/libvorbis-1.3.3.tar.xz
+        wget -N http://ffmpeg-builder.googlecode.com/files/libvorbis-1.3.3.tar.xz
         tar -xJvf libvorbis*.tar.*
         cd libvorbis*
         ./configure $CONFIGURE_ALL_FLAGS
@@ -589,7 +589,7 @@ function build_theora {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
         cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/libtheora-1.1.1.tar.bz2
+        wget -N http://ffmpeg-builder.googlecode.com/files/libtheora-1.1.1.tar.bz2
         tar -xjvf libtheora*.tar.*
         cd libtheora*
         ./configure $CONFIGURE_ALL_FLAGS --disable-examples
@@ -604,7 +604,7 @@ function build_xvid {
         if [ "$ENVIRONMENT" == "deb" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
+            wget -N http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
             tar -xjvf xvid*.tar.*
             cd xvid*/build/generic
             ./configure $CONFIGURE_ALL_FLAGS
@@ -613,7 +613,7 @@ function build_xvid {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $BUILD_DIR
-            wget -c http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
+            wget -N http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
             tar -xjvf xvid*.tar.*
             cd xvid*/build/generic
             ./configure $CONFIGURE_ALL_FLAGS
@@ -632,7 +632,7 @@ function build_vpx {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvpx" ]]
     then
         cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/libvpx-1.2.0.tar.bz2
+        wget -N http://ffmpeg-builder.googlecode.com/files/libvpx-1.2.0.tar.bz2
         tar -xjvf libvpx*.tar.*
         cd libvpx*
         ./configure $CONFIGURE_ALL_FLAGS --enable-runtime-cpu-detect --enable-vp8 --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
@@ -645,7 +645,7 @@ function build_x264 {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libx264" ]]
     then
         cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/x264-0.136.tar.bz2
+        wget -N http://ffmpeg-builder.googlecode.com/files/x264-0.136.tar.bz2
         tar -xjvf x264*.tar.*
         cd x264-snapshot*
         # NOTE: x264 threads must be same regarding to ffmpeg
@@ -677,7 +677,7 @@ function build_bluray {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libbluray" ]]
     then
         cd $BUILD_DIR
-        wget -c http://ffmpeg-builder.googlecode.com/files/libbluray-0.2.3.tar.bz2
+        wget -N http://ffmpeg-builder.googlecode.com/files/libbluray-0.2.3.tar.bz2
         tar -xjvf libbluray*.tar.*
         cd libbluray*
         ./configure $CONFIGURE_ALL_FLAGS --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
@@ -690,7 +690,7 @@ function build_bluray {
 
 function build_ffmpeg {
     cd $BUILD_DIR
-    wget -c http://ffmpeg-builder.googlecode.com/files/ffmpeg-2.0.2.tar.bz2
+    wget -N http://ffmpeg-builder.googlecode.com/files/ffmpeg-2.1.tar.bz2
     tar -xjvf ffmpeg*.tar.*
     cd ffmpeg*
     if [ "$ENVIRONMENT" == "deb" ]

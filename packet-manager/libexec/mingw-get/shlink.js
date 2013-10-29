@@ -1,7 +1,7 @@
 /*
  * shlink.js
  *
- * $Id: shlink.js,v 1.1 2012/04/06 22:49:36 keithmarshall Exp $
+ * $Id: shlink.js,v 0f864a5cad9e 2012/04/06 22:49:36 keithmarshall $
  *
  * Invoke the Windows Scripting Host to create or modify a windows shortcut,
  * with specified parameters.

@@ -1,7 +1,7 @@
 /*
  * unlink.js
  *
- * $Id: unlink.js,v 1.1 2012/04/06 22:49:36 keithmarshall Exp $
+ * $Id: unlink.js,v cd9a9ac85727 2013/09/20 08:43:04 keithmarshall $
  *
  * Invoke the Windows Scripting Host to remove specified files, typically
  * from the user's or all users' start menu or desktop directories.
@@ -40,7 +40,7 @@
  * This file is a component of mingw-get.
  *
  * Written by Keith Marshall <keithmarshall@users.sourceforge.net>
- * Copyright (C) 2012, MinGW Project
+ * Copyright (C) 2012, 2013, MinGW.org Project
  *
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -222,11 +222,12 @@ for( i = 0; i < argv.length; i++ )
        */
       if( chklink != "" )
       {
-	/* ...but when "--if-linked is in effect, we must verify
-	 * that the link target is matched, before...
+	/* ...but when "--if-linked is in effect, we must verify that
+	 * the link target is matched (case-insensitively), before...
 	 */
 	var ref = WinShell.CreateShortcut( filename );
-	if( ref.TargetPath == chklink )
+	var chk = WinShell.CreateShortcut( filename ); chk.TargetPath = chklink;
+	if( ref.TargetPath.toLowerCase() == chk.TargetPath.toLowerCase() )
 	  /*
 	   * ...we may proceed with deletion.
 	   */

@@ -8,7 +8,9 @@ export LDFLAGS="-s -L/usr/local/lib"
 
 # local variables
 
-BUILD_DIR="/usr/local/src"
+PKG_DIR=$(dirname $0)/archive
+SRC_DIR=$(dirname $0)/src
+BIN_DIR=$(dirname $0)/bin
 CONFIGURE_ALL_FLAGS="--disable-shared --enable-static"
 CONFIGURE_FFMPEG_LIBS=""
 CONFIGURE_FFMPEG_FLAGS="\
@@ -131,22 +133,23 @@ Press [Enter] to uninstall *-dev packages or [Ctrl + c] to quit..."
 }
 
 function build_yasm {
-    cd $BUILD_DIR
+    cd $SRC_DIR
     rm -r yasm*
-    wget -N http://www.tortall.net/projects/yasm/releases/yasm-1.2.0.tar.gz
-    tar -xzvf yasm*.tar.*
+    #wget -N http://www.tortall.net/projects/yasm/releases/yasm-1.2.0.tar.gz
+    tar -xzvf $PKG_DIR/yasm*.tar.*
     cd yasm*
     ./configure
     make
     make install
+    make clean
 }
 
 function install_pkgconfig {
     if [ "$ENVIRONMENT" == "mingw" ]
     then
         cd /usr/local
-        wget -N http://ffmpeg-builder.googlecode.com/files/pkg-config-lite-0.28-1.tar.bz2
-        tar -xjvf pkg-config-lite-*.tar.*
+        #wget -N http://ffmpeg-builder.googlecode.com/files/pkg-config-lite-0.28-1.tar.bz2
+        tar -xjvf $PKG_DIR/pkg-config-lite-*.tar.*
         mkdir -p /usr/local
         cp -r pkg-config*/* /usr/local
         rm -r pkg-config*
@@ -159,18 +162,19 @@ function build_zlib {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/zlib-1.2.8.tar.xz
-            tar -xJvf zlib*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/zlib-1.2.8.tar.xz
+            tar -xJvf $PKG_DIR/zlib*.tar.*
             cd zlib*
             ./configure --static
             make libz.a
             make install
+            make clean
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/zlib-1.2.8.tar.xz
-            tar -xJvf zlib*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/zlib-1.2.8.tar.xz
+            tar -xJvf $PKG_DIR/zlib*.tar.*
             cd zlib*
             make -f win32/Makefile.gcc
             mkdir -p /usr/local/include
@@ -178,13 +182,14 @@ function build_zlib {
             mkdir -p /usr/local/lib
             cp libz.a /usr/local/lib
         else
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/zlib-1.2.8.tar.xz
-            tar -xJvf zlib*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/zlib-1.2.8.tar.xz
+            tar -xJvf $PKG_DIR/zlib*.tar.*
             cd zlib*
             ./configure --static
             make libz.a
             make install
+            make clean
         fi
     fi
 }
@@ -194,30 +199,33 @@ function build_bzip2 {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
-            tar -xzvf bzip2*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
+            tar -xzvf $PKG_DIR/bzip2*.tar.*
             cd bzip2*
             make
             make install
+            make clean
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
-            tar -xzvf bzip2*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
+            tar -xzvf $PKG_DIR/bzip2*.tar.*
             cd bzip2*
             make
             mkdir -p /usr/local/include
             cp bzlib.h /usr/local/include
             mkdir -p /usr/local/lib
             cp libbz2.a /usr/local/lib
+            make clean
         else
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
-            tar -xzvf bzip2*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
+            tar -xzvf $PKG_DIR/bzip2*.tar.*
             cd bzip2*
             make
             make install
+            make clean
         fi
     fi
 }
@@ -227,13 +235,14 @@ function build_expat {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
-            tar -xzvf expat*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
+            tar -xzvf $PKG_DIR/expat*.tar.*
             cd expat*
             ./configure $CONFIGURE_ALL_FLAGS
             make
             make install
+            make clean
 
             pkg-config expat >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -244,13 +253,14 @@ function build_expat {
             fi
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
-            tar -xzvf expat*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
+            tar -xzvf $PKG_DIR/expat*.tar.*
             cd expat*
             ./configure $CONFIGURE_ALL_FLAGS
             make
             make install
+            make clean
 
             pkg-config expat >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -270,13 +280,14 @@ function build_xml2 {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
-            tar -xzvf libxml2*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
+            tar -xzvf $PKG_DIR/libxml2*.tar.*
             cd libxml2*
             ./configure $CONFIGURE_ALL_FLAGS --without-debug
             make
             make install
+            make clean
 
             pkg-config libxml-2.0 >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -293,13 +304,14 @@ function build_xml2 {
             fi
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
-            tar -xzvf libxml2*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
+            tar -xzvf $PKG_DIR/libxml2*.tar.*
             cd libxml2*
             ./configure $CONFIGURE_ALL_FLAGS --without-debug
             make
             make install
+            make clean
 
             pkg-config libxml-2.0 >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -325,13 +337,14 @@ function build_freetype {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
-            tar -xjvf freetype*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
+            tar -xjvf $PKG_DIR/freetype*.tar.*
             cd freetype*
             ./configure $CONFIGURE_ALL_FLAGS
             make
             make install
+            make clean
 
             pkg-config freetype2 >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -345,13 +358,14 @@ function build_freetype {
             fi
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
-            tar -xjvf freetype*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
+            tar -xjvf $PKG_DIR/freetype*.tar.*
             cd freetype*
             ./configure $CONFIGURE_ALL_FLAGS
             make
             make install
+            make clean
 
             pkg-config freetype2 >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -374,9 +388,9 @@ function build_fribidi {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
-            tar -xjvf fribidi*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
+            tar -xjvf $PKG_DIR/fribidi*.tar.*
             cd fribidi*
             # fix for static build
             #sed -i -e  's/__declspec(dllimport)//g' lib/fribidi-common.h
@@ -387,6 +401,7 @@ function build_fribidi {
             make -C lib
             make
             make install
+            make clean
 
             pkg-config fribidi >/dev/null 2>&1
             if [ $? != 0 ]
@@ -396,9 +411,9 @@ function build_fribidi {
             fi
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
-            tar -xjvf fribidi*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
+            tar -xjvf $PKG_DIR/fribidi*.tar.*
             cd fribidi*
             # fix for static build
             sed -i -e  's/__declspec(dllimport)//g' lib/fribidi-common.h
@@ -409,6 +424,7 @@ function build_fribidi {
             make -C lib
             make
             make install
+            make clean
 
             pkg-config fribidi >/dev/null 2>&1
             if [ $? != 0 ]
@@ -417,13 +433,14 @@ function build_fribidi {
                 export FRIBIDI_LIBS="-L/usr/local/lib -lfribidi"
             fi
         else
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
-            tar -xjvf fribidi*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
+            tar -xjvf $PKG_DIR/fribidi*.tar.*
             cd fribidi*
             ./configure $CONFIGURE_ALL_FLAGS --disable-debug
             make
             make install
+            make clean
 
             pkg-config fribidi >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -441,13 +458,14 @@ function build_fontconfig {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
-            tar -xjvf fontconfig*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
+            tar -xjvf $PKG_DIR/fontconfig*.tar.*
             cd fontconfig*
             ./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
             make
             make install
+            make clean
 
             pkg-config fontconfig >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -465,13 +483,14 @@ function build_fontconfig {
         then
             # TODO: important note about the font configuration directory in windows:
             # http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=10&t=318&start=10
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
-            tar -xjvf fontconfig*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
+            tar -xjvf $PKG_DIR/fontconfig*.tar.*
             cd fontconfig*
             ./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
             make
             make install
+            make clean
 
             pkg-config fontconfig >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -494,65 +513,70 @@ function build_fontconfig {
 function build_ass {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
-        cd $BUILD_DIR
-        wget -N http://ffmpeg-builder.googlecode.com/files/libass-0.10.1.tar.xz
-        tar -xJvf libass*.tar.*
+        cd $SRC_DIR
+        #wget -N http://ffmpeg-builder.googlecode.com/files/libass-0.10.1.tar.xz
+        tar -xJvf $PKG_DIR/libass*.tar.*
         cd libass*
         ./configure $CONFIGURE_ALL_FLAGS
         make
         make install
+        make clean
     fi
 }
 
 function build_faac {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfaac" ]]
     then
-        cd $BUILD_DIR
-        wget -N http://ffmpeg-builder.googlecode.com/files/faac-1.28.tar.bz2
-        tar -xjvf faac*.tar.*
+        cd $SRC_DIR
+        #wget -N http://ffmpeg-builder.googlecode.com/files/faac-1.28.tar.bz2
+        tar -xjvf $PKG_DIR/faac*.tar.*
         cd faac*
         ./configure $CONFIGURE_ALL_FLAGS --without-mp4v2
         make
         make install
+        make clean
     fi
 }
 
 function build_fdkaac {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfdk_aac" ]]
     then
-        cd $BUILD_DIR
-        wget -N http://ffmpeg-builder.googlecode.com/files/fdk-aac-0.1.2.tar.gz
-        tar -xzvf fdk-aac*
+        cd $SRC_DIR
+        #wget -N http://ffmpeg-builder.googlecode.com/files/fdk-aac-0.1.2.tar.gz
+        tar -xzvf $PKG_DIR/fdk-aac*
         cd fdk-aac*
         ./configure $CONFIGURE_ALL_FLAGS
         make
         make install
+        make clean
     fi
 }
 
 function build_lame {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libmp3lame" ]]
     then
-        cd $BUILD_DIR
-        wget -N http://ffmpeg-builder.googlecode.com/files/lame-3.99.5.tar.gz
-        tar -xzvf lame*.tar.*
+        cd $SRC_DIR
+        #wget -N http://ffmpeg-builder.googlecode.com/files/lame-3.99.5.tar.gz
+        tar -xzvf $PKG_DIR/lame*.tar.*
         cd lame*
         ./configure $CONFIGURE_ALL_FLAGS --disable-frontend
         make
         make install
+        make clean
     fi
 }
 
 function build_ogg {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvorbis" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
-        cd $BUILD_DIR
-        wget -N http://ffmpeg-builder.googlecode.com/files/libogg-1.3.1.tar.xz
-        tar -xJvf libogg*.tar.*
+        cd $SRC_DIR
+        #wget -N http://ffmpeg-builder.googlecode.com/files/libogg-1.3.1.tar.xz
+        tar -xJvf $PKG_DIR/libogg*.tar.*
         cd libogg*
         ./configure $CONFIGURE_ALL_FLAGS
         make
         make install
+        make clean
 
         pkg-config ogg >/dev/null 2>&1
         # NOTE: when package config fails, export the lib dependencies to variables
@@ -567,13 +591,14 @@ function build_ogg {
 function build_vorbis {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvorbis" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
-        cd $BUILD_DIR
-        wget -N http://ffmpeg-builder.googlecode.com/files/libvorbis-1.3.3.tar.xz
-        tar -xJvf libvorbis*.tar.*
+        cd $SRC_DIR
+        #wget -N http://ffmpeg-builder.googlecode.com/files/libvorbis-1.3.3.tar.xz
+        tar -xJvf $PKG_DIR/libvorbis*.tar.*
         cd libvorbis*
         ./configure $CONFIGURE_ALL_FLAGS
         make
         make install
+        make clean
 
         pkg-config vorbis >/dev/null 2>&1
         # NOTE: when package config fails, export the lib dependencies to variables
@@ -588,13 +613,14 @@ function build_vorbis {
 function build_theora {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
-        cd $BUILD_DIR
-        wget -N http://ffmpeg-builder.googlecode.com/files/libtheora-1.1.1.tar.bz2
-        tar -xjvf libtheora*.tar.*
+        cd $SRC_DIR
+        #wget -N http://ffmpeg-builder.googlecode.com/files/libtheora-1.1.1.tar.bz2
+        tar -xjvf $PKG_DIR/libtheora*.tar.*
         cd libtheora*
         ./configure $CONFIGURE_ALL_FLAGS --disable-examples
         make
         make install
+        make clean
     fi
 }
 
@@ -603,23 +629,25 @@ function build_xvid {
     then
         if [ "$ENVIRONMENT" == "deb" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
-            tar -xjvf xvid*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
+            tar -xjvf $PKG_DIR/xvid*.tar.*
             cd xvid*/build/generic
             ./configure $CONFIGURE_ALL_FLAGS
             make
             make install
+            make clean
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
-            cd $BUILD_DIR
-            wget -N http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
-            tar -xjvf xvid*.tar.*
+            cd $SRC_DIR
+            #wget -N http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
+            tar -xjvf $PKG_DIR/xvid*.tar.*
             cd xvid*/build/generic
             ./configure $CONFIGURE_ALL_FLAGS
             sed -i -e 's/-mno-cygwin//g' platform.inc
             make
             make install
+            make clean
             rm /usr/local/lib/xvidcore.dll
             ln -s /usr/local/lib/xvidcore.a /usr/local/lib/libxvidcore.a
         else
@@ -631,22 +659,23 @@ function build_xvid {
 function build_vpx {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvpx" ]]
     then
-        cd $BUILD_DIR
-        wget -N http://ffmpeg-builder.googlecode.com/files/libvpx-1.2.0.tar.bz2
-        tar -xjvf libvpx*.tar.*
+        cd $SRC_DIR
+        #wget -N http://ffmpeg-builder.googlecode.com/files/libvpx-1.2.0.tar.bz2
+        tar -xjvf $PKG_DIR/libvpx*.tar.*
         cd libvpx*
         ./configure $CONFIGURE_ALL_FLAGS --enable-runtime-cpu-detect --enable-vp8 --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
         make
         make install
+        make clean
     fi
 }
 
 function build_x264 {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libx264" ]]
     then
-        cd $BUILD_DIR
-        wget -N http://ffmpeg-builder.googlecode.com/files/x264-0.136.tar.bz2
-        tar -xjvf x264*.tar.*
+        cd $SRC_DIR
+        #wget -N http://ffmpeg-builder.googlecode.com/files/x264-0.136.tar.bz2
+        tar -xjvf $PKG_DIR/x264*.tar.*
         cd x264-snapshot*
         # NOTE: x264 threads must be same regarding to ffmpeg
         # i.e.
@@ -670,28 +699,30 @@ function build_x264 {
         fi
         make
         make install
+        make clean
     fi
 }
 
 function build_bluray {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libbluray" ]]
     then
-        cd $BUILD_DIR
-        wget -N http://ffmpeg-builder.googlecode.com/files/libbluray-0.2.3.tar.bz2
-        tar -xjvf libbluray*.tar.*
+        cd $SRC_DIR
+        #wget -N http://ffmpeg-builder.googlecode.com/files/libbluray-0.2.3.tar.bz2
+        tar -xjvf $PKG_DIR/libbluray*.tar.*
         cd libbluray*
         ./configure $CONFIGURE_ALL_FLAGS --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
         make
         make install
+        make clean
         # NOTE: libbluray depends on "-lxml2 -ldl" so we need to link ffmpeg against those libs
         CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lxml2 -ldl"
     fi
 }
 
 function build_ffmpeg {
-    cd $BUILD_DIR
-    wget -N http://ffmpeg-builder.googlecode.com/files/ffmpeg-2.1.tar.bz2
-    tar -xjvf ffmpeg*.tar.*
+    cd $SRC_DIR
+    #wget -N http://ffmpeg-builder.googlecode.com/files/ffmpeg-2.1.tar.bz2
+    tar -xjvf $PKG_DIR/ffmpeg*.tar.*
     cd ffmpeg*
     if [ "$ENVIRONMENT" == "deb" ]
     then
@@ -704,11 +735,14 @@ function build_ffmpeg {
     fi
     make
     make install
+    make clean
 }
 
 function build_all {
 
-    mkdir -p $BUILD_DIR
+    #mkdir -p $PKG_DIR
+    mkdir -p $SRC_DIR
+    mkdir -p $BIN_DIR
 
     build_yasm
     install_pkgconfig
@@ -729,9 +763,63 @@ function build_all {
     build_theora
     build_xvid
     build_vpx
-    build_x264
     build_bluray
+
+    BITDEPTH=10
+    build_x264
     build_ffmpeg
+    if [ "$ENVIRONMENT" == "deb" ]
+    then
+        mv -f /usr/local/bin/ffmpeg $BIN_DIR/ffmpeg-hi10-heaac
+    elif [ "$ENVIRONMENT" == "mingw" ]
+    then
+        mv -f /usr/local/bin/ffmpeg.exe $BIN_DIR/ffmpeg-hi10-heaac.exe
+    else
+        echo "ERROR"
+    fi
+
+    BITDEPTH=8
+    build_x264
+    build_ffmpeg
+    if [ "$ENVIRONMENT" == "deb" ]
+    then
+        mv -f /usr/local/bin/ffmpeg $BIN_DIR/ffmpeg-hi8-heaac
+    elif [ "$ENVIRONMENT" == "mingw" ]
+    then
+        mv -f /usr/local/bin/ffmpeg.exe $BIN_DIR/ffmpeg-hi8-heaac.exe
+    else
+        echo "ERROR"
+    fi
+
+}
+
+function build_deb {
+
+    if [ "$ENVIRONMENT" == "deb" ]
+    then
+        echo
+        echo "TODO: build deb package..."
+        echo
+    fi
+
+}
+
+function build_clean {
+
+    #remove sources
+    rm -r -f $SRC_DIR/*
+
+    # remove binaries
+    rm -f /usr/local/bin/*asm* /usr/local/bin/bunzip2 /usr/local/bin/bz* /usr/local/bin/fc-* /usr/local/bin/freetype* /usr/local/bin/xml* /usr/local/bin/faac /usr/local/bin/fribidi /usr/local/bin/ff*
+
+    #remove includes
+    rm -r -f /usr/local/include/ass /usr/local/include/libbluray /usr/local/include/fdk-aac /usr/local/include/libswscale /usr/local/include/vorbis /usr/local/include/libavutil /usr/local/include/libavfilter /usr/local/include/lame /usr/local/include/ogg /usr/local/include/libxml2 /usr/local/include/vpx /usr/local/include/freetype2 /usr/local/include/fontconfig /usr/local/include/fribidi /usr/local/include/libpostproc /usr/local/include/theora /usr/local/include/libavcodec /usr/local/include/libavformat /usr/local/include/libyasm /usr/local/include/libavdevice /usr/local/include/libswresample
+    rm -f /usr/local/include/expat.h /usr/local/include/bzlib.h /usr/local/include/faaccfg.h /usr/local/include/ft2build.h /usr/local/include/zconf.h /usr/local/include/xvid.h /usr/local/include/libyasm.h /usr/local/include/zlib.h /usr/local/include/expat_external.h /usr/local/include/x264_config.h /usr/local/include/libyasm-stdint.h /usr/local/include/faac.h /usr/local/include/x264.h
+
+    # remove libraries
+    rm -f /usr/local/lib/pkgconfig/fribidi.pc /usr/local/lib/pkgconfig/libavfilter.pc /usr/local/lib/pkgconfig/vpx.pc /usr/local/lib/pkgconfig/zlib.pc /usr/local/lib/pkgconfig/theoradec.pc /usr/local/lib/pkgconfig/theoraenc.pc /usr/local/lib/pkgconfig/theora.pc /usr/local/lib/pkgconfig/libbluray.pc /usr/local/lib/pkgconfig/ogg.pc /usr/local/lib/pkgconfig/vorbisenc.pc /usr/local/lib/pkgconfig/libavcodec.pc /usr/local/lib/pkgconfig/libpostproc.pc /usr/local/lib/pkgconfig/expat.pc /usr/local/lib/pkgconfig/libswscale.pc /usr/local/lib/pkgconfig/libavdevice.pc /usr/local/lib/pkgconfig/fontconfig.pc /usr/local/lib/pkgconfig/fdk-aac.pc /usr/local/lib/pkgconfig/libavutil.pc /usr/local/lib/pkgconfig/freetype2.pc /usr/local/lib/pkgconfig/libavformat.pc /usr/local/lib/pkgconfig/vorbisfile.pc /usr/local/lib/pkgconfig/x264.pc /usr/local/lib/pkgconfig/libass.pc /usr/local/lib/pkgconfig/vorbis.pc /usr/local/lib/pkgconfig/libswresample.pc /usr/local/lib/pkgconfig/libxml-2.0.pc
+    rm -f /usr/local/lib/libyasm.a /usr/local/lib/libz.a /usr/local/lib/libtheoraenc.a /usr/local/lib/libfdk-aac.la /usr/local/lib/libogg.a /usr/local/lib/libtheoradec.la /usr/local/lib/libavfilter.a /usr/local/lib/libmp3lame.a /usr/local/lib/libtheoradec.a /usr/local/lib/libfaac.a /usr/local/lib/libvorbisenc.a /usr/local/lib/libvorbis.a /usr/local/lib/libogg.la /usr/local/lib/libavdevice.a /usr/local/lib/libfdk-aac.a /usr/local/lib/libxvidcore.so.4 /usr/local/lib/libfribidi.a /usr/local/lib/libvpx.a /usr/local/lib/libfreetype.a /usr/local/lib/libvorbis.la /usr/local/lib/libvorbisfile.a /usr/local/lib/libx264.a /usr/local/lib/libavformat.a /usr/local/lib/libtheoraenc.la /usr/local/lib/libbluray.la /usr/local/lib/libfontconfig.la /usr/local/lib/libswresample.a /usr/local/lib/libfreetype.la /usr/local/lib/libxml2.a /usr/local/lib/libfaac.la /usr/local/lib/libfribidi.la /usr/local/lib/libxml2.la /usr/local/lib/libpostproc.a /usr/local/lib/libxvidcore.so.4.3 /usr/local/lib/libbluray.a /usr/local/lib/libexpat.a /usr/local/lib/libxvidcore.a /usr/local/lib/libavutil.a /usr/local/lib/libexpat.la /usr/local/lib/libbz2.a /usr/local/lib/libtheora.la /usr/local/lib/libass.a /usr/local/lib/libvorbisfile.la /usr/local/lib/libvorbisenc.la /usr/local/lib/libfontconfig.a /usr/local/lib/libswscale.a /usr/local/lib/xml2Conf.sh /usr/local/lib/libtheora.a /usr/local/lib/libass.la /usr/local/lib/libmp3lame.la /usr/local/lib/libavcodec.a
+
 }
 
 read -p "
@@ -747,28 +835,11 @@ then
     ENVIRONMENT="deb"
 fi
 
-# NOTE: ffmpeg autoenables w32threads on mingw
-#if [ "$ENVIRONMENT" == "mingw" ]
-#then
-#   CONFIGURE_FFMPEG_FLAGS="$CONFIGURE_FFMPEG_FLAGS --enable-w32threads"
-#fi
-
 if [ "$ENVIRONMENT" == "deb" ]
 then
     remove_dev_debs
 fi
 
-read -p "
-Please select the bit depth for x264 encoding:
-
-    [8]  for 8-Bit
-    [10] for 10-Bit
-
-Bit Depth [8]: " BITDEPTH
-
-if [ "$BITDEPTH" != "10" ]
-then
-    BITDEPTH="8"
-fi
-
 build_all
+build_deb
+build_clean

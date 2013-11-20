@@ -815,7 +815,7 @@ function build_deb {
 
     if [ "$ENVIRONMENT" == "deb" ]
     then
-        DEBPKG=$PKGNAME\_$PKGVERSION\_$(dpkg --print-architecture)_$(cat /etc/*release | grep DISTRIB_ID | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(cat /etc/*release | grep DISTRIB_RELEASE | cut -d '=' -f 2).deb
+        DEBPKG=$(dirname $0)/$PKGNAME\_$PKGVERSION\_$(dpkg --print-architecture)_$(cat /etc/*release | grep DISTRIB_ID | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(cat /etc/*release | grep DISTRIB_RELEASE | cut -d '=' -f 2).deb
         mkdir -p $DEB_DIR/DEBIAN
 
         md5sum $(find $BIN_DIR -type f) | sed "s|$BIN_DIR|usr/bin|g" > $DEB_DIR/DEBIAN/md5sums

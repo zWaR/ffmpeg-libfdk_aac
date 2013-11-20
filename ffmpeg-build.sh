@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# deb configuration
+
+PKGNAME="ffmpeg-hi"
+PKGVERSION="2.1"
+PKGSECTION="video"
+PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
+PKGHOMEPAGE="http://ffmpeg-builder.googlecode.com"
+PKGDEPENDS=""
+PKGDESCRIPTION="Multimedia encoder
+ Customized ffmpeg build of for use with FFmpegYAG.
+ Statically linked to reduce dependencies.
+ Supports 8 and 10 bit encoding with x264.
+ Supports HE-AAC profiles with fdkaac."
+
 # environment variables
 
 export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
@@ -10,7 +24,8 @@ export LDFLAGS="-s -L/usr/local/lib"
 
 PKG_DIR=$(dirname $0)/archive
 SRC_DIR=$(dirname $0)/src
-BIN_DIR=$(dirname $0)/bin
+BIN_DIR=$(dirname $0)/dist/usr/bin
+DEB_DIR=$(dirname $0)/dist/DEBIAN
 CONFIGURE_ALL_FLAGS="--disable-shared --enable-static"
 CONFIGURE_FFMPEG_LIBS=""
 CONFIGURE_FFMPEG_FLAGS="\
@@ -778,6 +793,9 @@ function build_all {
         echo "ERROR"
     fi
 
+    cd $SRC_DIR
+    rm -r -f x264* ffmpeg*
+
     BITDEPTH=8
     build_x264
     build_ffmpeg
@@ -797,9 +815,39 @@ function build_deb {
 
     if [ "$ENVIRONMENT" == "deb" ]
     then
-        echo
-        echo "TODO: build deb package..."
-        echo
+        DEBPKG=$PKGNAME\_$PKGVERSION\_$(dpkg --print-architecture)_$(cat /etc/*release | grep DISTRIB_ID | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(cat /etc/*release | grep DISTRIB_RELEASE | cut -d '=' -f 2).deb
+        echo $DEBPKG
+        mkdir -p $DEB_DIR
+
+        md5sum $(find $BIN_DIR -type f) | sed "s|$BIN_DIR|usr/bin|g" > $DEB_DIR/md5sums
+        echo "Package: $PKGNAME" > $DEB_DIR/control
+        echo "Version: $PKGVERSION" >> $DEB_DIR/control
+        echo "Section: $PKGSECTION" >> $DEB_DIR/control
+        echo "Architecture: $(dpkg --print-architecture)" >> $DEB_DIR/control
+        echo "Installed-Size: $(du -k -c $BIN_DIR | grep 'total' | sed -e 's|\s*total||g')" >> $DEB_DIR/control
+        # TODO: resolve dependencies...
+        echo "Depends: $PKGDEPENDS" >> $DEB_DIR/control
+        echo "Maintainer: $PKGAUTHOR" >> $DEB_DIR/control
+        echo "Priority: optional" >> $DEB_DIR/control
+        echo "Homepage: $PKGHOMEPAGE" >> $DEB_DIR/control
+        echo "Description: $PKGDESCRIPTION" >> $DEB_DIR/control
+
+        #echo "#!/bin/sh" > $DEB_DIR/postinst
+        #echo "" >> $DEB_DIR/postinst
+        #echo "if [ -x /usr/bin/update-menus ] ; then update-menus ; fi" >> $DEB_DIR/postinst
+        #echo "if [ -x /usr/bin/update-mime ] ; then update-mime ; fi" >> $DEB_DIR/postinst
+        #chmod 0755 $DEB_DIR/postinst
+
+        #echo "#!/bin/sh" > $DEB_DIR/postrm
+        #echo "" >> $DEB_DIR/postrm
+        #echo "if [ -x /usr/bin/update-menus ] ; then update-menus ; fi" >> $DEB_DIR/postrm
+        #echo "if [ -x /usr/bin/update-mime ] ; then update-mime ; fi" >> $DEB_DIR/postrm
+        #chmod 0755 $DEB_DIR/postrm
+
+        rm -f $DEBPKG
+        dpkg-deb -v -b $DEB_DIR $DEBPKG
+        rm -f -r $DEB_DIR
+        lintian --profile debian $DEBPKG
     fi
 
 }

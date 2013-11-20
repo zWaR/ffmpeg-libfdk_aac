@@ -25,7 +25,7 @@ export LDFLAGS="-s -L/usr/local/lib"
 PKG_DIR=$(dirname $0)/archive
 SRC_DIR=$(dirname $0)/src
 BIN_DIR=$(dirname $0)/dist/usr/bin
-DEB_DIR=$(dirname $0)/dist/DEBIAN
+DEB_DIR=$(dirname $0)/dist
 CONFIGURE_ALL_FLAGS="--disable-shared --enable-static"
 CONFIGURE_FFMPEG_LIBS=""
 CONFIGURE_FFMPEG_FLAGS="\
@@ -816,37 +816,36 @@ function build_deb {
     if [ "$ENVIRONMENT" == "deb" ]
     then
         DEBPKG=$PKGNAME\_$PKGVERSION\_$(dpkg --print-architecture)_$(cat /etc/*release | grep DISTRIB_ID | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(cat /etc/*release | grep DISTRIB_RELEASE | cut -d '=' -f 2).deb
-        echo $DEBPKG
-        mkdir -p $DEB_DIR
+        mkdir -p $DEB_DIR/DEBIAN
 
-        md5sum $(find $BIN_DIR -type f) | sed "s|$BIN_DIR|usr/bin|g" > $DEB_DIR/md5sums
-        echo "Package: $PKGNAME" > $DEB_DIR/control
-        echo "Version: $PKGVERSION" >> $DEB_DIR/control
-        echo "Section: $PKGSECTION" >> $DEB_DIR/control
-        echo "Architecture: $(dpkg --print-architecture)" >> $DEB_DIR/control
-        echo "Installed-Size: $(du -k -c $BIN_DIR | grep 'total' | sed -e 's|\s*total||g')" >> $DEB_DIR/control
+        md5sum $(find $BIN_DIR -type f) | sed "s|$BIN_DIR|usr/bin|g" > $DEB_DIR/DEBIAN/md5sums
+        echo "Package: $PKGNAME" > $DEB_DIR/DEBIAN/control
+        echo "Version: $PKGVERSION" >> $DEB_DIR/DEBIAN/control
+        echo "Section: $PKGSECTION" >> $DEB_DIR/DEBIAN/control
+        echo "Architecture: $(dpkg --print-architecture)" >> $DEB_DIR/DEBIAN/control
+        echo "Installed-Size: $(du -k -c $BIN_DIR | grep 'total' | sed -e 's|\s*total||g')" >> $DEB_DIR/DEBIAN/control
         # TODO: resolve dependencies...
-        echo "Depends: $PKGDEPENDS" >> $DEB_DIR/control
-        echo "Maintainer: $PKGAUTHOR" >> $DEB_DIR/control
-        echo "Priority: optional" >> $DEB_DIR/control
-        echo "Homepage: $PKGHOMEPAGE" >> $DEB_DIR/control
-        echo "Description: $PKGDESCRIPTION" >> $DEB_DIR/control
+        echo "Depends: $PKGDEPENDS" >> $DEB_DIR/DEBIAN/control
+        echo "Maintainer: $PKGAUTHOR" >> $DEB_DIR/DEBIAN/control
+        echo "Priority: optional" >> $DEB_DIR/DEBIAN/control
+        echo "Homepage: $PKGHOMEPAGE" >> $DEB_DIR/DEBIAN/control
+        echo "Description: $PKGDESCRIPTION" >> $DEB_DIR/DEBIAN/control
 
-        #echo "#!/bin/sh" > $DEB_DIR/postinst
-        #echo "" >> $DEB_DIR/postinst
-        #echo "if [ -x /usr/bin/update-menus ] ; then update-menus ; fi" >> $DEB_DIR/postinst
-        #echo "if [ -x /usr/bin/update-mime ] ; then update-mime ; fi" >> $DEB_DIR/postinst
-        #chmod 0755 $DEB_DIR/postinst
+        #echo "#!/bin/sh" > $DEB_DIR/DEBIAN/postinst
+        #echo "" >> $DEB_DIR/DEBIAN/postinst
+        #echo "if [ -x /usr/bin/update-menus ] ; then update-menus ; fi" >> $DEB_DIR/DEBIAN/postinst
+        #echo "if [ -x /usr/bin/update-mime ] ; then update-mime ; fi" >> $DEB_DIR/DEBIAN/postinst
+        #chmod 0755 $DEB_DIR/DEBIAN/postinst
 
-        #echo "#!/bin/sh" > $DEB_DIR/postrm
-        #echo "" >> $DEB_DIR/postrm
-        #echo "if [ -x /usr/bin/update-menus ] ; then update-menus ; fi" >> $DEB_DIR/postrm
-        #echo "if [ -x /usr/bin/update-mime ] ; then update-mime ; fi" >> $DEB_DIR/postrm
-        #chmod 0755 $DEB_DIR/postrm
+        #echo "#!/bin/sh" > $DEB_DIR/DEBIAN/postrm
+        #echo "" >> $DEB_DIR/DEBIAN/postrm
+        #echo "if [ -x /usr/bin/update-menus ] ; then update-menus ; fi" >> $DEB_DIR/DEBIAN/postrm
+        #echo "if [ -x /usr/bin/update-mime ] ; then update-mime ; fi" >> $DEB_DIR/DEBIAN/postrm
+        #chmod 0755 $DEB_DIR/DEBIAN/postrm
 
         rm -f $DEBPKG
         dpkg-deb -v -b $DEB_DIR $DEBPKG
-        rm -f -r $DEB_DIR
+        rm -f -r $DEB_DIR/DEBIAN
         lintian --profile debian $DEBPKG
     fi
 

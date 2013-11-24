@@ -3,7 +3,7 @@
 # deb configuration
 
 PKGNAME="ffmpeg-hi"
-PKGVERSION="2.1"
+PKGVERSION="2.1.1"
 PKGSECTION="video"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://ffmpeg-builder.googlecode.com"

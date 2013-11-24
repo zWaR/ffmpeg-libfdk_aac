@@ -853,6 +853,9 @@ function build_deb {
 
 function build_clean {
 
+    # remove build
+    rm -r -f $BIN_DIR/*
+
     #remove sources
     rm -r -f $SRC_DIR/*
 

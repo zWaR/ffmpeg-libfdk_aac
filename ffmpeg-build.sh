@@ -678,6 +678,7 @@ function build_vpx {
         #wget -N http://ffmpeg-builder.googlecode.com/files/libvpx-1.2.0.tar.bz2
         tar -xjvf $PKG_DIR/libvpx*.tar.*
         cd libvpx*
+        # FIXME: dependency loop in mingw32
         ./configure $CONFIGURE_ALL_FLAGS --enable-runtime-cpu-detect --enable-vp8 --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
         make
         make install

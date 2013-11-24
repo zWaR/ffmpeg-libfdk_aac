@@ -9,7 +9,7 @@ PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://ffmpeg-builder.googlecode.com"
 PKGDEPENDS=""
 PKGDESCRIPTION="Multimedia encoder
- Customized ffmpeg build of for use with FFmpegYAG.
+ Customized ffmpeg build for use with FFmpegYAG.
  Statically linked to reduce dependencies.
  Supports 8 and 10 bit encoding with x264.
  Supports HE-AAC profiles with fdkaac."

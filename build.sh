@@ -163,7 +163,10 @@ function build_yasm {
 }
 
 function install_pkgconfig {
-    if [ "$ENVIRONMENT" == "mingw" ]
+    if [ "$ENVIRONMENT" == "deb" ]
+    then
+        apt-get install --yes pkg-config
+    elif [ "$ENVIRONMENT" == "mingw" ]
     then
         cd /usr/local
         #wget -N http://ffmpeg-builder.googlecode.com/files/pkg-config-lite-0.28-1.tar.bz2

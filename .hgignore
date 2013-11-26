@@ -1,5 +1,5 @@
 syntax: glob
 src/*
-dist/*
+build/*
 *.deb
 Makefile

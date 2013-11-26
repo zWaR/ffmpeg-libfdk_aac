@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "all:
+echo "deb:
 \t@echo
 \t@./build.sh
 

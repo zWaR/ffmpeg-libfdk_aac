@@ -22,10 +22,13 @@ export LDFLAGS="-s -L/usr/local/lib"
 
 # local variables
 
-PKG_DIR=$(dirname $0)/archive
-SRC_DIR=$(dirname $0)/src
-BIN_DIR=$(dirname $0)/dist/usr/bin
-DEB_DIR=$(dirname $0)/dist
+cd $(dirname $0)
+
+CWD=$(pwd)
+PKG_DIR=$CWD/archive
+SRC_DIR=$CWD/src
+BIN_DIR=$CWD/build/usr/bin
+DEB_DIR=$CWD/build
 CONFIGURE_ALL_FLAGS="--disable-shared --enable-static"
 CONFIGURE_FFMPEG_LIBS=""
 CONFIGURE_FFMPEG_FLAGS="\
@@ -816,7 +819,7 @@ function build_deb {
 
     if [ "$ENVIRONMENT" == "deb" ]
     then
-        DEBPKG=$(dirname $0)/$PKGNAME\_$PKGVERSION\_$(dpkg --print-architecture)_$(cat /etc/*release | grep DISTRIB_ID | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(cat /etc/*release | grep DISTRIB_RELEASE | cut -d '=' -f 2).deb
+        DEBPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(dpkg --print-architecture)_$(cat /etc/*release | grep DISTRIB_ID | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(cat /etc/*release | grep DISTRIB_RELEASE | cut -d '=' -f 2).deb
         mkdir -p $DEB_DIR/DEBIAN
 
         md5sum $(find $BIN_DIR -type f) | sed "s|$BIN_DIR|usr/bin|g" > $DEB_DIR/DEBIAN/md5sums

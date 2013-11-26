@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "all:
+\t@echo
+\t@./build.sh
+
+clean:
+\t@rm -f *.tar.gz *.changes *.dsc *.deb" > Makefile

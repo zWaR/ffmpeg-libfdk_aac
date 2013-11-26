@@ -497,6 +497,7 @@ function build_fontconfig {
                 # TODO: deceide if libxml or expat was used, and export corresponding lib dependencies...
                 #export FONTCONFIG_LIBS="-L/usr/local/lib -lfontconfig -lexpat -lfreetype"
             else
+                cp -f fontconfig.pc $PKG_CONFIG_PATH/fontconfig.pc
                 # NOTE: modify fontconfig.pc so it will return private libs even when called without --static
                 sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static fontconfig)|g" $PKG_CONFIG_PATH/fontconfig.pc
             fi

@@ -823,7 +823,12 @@ function build_deb {
 
     if [ "$ENVIRONMENT" == "deb" ]
     then
-        DEBPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(dpkg --print-architecture)_$(cat /etc/*release | grep '^ID=' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(cat /etc/*release | grep 'VERSION_ID=' | cut -d '"' -f 2).deb
+        if [[ $(grep '^DISTRIB_' /etc/*release | wc -l) > 1 ]]
+        then
+            DEBPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(dpkg --print-architecture)_$(grep '^DISTRIB_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^DISTRIB_RELEASE=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2).deb
+        else
+            DEBPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(dpkg --print-architecture)_$(grep '^ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^VERSION_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2).deb
+        fi
         mkdir -p $DEB_DIR/DEBIAN
 
         md5sum $(find $BIN_DIR -type f) | sed "s|$BIN_DIR|usr/bin|g" > $DEB_DIR/DEBIAN/md5sums

@@ -113,41 +113,41 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 
 function remove_dev_debs {
 
-    read -p "
-Some packages are searching for installed development debian packages.
-i.e. libxml2 is looking for liblzma-dev (shared!). If this package is
-found, the dependency is dragged into the library. When building ffmpeg
-this dependency may also be required and needs to be passed to the linker
-when linking ffmpeg.
-
-Make sure your system don't have any development packages installed that
-might interfere with packages from this build
-
-Press [Enter] to uninstall *-dev packages or [Ctrl + c] to quit..."
+#    read -p "
+#Some packages are searching for installed development debian packages.
+#i.e. libxml2 is looking for liblzma-dev (shared!). If this package is
+#found, the dependency is dragged into the library. When building ffmpeg
+#this dependency may also be required and needs to be passed to the linker
+#when linking ffmpeg.
+#
+#Make sure your system don't have any development packages installed that
+#might interfere with packages from this build
+#
+#Press [Enter] to uninstall *-dev packages or [Ctrl + c] to quit..."
 
     # comment shared dependencies which are currently unused (i.e. expat)
     # or seems 'future' consistent with their ABI (application binary interface)
 
-    apt-get autoremove yasm
-    apt-get autoremove zlib1g-dev
-    apt-get autoremove libbz2-dev
-    apt-get autoremove liblzma-dev
-    apt-get autoremove libexpat1-dev
-    apt-get autoremove libxml2-dev
-    apt-get autoremove libfreetype6-dev
-    apt-get autoremove libfribidi-dev
-    apt-get autoremove libfontconfig1-dev
-    apt-get autoremove libass-dev
-    apt-get autoremove libfaac-dev
-    apt-get autoremove libfdk-aac-dev
-    apt-get autoremove libmp3lame-dev
-    apt-get autoremove libtheora-dev
-    apt-get autoremove libvorbis-dev
-    apt-get autoremove libogg-dev
-    apt-get autoremove libxvidcore-dev
-    apt-get autoremove libvpx-dev
-    apt-get autoremove libx264.*-dev
-    apt-get autoremove libbluray-dev
+    apt-get autoremove --yes yasm
+    apt-get autoremove --yes zlib1g-dev
+    apt-get autoremove --yes libbz2-dev
+    apt-get autoremove --yes liblzma-dev
+    apt-get autoremove --yes libexpat1-dev
+    apt-get autoremove --yes libxml2-dev
+    apt-get autoremove --yes libfreetype6-dev
+    apt-get autoremove --yes libfribidi-dev
+    apt-get autoremove --yes libfontconfig1-dev
+    apt-get autoremove --yes libass-dev
+    apt-get autoremove --yes libfaac-dev
+    apt-get autoremove --yes libfdk-aac-dev
+    apt-get autoremove --yes libmp3lame-dev
+    apt-get autoremove --yes libtheora-dev
+    apt-get autoremove --yes libvorbis-dev
+    apt-get autoremove --yes libogg-dev
+    apt-get autoremove --yes libxvidcore-dev
+    apt-get autoremove --yes libvpx-dev
+    apt-get autoremove --yes libx264.*-dev
+    apt-get autoremove --yes libbluray-dev
 }
 
 function build_yasm {
@@ -887,17 +887,30 @@ function build_clean {
 
 }
 
-read -p "
-Please select your environment:
+#read -p "
+#Please select your environment:
+#
+#    [deb]   for Debian/Ubuntu/Mint
+#    [mingw] for windows MinGW/MSYS
+#
+#Environment [deb]: " ENVIRONMENT
+#
+#if [ ! $ENVIRONMENT ]
+#then
+#    ENVIRONMENT="deb"
+#fi
 
-    [deb]   for Debian/Ubuntu/Mint
-    [mingw] for windows MinGW/MSYS
-
-Environment [deb]: " ENVIRONMENT
-
-if [ ! $ENVIRONMENT ]
+apt-get --version 2>&1 > /dev/null
+if [ $? == 0 ]
 then
     ENVIRONMENT="deb"
+elif [[ $(uname | grep 'MINGW' | wc -l) > 0 ]]
+then
+    ENVIRONMENT="mingw"
+else
+    echo "Unknown environment..."
+    ENVIRONMENT="unknown"
+    exit
 fi
 
 if [ "$ENVIRONMENT" == "deb" ]

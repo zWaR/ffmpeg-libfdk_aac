@@ -212,6 +212,7 @@ function build_zlib {
             make install
             make clean
         fi
+        rm -r -f $SRC_DIR/zlib*
     fi
 }
 
@@ -248,6 +249,7 @@ function build_bzip2 {
             make install
             make clean
         fi
+        rm -r -f $SRC_DIR/bzip2*
     fi
 }
 
@@ -293,6 +295,7 @@ function build_expat {
         else
             echo ERROR
         fi
+        rm -r -f $SRC_DIR/expat*
     fi
 }
 
@@ -350,6 +353,7 @@ function build_xml2 {
         else
             echo ERROR
         fi
+        rm -r -f $SRC_DIR/libxml2*
     fi
 }
 
@@ -401,6 +405,7 @@ function build_freetype {
         else
             echo ERROR
         fi
+        rm -r -f $SRC_DIR/freetype*
     fi
 }
 
@@ -471,6 +476,7 @@ function build_fribidi {
                 export FRIBIDI_LIBS="-L/usr/local/lib -lfribidi"
             fi
         fi
+        rm -r -f $SRC_DIR/fribidi*
     fi
 }
 
@@ -529,6 +535,7 @@ function build_fontconfig {
         else
             echo ERROR
         fi
+        rm -r -f $SRC_DIR/fontconfig*
     fi
 }
 
@@ -543,6 +550,8 @@ function build_ass {
         make
         make install
         make clean
+
+        rm -r -f $SRC_DIR/libass*
     fi
 }
 
@@ -557,6 +566,8 @@ function build_faac {
         make
         make install
         make clean
+
+        rm -r -f $SRC_DIR/faac*
     fi
 }
 
@@ -571,6 +582,8 @@ function build_fdkaac {
         make
         make install
         make clean
+
+        rm -r -f $SRC_DIR/fdk-aac*
     fi
 }
 
@@ -585,6 +598,8 @@ function build_lame {
         make
         make install
         make clean
+
+        rm -r -f $SRC_DIR/lame*
     fi
 }
 
@@ -607,6 +622,8 @@ function build_ogg {
             export OGG_CFLAGS="-I/usr/local/include"
             export OGG_LIBS="-L/usr/local/lib -logg"
         fi
+
+        rm -r -f $SRC_DIR/libogg*
     fi
 }
 
@@ -629,6 +646,8 @@ function build_vorbis {
             export VORBIS_CFLAGS="-I/usr/local/include"
             export VORBIS_LIBS="-L/usr/local/lib -lvorbis -lm"
         fi
+
+        rm -r -f $SRC_DIR/libvorbis*
     fi
 }
 
@@ -643,6 +662,8 @@ function build_theora {
         make
         make install
         make clean
+
+        rm -r -f $SRC_DIR/libtheora*
     fi
 }
 
@@ -675,6 +696,7 @@ function build_xvid {
         else
             echo ERROR
         fi
+        rm -r -f $SRC_DIR/xvid*
     fi
 }
 
@@ -690,6 +712,8 @@ function build_vpx {
         make
         make install
         make clean
+
+        rm -r -f $SRC_DIR/libvpx*
     fi
 }
 
@@ -739,6 +763,8 @@ function build_bluray {
         make clean
         # NOTE: libbluray depends on "-lxml2 -ldl" so we need to link ffmpeg against those libs
         CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lxml2 -ldl"
+
+        rm -r -f $SRC_DIR/libbluray*
     fi
 }
 

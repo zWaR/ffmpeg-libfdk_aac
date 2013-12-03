@@ -160,6 +160,8 @@ function build_yasm {
     make
     make install
     make clean
+
+    rm -r -f $SRC_DIR/yasm*
 }
 
 function install_pkgconfig {

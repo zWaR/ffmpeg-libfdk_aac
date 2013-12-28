@@ -844,7 +844,7 @@ function build_pkg {
         echo "" >> rpm/SPECS/specfile.spec
         echo "%files" >> rpm/SPECS/specfile.spec
         find rpm/BUILDROOT -type f | sed 's|rpm/BUILDROOT||g' >> rpm/SPECS/specfile.spec
-        rpmbuild -bb --noclean --define '_topdir $CWD/rpm' --define 'buildroot %{_topdir}/BUILDROOT' 'rpm/SPECS/specfile.spec'
+        rpmbuild -bb --noclean --define "_topdir $CWD/rpm" --define "buildroot %{_topdir}/BUILDROOT" "rpm/SPECS/specfile.spec"
         mv -f rpm/RPMS/*/*.rpm $RPMPKG
         rm -r -f rpm
     elif [ "$ENVIRONMENT" == "mingw" ]

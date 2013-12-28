@@ -29,11 +29,14 @@ then
     echo -e "\t-@apt-get install --yes pkg-config" >> Makefile
 fi
 
-#yum --version > /dev/null 2>&1
-#if [ $? = 0 ]
-#then
-#    echo -e "\t@echo Fedora currently not supported" >> Makefile
-#fi
+yum --version > /dev/null 2>&1
+if [ $? = 0 ]
+then
+    echo -e "\t@yum makecache" >> Makefile
+    echo -e "\t@yum --assumeyes update" >> Makefile
+    #echo -e "\t-@yum --assumeyes erase harfbuzz" >> Makefile
+    echo -e "\t@yum --assumeyes install pkgconfig" >> Makefile
+fi
 
 #zypper --version > /dev/null 2>&1
 #if [ $? = 0 ]

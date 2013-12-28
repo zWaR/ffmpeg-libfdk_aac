@@ -5,27 +5,28 @@ echo "all:"  > Makefile
 apt-get --version > /dev/null 2>&1
 if [ $? == 0 ]
 then
-    echo -e "\t@apt-get autoremove --yes yasm" >> Makefile
-    echo -e "\t@apt-get autoremove --yes zlib1g-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libbz2-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes liblzma-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libexpat1-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libxml2-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libfreetype6-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libfribidi-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libfontconfig1-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libass-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libfaac-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libfdk-aac-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libmp3lame-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libtheora-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libvorbis-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libogg-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libxvidcore-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libvpx-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libx264.*-dev" >> Makefile
-    echo -e "\t@apt-get autoremove --yes libbluray-dev" >> Makefile
-    echo -e "\t@apt-get install --yes pkg-config" >> Makefile
+    echo -e "\t@apt-get update --yes" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes yasm" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes zlib1g-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libbz2-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes liblzma-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libexpat1-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libxml2-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libfreetype6-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libfribidi-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libfontconfig1-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libass-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libfaac-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libfdk-aac-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libmp3lame-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libtheora-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libvorbis-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libogg-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libxvidcore-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libvpx-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libx264.*-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libbluray-dev" >> Makefile
+    echo -e "\t-@apt-get install --yes pkg-config" >> Makefile
 fi
 
 #yum --version > /dev/null 2>&1

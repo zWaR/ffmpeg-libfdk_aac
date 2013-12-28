@@ -761,9 +761,9 @@ function build_pkg {
     then
         if [[ $(grep '^DISTRIB_' /etc/*release | wc -l) > 1 ]]
         then
-            DEBPKG=$CWD/$(PKGNAME)_$(PKGVERSION)_$(grep '^DISTRIB_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^DISTRIB_RELEASE=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(dpkg --print-architecture).deb
+            DEBPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(grep '^DISTRIB_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^DISTRIB_RELEASE=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(dpkg --print-architecture).deb
         else
-            DEBPKG=$CWD/$(PKGNAME)_$(PKGVERSION)_$(grep '^ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^VERSION_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(dpkg --print-architecture).deb
+            DEBPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(grep '^ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^VERSION_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(dpkg --print-architecture).deb
         fi
         mkdir -p $DIST_DIR/DEBIAN
         md5sum $(find $BIN_DIR -type f) | sed "s|$BIN_DIR|usr/bin|g" > $DIST_DIR/DEBIAN/md5sums
@@ -785,37 +785,37 @@ function build_pkg {
     then
         if [[ $(grep '^DISTRIB_' /etc/*release | wc -l) > 1 ]]
         then
-            RPMPKG=$CWD/$(PKGNAME)_$(PKGVERSION)_$(grep '^DISTRIB_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^DISTRIB_RELEASE=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(rpm --eval %_target_cpu).rpm
+            RPMPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(grep '^DISTRIB_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^DISTRIB_RELEASE=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(rpm --eval %_target_cpu).rpm
         else
-            RPMPKG=$CWD/$(PKGNAME)_$(PKGVERSION)_$(grep '^ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^VERSION_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(rpm --eval %_target_cpu).rpm
+            RPMPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(grep '^ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^VERSION_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(rpm --eval %_target_cpu).rpm
         fi
         mkdir -p rpm/BUILDROOT 2> /dev/null
         mkdir -p rpm/SPECS 2> /dev/null
-        cp -r $(DIST_DIR)/* rpm/BUILDROOT
-        echo 'Name: $(PKGNAME)' > rpm/SPECS/specfile.spec
-        echo 'Version: $(PKGVERSION)' >> rpm/SPECS/specfile.spec
-        echo 'Release: 0' >> rpm/SPECS/specfile.spec
-        echo 'License: public domain' >> rpm/SPECS/specfile.spec
-        echo 'URL: $(PKGHOMEPAGE)' >> rpm/SPECS/specfile.spec
-        #echo 'Requires: libc' >> rpm/SPECS/specfile.spec
-        echo 'Summary: Summary not available...' >> rpm/SPECS/specfile.spec
-        echo '' >> rpm/SPECS/specfile.spec
-        echo '%description' >> rpm/SPECS/specfile.spec
-        echo 'Description not available...' >> rpm/SPECS/specfile.spec
-        echo '' >> rpm/SPECS/specfile.spec
-        echo '%files' >> rpm/SPECS/specfile.spec
+        cp -r $DIST_DIR/* rpm/BUILDROOT
+        echo "Name: $PKGNAME" > rpm/SPECS/specfile.spec
+        echo "Version: $PKGVERSION" >> rpm/SPECS/specfile.spec
+        echo "Release: 0" >> rpm/SPECS/specfile.spec
+        echo "License: public domain" >> rpm/SPECS/specfile.spec
+        echo "URL: $PKGHOMEPAGE" >> rpm/SPECS/specfile.spec
+        #echo "Requires: libc" >> rpm/SPECS/specfile.spec
+        echo "Summary: Summary not available..." >> rpm/SPECS/specfile.spec
+        echo "" >> rpm/SPECS/specfile.spec
+        echo "%description" >> rpm/SPECS/specfile.spec
+        echo "Description not available..." >> rpm/SPECS/specfile.spec
+        echo "" >> rpm/SPECS/specfile.spec
+        echo "%files" >> rpm/SPECS/specfile.spec
         find rpm/BUILDROOT -type f | sed 's|rpm/BUILDROOT||g' >> rpm/SPECS/specfile.spec
         rpmbuild -bb --noclean --define '_topdir $CWD/rpm' --define 'buildroot %{_topdir}/BUILDROOT' 'rpm/SPECS/specfile.spec'
-        mv -f rpm/RPMS/*/*.rpm $(RPMPKG)
+        mv -f rpm/RPMS/*/*.rpm $RPMPKG
         rm -r -f rpm
     elif [ "$ENVIRONMENT" == "mingw" ]
     then
         # TODO: create iss...
-        ZIPPKG=$CWD/$(PKGNAME)_$(PKGVERSION)_windows-portable_$(uname -m).zip
-        mkdir -p $(PKGNAME) 2> /dev/null
-        cp -r $(DIST_DIR)/* $(PKGNAME)
-        zip -r $(ZIPPKG) $(PKGNAME)
-        rm -r -f $(PKGNAME)
+        ZIPPKG=$CWD/$PKGNAME\_$PKGVERSION\_windows-portable_$(uname -m).zip
+        mkdir -p $PKGNAME 2> /dev/null
+        cp -r $DIST_DIR/* $PKGNAME
+        zip -r $ZIPPKG $PKGNAME
+        rm -r -f $PKGNAME
     else
         echo "ERROR"
         exit

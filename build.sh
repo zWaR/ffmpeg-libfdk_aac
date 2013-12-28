@@ -113,7 +113,7 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 
 function build_yasm {
     cd $SRC_DIR
-    rm -r yasm*
+    rm -r -f yasm*
     tar -xzvf $PKG_DIR/yasm*.tar.*
     cd yasm*
     ./configure

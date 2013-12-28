@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# deb configuration
+# pkg configuration
 
 PKGNAME="ffmpeg-hi"
 PKGVERSION="2.1.1"
 PKGSECTION="video"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
-PKGHOMEPAGE="http://ffmpeg-builder.googlecode.com"
+PKGHOMEPAGE="http://ffmpeg-hi.sourceforge.net"
 PKGDEPENDS=""
 PKGDESCRIPTION="Multimedia encoder
  Customized ffmpeg build for use with FFmpegYAG.
@@ -28,7 +28,7 @@ CWD=$(pwd)
 PKG_DIR=$CWD/archive
 SRC_DIR=$CWD/src
 BIN_DIR=$CWD/build/usr/bin
-DEB_DIR=$CWD/build
+DIST_DIR=$CWD/build
 CONFIGURE_ALL_FLAGS="--disable-shared --enable-static"
 CONFIGURE_FFMPEG_LIBS=""
 CONFIGURE_FFMPEG_FLAGS="\
@@ -110,45 +110,6 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 #~ [-] --enable-openssl         enable openssl [no]
 #~ [-] --enable-x11grab         enable X11 grabbing [no]
 #~ [+] --enable-zlib            enable zlib [autodetect]
-
-function remove_dev_debs {
-
-#    read -p "
-#Some packages are searching for installed development debian packages.
-#i.e. libxml2 is looking for liblzma-dev (shared!). If this package is
-#found, the dependency is dragged into the library. When building ffmpeg
-#this dependency may also be required and needs to be passed to the linker
-#when linking ffmpeg.
-#
-#Make sure your system don't have any development packages installed that
-#might interfere with packages from this build
-#
-#Press [Enter] to uninstall *-dev packages or [Ctrl + c] to quit..."
-
-    # comment shared dependencies which are currently unused (i.e. expat)
-    # or seems 'future' consistent with their ABI (application binary interface)
-
-    apt-get autoremove --yes yasm
-    apt-get autoremove --yes zlib1g-dev
-    apt-get autoremove --yes libbz2-dev
-    apt-get autoremove --yes liblzma-dev
-    apt-get autoremove --yes libexpat1-dev
-    apt-get autoremove --yes libxml2-dev
-    apt-get autoremove --yes libfreetype6-dev
-    apt-get autoremove --yes libfribidi-dev
-    apt-get autoremove --yes libfontconfig1-dev
-    apt-get autoremove --yes libass-dev
-    apt-get autoremove --yes libfaac-dev
-    apt-get autoremove --yes libfdk-aac-dev
-    apt-get autoremove --yes libmp3lame-dev
-    apt-get autoremove --yes libtheora-dev
-    apt-get autoremove --yes libvorbis-dev
-    apt-get autoremove --yes libogg-dev
-    apt-get autoremove --yes libxvidcore-dev
-    apt-get autoremove --yes libvpx-dev
-    apt-get autoremove --yes libx264.*-dev
-    apt-get autoremove --yes libbluray-dev
-}
 
 function build_yasm {
     cd $SRC_DIR
@@ -847,47 +808,71 @@ function build_all {
 
 }
 
-function build_deb {
+function build_pkg {
 
     if [ "$ENVIRONMENT" == "deb" ]
     then
         if [[ $(grep '^DISTRIB_' /etc/*release | wc -l) > 1 ]]
         then
-            DEBPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(dpkg --print-architecture)_$(grep '^DISTRIB_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^DISTRIB_RELEASE=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2).deb
+            DEBPKG=$CWD/$(PKGNAME)_$(PKGVERSION)_$(grep '^DISTRIB_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^DISTRIB_RELEASE=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(dpkg --print-architecture).deb
         else
-            DEBPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(dpkg --print-architecture)_$(grep '^ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^VERSION_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2).deb
+            DEBPKG=$CWD/$(PKGNAME)_$(PKGVERSION)_$(grep '^ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^VERSION_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(dpkg --print-architecture).deb
         fi
-        mkdir -p $DEB_DIR/DEBIAN
-
-        md5sum $(find $BIN_DIR -type f) | sed "s|$BIN_DIR|usr/bin|g" > $DEB_DIR/DEBIAN/md5sums
-        echo "Package: $PKGNAME" > $DEB_DIR/DEBIAN/control
-        echo "Version: $PKGVERSION" >> $DEB_DIR/DEBIAN/control
-        echo "Section: $PKGSECTION" >> $DEB_DIR/DEBIAN/control
-        echo "Architecture: $(dpkg --print-architecture)" >> $DEB_DIR/DEBIAN/control
-        echo "Installed-Size: $(du -k -c $BIN_DIR | grep 'total' | sed -e 's|\s*total||g')" >> $DEB_DIR/DEBIAN/control
-        # TODO: resolve dependencies...
-        echo "Depends: $PKGDEPENDS" >> $DEB_DIR/DEBIAN/control
-        echo "Maintainer: $PKGAUTHOR" >> $DEB_DIR/DEBIAN/control
-        echo "Priority: optional" >> $DEB_DIR/DEBIAN/control
-        echo "Homepage: $PKGHOMEPAGE" >> $DEB_DIR/DEBIAN/control
-        echo "Description: $PKGDESCRIPTION" >> $DEB_DIR/DEBIAN/control
-
-        #echo "#!/bin/sh" > $DEB_DIR/DEBIAN/postinst
-        #echo "" >> $DEB_DIR/DEBIAN/postinst
-        #echo "if [ -x /usr/bin/update-menus ] ; then update-menus ; fi" >> $DEB_DIR/DEBIAN/postinst
-        #echo "if [ -x /usr/bin/update-mime ] ; then update-mime ; fi" >> $DEB_DIR/DEBIAN/postinst
-        #chmod 0755 $DEB_DIR/DEBIAN/postinst
-
-        #echo "#!/bin/sh" > $DEB_DIR/DEBIAN/postrm
-        #echo "" >> $DEB_DIR/DEBIAN/postrm
-        #echo "if [ -x /usr/bin/update-menus ] ; then update-menus ; fi" >> $DEB_DIR/DEBIAN/postrm
-        #echo "if [ -x /usr/bin/update-mime ] ; then update-mime ; fi" >> $DEB_DIR/DEBIAN/postrm
-        #chmod 0755 $DEB_DIR/DEBIAN/postrm
-
+        mkdir -p $DIST_DIR/DEBIAN
+        md5sum $(find $BIN_DIR -type f) | sed "s|$BIN_DIR|usr/bin|g" > $DIST_DIR/DEBIAN/md5sums
+        echo "Package: $PKGNAME" > $DIST_DIR/DEBIAN/control
+        echo "Version: $PKGVERSION" >> $DIST_DIR/DEBIAN/control
+        echo "Section: $PKGSECTION" >> $DIST_DIR/DEBIAN/control
+        echo "Architecture: $(dpkg --print-architecture)" >> $DIST_DIR/DEBIAN/control
+        echo "Installed-Size: $(du -k -c $BIN_DIR | grep 'total' | sed -e 's|\s*total||g')" >> $DIST_DIR/DEBIAN/control
+        echo "Depends: $PKGDEPENDS" >> $DIST_DIR/DEBIAN/control # TODO: resolve dependencies... (static build without any dependencies)
+        echo "Maintainer: $PKGAUTHOR" >> $DIST_DIR/DEBIAN/control
+        echo "Priority: optional" >> $DIST_DIR/DEBIAN/control
+        echo "Homepage: $PKGHOMEPAGE" >> $DIST_DIR/DEBIAN/control
+        echo "Description: $PKGDESCRIPTION" >> $DIST_DIR/DEBIAN/control
         rm -f $DEBPKG
-        dpkg-deb -v -b $DEB_DIR $DEBPKG
-        rm -f -r $DEB_DIR/DEBIAN
+        dpkg-deb -v -b $DIST_DIR $DEBPKG
+        rm -f -r $DIST_DIR/DEBIAN
         lintian --profile debian $DEBPKG
+    fi
+
+    if [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
+    then
+        if [[ $(grep '^DISTRIB_' /etc/*release | wc -l) > 1 ]]
+        then
+            RPMPKG=$CWD/$(PKGNAME)_$(PKGVERSION)_$(grep '^DISTRIB_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^DISTRIB_RELEASE=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(rpm --eval %_target_cpu).rpm
+        else
+            RPMPKG=$CWD/$(PKGNAME)_$(PKGVERSION)_$(grep '^ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^VERSION_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(rpm --eval %_target_cpu).rpm
+        fi
+        mkdir -p rpm/BUILDROOT 2> /dev/null
+        mkdir -p rpm/SPECS 2> /dev/null
+        cp -r $(DIST_DIR)/* rpm/BUILDROOT
+        echo 'Name: $(PKGNAME)' > rpm/SPECS/specfile.spec
+        echo 'Version: $(PKGVERSION)' >> rpm/SPECS/specfile.spec
+        echo 'Release: 0' >> rpm/SPECS/specfile.spec
+        echo 'License: public domain' >> rpm/SPECS/specfile.spec
+        echo 'URL: $(PKGHOMEPAGE)' >> rpm/SPECS/specfile.spec
+        #echo 'Requires: libc' >> rpm/SPECS/specfile.spec
+        echo 'Summary: Summary not available...' >> rpm/SPECS/specfile.spec
+        echo '' >> rpm/SPECS/specfile.spec
+        echo '%description' >> rpm/SPECS/specfile.spec
+        echo 'Description not available...' >> rpm/SPECS/specfile.spec
+        echo '' >> rpm/SPECS/specfile.spec
+        echo '%files' >> rpm/SPECS/specfile.spec
+        find rpm/BUILDROOT -type f | sed 's|rpm/BUILDROOT||g' >> rpm/SPECS/specfile.spec
+        rpmbuild -bb --noclean --define '_topdir $CWD/rpm' --define 'buildroot %{_topdir}/BUILDROOT' 'rpm/SPECS/specfile.spec'
+        mv -f rpm/RPMS/*/*.rpm \$(RPMPKG)
+        rm -r -f rpm
+    fi
+
+    if [ "$ENVIRONMENT" == "mingw" ]
+    then
+        # TODO: create iss...
+        ZIPPKG=$CWD/$(PKGNAME)_$(PKGVERSION)_windows-portable_$(uname -m).zip
+        mkdir -p $(PKGNAME) 2> /dev/null
+        cp -r $(DIST_DIR)/* $(PKGNAME)
+        zip -r $(ZIPPKG) $(PKGNAME)
+        rm -r -f $(PKGNAME)
     fi
 
 }
@@ -915,37 +900,29 @@ function build_clean {
 
 }
 
-#read -p "
-#Please select your environment:
-#
-#    [deb]   for Debian/Ubuntu/Mint
-#    [mingw] for windows MinGW/MSYS
-#
-#Environment [deb]: " ENVIRONMENT
-#
-#if [ ! $ENVIRONMENT ]
-#then
-#    ENVIRONMENT="deb"
-#fi
-
 apt-get --version 2>&1 > /dev/null
 if [ $? == 0 ]
 then
     ENVIRONMENT="deb"
-elif [[ $(uname | grep 'MINGW' | wc -l) > 0 ]]
-then
-    ENVIRONMENT="mingw"
-else
-    echo "Unknown environment..."
-    ENVIRONMENT="unknown"
-    exit
 fi
 
-if [ "$ENVIRONMENT" == "deb" ]
+yum --version 2>&1 > /dev/null
+if [ $? = 0 ]
 then
-    remove_dev_debs
+    ENVIRONMENT="fedora"
+fi
+
+zypper --version 2>&1 > /dev/null
+if [ $? = 0 ]
+then
+    ENVIRONMENT="opensuse"
+fi
+
+if [ "$(uname -o)" = "Msys" ]
+then
+    ENVIRONMENT="mingw"
 fi
 
 build_all
-build_deb
+build_pkg
 build_clean

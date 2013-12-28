@@ -37,16 +37,17 @@ then
     echo -e "\t@yum --assumeyes install pkgconfig" >> Makefile
 fi
 
-#zypper --version > /dev/null 2>&1
-#if [ $? = 0 ]
-#then
-#    echo -e "\t@echo OpenSUSE currently not supported" >> Makefile
-#fi
+zypper --version > /dev/null 2>&1
+if [ $? = 0 ]
+then
+    echo -e "\t@zypper --non-interactive --no-gpg-checks update" >> Makefile
+    echo -e "\t@zypper --non-interactive install pkg-config" >> Makefile
+fi
 
-#if [ "$(uname -o)" = "Msys" ]
-#then
-#    echo -e "\t@echo MinGW currently not supported" >> Makefile
-#fi
+if [ "$(uname -o)" = "Msys" ]
+then
+    echo -e "\t@echo TODO: Install pkg-config here instead of build script..." >> Makefile
+fi
 
 echo -e "\t@./build.sh" >> Makefile
 echo -e "" >> Makefile

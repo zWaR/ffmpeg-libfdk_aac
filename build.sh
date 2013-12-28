@@ -126,13 +126,7 @@ function build_yasm {
 }
 
 function install_pkgconfig {
-    if [ "$ENVIRONMENT" == "deb" ]
-    then
-        apt-get --yes install pkg-config
-    elif [ "$ENVIRONMENT" == "fedora" ]
-    then
-        yum --assumeyes install pkgconfig
-    elif [ "$ENVIRONMENT" == "mingw" ]
+    if [ "$ENVIRONMENT" == "mingw" ]
     then
         cd /usr/local
         tar -xjvf $PKG_DIR/pkg-config-lite-*.tar.*

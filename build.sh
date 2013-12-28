@@ -120,8 +120,8 @@ function build_yasm {
     make
     make install
     make clean
-
-    rm -r -f $SRC_DIR/yasm*
+    cd $SRC_DIR
+    rm -r -f yasm*
 }
 
 function install_pkgconfig {
@@ -131,7 +131,7 @@ function install_pkgconfig {
         tar -xjvf $PKG_DIR/pkg-config-lite-*.tar.*
         mkdir -p /usr/local
         cp -r pkg-config*/* /usr/local
-        rm -r pkg-config*
+        rm -r -f pkg-config*
         echo
     fi
 }
@@ -162,7 +162,8 @@ function build_zlib {
             echo "ERROR"
             exit
         fi
-        rm -r -f $SRC_DIR/zlib*
+        cd $SRC_DIR
+        rm -r -f zlib*
     fi
 }
 
@@ -192,7 +193,8 @@ function build_bzip2 {
             echo "ERROR"
             exit
         fi
-        rm -r -f $SRC_DIR/bzip2*
+        cd $SRC_DIR
+        rm -r -f bzip2*
     fi
 }
 
@@ -237,7 +239,8 @@ function build_expat {
             echo "ERROR"
             exit
         fi
-        rm -r -f $SRC_DIR/expat*
+        cd $SRC_DIR
+        rm -r -f expat*
     fi
 }
 
@@ -294,7 +297,8 @@ function build_xml2 {
             echo "ERROR"
             exit
         fi
-        rm -r -f $SRC_DIR/libxml2*
+        cd $SRC_DIR
+        rm -r -f libxml2*
     fi
 }
 
@@ -345,7 +349,8 @@ function build_freetype {
             echo "ERROR"
             exit
         fi
-        rm -r -f $SRC_DIR/freetype*
+        cd $SRC_DIR
+        rm -r -f freetype*
     fi
 }
 
@@ -398,7 +403,8 @@ function build_fribidi {
             echo "ERROR"
             exit
         fi
-        rm -r -f $SRC_DIR/fribidi*
+        cd $SRC_DIR
+        rm -r -f fribidi*
     fi
 }
 
@@ -456,7 +462,8 @@ function build_fontconfig {
             echo "ERROR"
             exit
         fi
-        rm -r -f $SRC_DIR/fontconfig*
+        cd $SRC_DIR
+        rm -r -f fontconfig*
     fi
 }
 
@@ -470,8 +477,8 @@ function build_ass {
         make
         make install
         make clean
-
-        rm -r -f $SRC_DIR/libass*
+        cd $SRC_DIR
+        rm -r -f libass*
     fi
 }
 
@@ -485,8 +492,8 @@ function build_faac {
         make
         make install
         make clean
-
-        rm -r -f $SRC_DIR/faac*
+        cd $SRC_DIR
+        rm -r -f faac*
     fi
 }
 
@@ -500,8 +507,8 @@ function build_fdkaac {
         make
         make install
         make clean
-
-        rm -r -f $SRC_DIR/fdk-aac*
+        cd $SRC_DIR
+        rm -r -f fdk-aac*
     fi
 }
 
@@ -515,8 +522,8 @@ function build_lame {
         make
         make install
         make clean
-
-        rm -r -f $SRC_DIR/lame*
+        cd $SRC_DIR
+        rm -r -f lame*
     fi
 }
 
@@ -538,8 +545,8 @@ function build_ogg {
             export OGG_CFLAGS="-I/usr/local/include"
             export OGG_LIBS="-L/usr/local/lib -logg"
         fi
-
-        rm -r -f $SRC_DIR/libogg*
+        cd $SRC_DIR
+        rm -r -f libogg*
     fi
 }
 
@@ -561,8 +568,8 @@ function build_vorbis {
             export VORBIS_CFLAGS="-I/usr/local/include"
             export VORBIS_LIBS="-L/usr/local/lib -lvorbis -lm"
         fi
-
-        rm -r -f $SRC_DIR/libvorbis*
+        cd $SRC_DIR
+        rm -r -f libvorbis*
     fi
 }
 
@@ -576,8 +583,8 @@ function build_theora {
         make
         make install
         make clean
-
-        rm -r -f $SRC_DIR/libtheora*
+        cd $SRC_DIR
+        rm -r -f libtheora*
     fi
 }
 
@@ -609,7 +616,8 @@ function build_xvid {
             echo "ERROR"
             exit
         fi
-        rm -r -f $SRC_DIR/xvid*
+        cd $SRC_DIR
+        rm -r -f xvid*
     fi
 }
 
@@ -624,8 +632,8 @@ function build_vpx {
         make
         make install
         make clean
-
-        rm -r -f $SRC_DIR/libvpx*
+        cd $SRC_DIR
+        rm -r -f libvpx*
     fi
 }
 
@@ -673,8 +681,8 @@ function build_bluray {
         make clean
         # NOTE: libbluray depends on "-lxml2 -ldl" so we need to link ffmpeg against those libs
         CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lxml2 -ldl"
-
-        rm -r -f $SRC_DIR/libbluray*
+        cd $SRC_DIR
+        rm -r -f libbluray*
     fi
 }
 
@@ -779,7 +787,7 @@ function build_pkg {
         echo "Description: $PKGDESCRIPTION" >> $DIST_DIR/DEBIAN/control
         rm -f $DEBPKG
         dpkg-deb -v -b $DIST_DIR $DEBPKG
-        rm -f -r $DIST_DIR/DEBIAN
+        rm -r -f $DIST_DIR/DEBIAN
         lintian --profile debian $DEBPKG
     elif [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then

@@ -904,9 +904,10 @@ fi
 if [ "$(uname -o)" = "Msys" ]
 then
     ENVIRONMENT="mingw"
+else
+    set -e
 fi
 
-#set -e
 build_all
 build_pkg
 build_clean

@@ -785,11 +785,11 @@ function build_all {
     else
         echo "ERROR"
     fi
-
 }
 
 function build_pkg {
 
+    cd $CWD
     if [ "$ENVIRONMENT" == "deb" ]
     then
         if [[ $(grep '^DISTRIB_' /etc/*release | wc -l) > 1 ]]
@@ -822,38 +822,37 @@ function build_pkg {
         else
             RPMPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(grep '^ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^VERSION_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(rpm --eval %_target_cpu).rpm
         fi
-        mkdir -p rpm/BUILDROOT 2> /dev/null
-        mkdir -p rpm/SPECS 2> /dev/null
-        cp -r $DIST_DIR/* rpm/BUILDROOT
-        echo "Name: $PKGNAME" > rpm/SPECS/specfile.spec
-        echo "Version: $PKGVERSION" >> rpm/SPECS/specfile.spec
-        echo "Release: 0" >> rpm/SPECS/specfile.spec
-        echo "License: public domain" >> rpm/SPECS/specfile.spec
-        echo "URL: $PKGHOMEPAGE" >> rpm/SPECS/specfile.spec
-        #echo "Requires: libc" >> rpm/SPECS/specfile.spec
-        echo "Summary: Summary not available..." >> rpm/SPECS/specfile.spec
-        echo "" >> rpm/SPECS/specfile.spec
-        echo "%description" >> rpm/SPECS/specfile.spec
-        echo "Description not available..." >> rpm/SPECS/specfile.spec
-        echo "" >> rpm/SPECS/specfile.spec
-        echo "%files" >> rpm/SPECS/specfile.spec
-        find rpm/BUILDROOT -type f | sed 's|rpm/BUILDROOT||g' >> rpm/SPECS/specfile.spec
-        rpmbuild -bb --noclean --define "_topdir $CWD/rpm" --define "buildroot %{_topdir}/BUILDROOT" "rpm/SPECS/specfile.spec"
-        mv -f rpm/RPMS/*/*.rpm $RPMPKG
+        mkdir -p $CWD/rpm/BUILDROOT 2> /dev/null
+        mkdir -p $CWD/rpm/SPECS 2> /dev/null
+        cp -r $DIST_DIR/* $CWD/rpm/BUILDROOT
+        echo "Name: $PKGNAME" > $CWD/rpm/SPECS/specfile.spec
+        echo "Version: $PKGVERSION" >> $CWD/rpm/SPECS/specfile.spec
+        echo "Release: 0" >> $CWD/rpm/SPECS/specfile.spec
+        echo "License: public domain" >> $CWD/rpm/SPECS/specfile.spec
+        echo "URL: $PKGHOMEPAGE" >> $CWD/rpm/SPECS/specfile.spec
+        #echo "Requires: libc" >> $CWD/rpm/SPECS/specfile.spec
+        echo "Summary: Summary not available..." >> $CWD/rpm/SPECS/specfile.spec
+        echo "" >> $CWD/rpm/SPECS/specfile.spec
+        echo "%description" >> $CWD/rpm/SPECS/specfile.spec
+        echo "Description not available..." >> $CWD/rpm/SPECS/specfile.spec
+        echo "" >> $CWD/rpm/SPECS/specfile.spec
+        echo "%files" >> $CWD/rpm/SPECS/specfile.spec
+        find rpm/BUILDROOT -type f | sed 's|rpm/BUILDROOT||g' >> $CWD/rpm/SPECS/specfile.spec
+        rpmbuild -bb --noclean --define "_topdir $CWD/rpm" --define "buildroot %{_topdir}/BUILDROOT" "$CWD/rpm/SPECS/specfile.spec"
+        mv -f $CWD/rpm/RPMS/*/*.rpm $RPMPKG
         rm -r -f rpm
     elif [ "$ENVIRONMENT" == "mingw" ]
     then
         # TODO: create iss...
         ZIPPKG=$CWD/$PKGNAME\_$PKGVERSION\_windows-portable_$(uname -m).zip
-        mkdir -p $PKGNAME 2> /dev/null
-        cp -r $DIST_DIR/* $PKGNAME
-        zip -r $ZIPPKG $PKGNAME
-        rm -r -f $PKGNAME
+        mkdir -p $CWD/$PKGNAME 2> /dev/null
+        cp -r $DIST_DIR/* $CWD/$PKGNAME
+        zip -r $ZIPPKG $CWD/$PKGNAME
+        rm -r -f $CWD/$PKGNAME
     else
         echo "ERROR"
         exit
     fi
-
 }
 
 function build_clean {
@@ -874,7 +873,6 @@ function build_clean {
     # remove libraries
     rm -f /usr/local/lib/pkgconfig/fribidi.pc /usr/local/lib/pkgconfig/libavfilter.pc /usr/local/lib/pkgconfig/vpx.pc /usr/local/lib/pkgconfig/zlib.pc /usr/local/lib/pkgconfig/theoradec.pc /usr/local/lib/pkgconfig/theoraenc.pc /usr/local/lib/pkgconfig/theora.pc /usr/local/lib/pkgconfig/libbluray.pc /usr/local/lib/pkgconfig/ogg.pc /usr/local/lib/pkgconfig/vorbisenc.pc /usr/local/lib/pkgconfig/libavcodec.pc /usr/local/lib/pkgconfig/libpostproc.pc /usr/local/lib/pkgconfig/expat.pc /usr/local/lib/pkgconfig/libswscale.pc /usr/local/lib/pkgconfig/libavdevice.pc /usr/local/lib/pkgconfig/fontconfig.pc /usr/local/lib/pkgconfig/fdk-aac.pc /usr/local/lib/pkgconfig/libavutil.pc /usr/local/lib/pkgconfig/freetype2.pc /usr/local/lib/pkgconfig/libavformat.pc /usr/local/lib/pkgconfig/vorbisfile.pc /usr/local/lib/pkgconfig/x264.pc /usr/local/lib/pkgconfig/libass.pc /usr/local/lib/pkgconfig/vorbis.pc /usr/local/lib/pkgconfig/libswresample.pc /usr/local/lib/pkgconfig/libxml-2.0.pc /usr/local/lib/pkgconfig/harfbuzz.pc
     rm -f /usr/local/lib/libyasm.a /usr/local/lib/libz.a /usr/local/lib/libtheoraenc.a /usr/local/lib/libfdk-aac.la /usr/local/lib/libogg.a /usr/local/lib/libtheoradec.la /usr/local/lib/libavfilter.a /usr/local/lib/libmp3lame.a /usr/local/lib/libtheoradec.a /usr/local/lib/libfaac.a /usr/local/lib/libvorbisenc.a /usr/local/lib/libvorbis.a /usr/local/lib/libogg.la /usr/local/lib/libavdevice.a /usr/local/lib/libfdk-aac.a /usr/local/lib/libxvidcore.so.4 /usr/local/lib/libfribidi.a /usr/local/lib/libvpx.a /usr/local/lib/libfreetype.a /usr/local/lib/libvorbis.la /usr/local/lib/libvorbisfile.a /usr/local/lib/libx264.a /usr/local/lib/libavformat.a /usr/local/lib/libtheoraenc.la /usr/local/lib/libbluray.la /usr/local/lib/libfontconfig.la /usr/local/lib/libswresample.a /usr/local/lib/libfreetype.la /usr/local/lib/libxml2.a /usr/local/lib/libfaac.la /usr/local/lib/libfribidi.la /usr/local/lib/libxml2.la /usr/local/lib/libpostproc.a /usr/local/lib/libxvidcore.so.4.3 /usr/local/lib/libbluray.a /usr/local/lib/libexpat.a /usr/local/lib/libxvidcore.a /usr/local/lib/libavutil.a /usr/local/lib/libexpat.la /usr/local/lib/libbz2.a /usr/local/lib/libtheora.la /usr/local/lib/libass.a /usr/local/lib/libvorbisfile.la /usr/local/lib/libvorbisenc.la /usr/local/lib/libfontconfig.a /usr/local/lib/libswscale.a /usr/local/lib/xml2Conf.sh /usr/local/lib/libtheora.a /usr/local/lib/libass.la /usr/local/lib/libmp3lame.la /usr/local/lib/libavcodec.a /usr/local/lib/libharfbuzz.a /usr/local/lib/libharfbuzz.la
-
 }
 
 apt-get --version > /dev/null 2>&1

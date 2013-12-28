@@ -114,7 +114,6 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 function build_yasm {
     cd $SRC_DIR
     rm -r yasm*
-    #wget -N http://www.tortall.net/projects/yasm/releases/yasm-1.2.0.tar.gz
     tar -xzvf $PKG_DIR/yasm*.tar.*
     cd yasm*
     ./configure
@@ -126,13 +125,9 @@ function build_yasm {
 }
 
 function install_pkgconfig {
-    if [ "$ENVIRONMENT" == "deb" ]
-    then
-        apt-get install --yes pkg-config
-    elif [ "$ENVIRONMENT" == "mingw" ]
+    if [ "$ENVIRONMENT" == "mingw" ]
     then
         cd /usr/local
-        #wget -N http://ffmpeg-builder.googlecode.com/files/pkg-config-lite-0.28-1.tar.bz2
         tar -xjvf $PKG_DIR/pkg-config-lite-*.tar.*
         mkdir -p /usr/local
         cp -r pkg-config*/* /usr/local
@@ -144,10 +139,9 @@ function install_pkgconfig {
 function build_zlib {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-zlib" ]]
     then
-        if [ "$ENVIRONMENT" == "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/zlib-1.2.8.tar.xz
             tar -xJvf $PKG_DIR/zlib*.tar.*
             cd zlib*
             ./configure --static
@@ -157,7 +151,6 @@ function build_zlib {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/zlib-1.2.8.tar.xz
             tar -xJvf $PKG_DIR/zlib*.tar.*
             cd zlib*
             make -f win32/Makefile.gcc
@@ -166,14 +159,8 @@ function build_zlib {
             mkdir -p /usr/local/lib
             cp libz.a /usr/local/lib
         else
-            cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/zlib-1.2.8.tar.xz
-            tar -xJvf $PKG_DIR/zlib*.tar.*
-            cd zlib*
-            ./configure --static
-            make libz.a
-            make install
-            make clean
+            echo "ERROR"
+            exit
         fi
         rm -r -f $SRC_DIR/zlib*
     fi
@@ -182,10 +169,9 @@ function build_zlib {
 function build_bzip2 {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-bzlib" ]]
     then
-        if [ "$ENVIRONMENT" == "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
             tar -xzvf $PKG_DIR/bzip2*.tar.*
             cd bzip2*
             make
@@ -194,7 +180,6 @@ function build_bzip2 {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
             tar -xzvf $PKG_DIR/bzip2*.tar.*
             cd bzip2*
             make
@@ -204,13 +189,8 @@ function build_bzip2 {
             cp libbz2.a /usr/local/lib
             make clean
         else
-            cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/bzip2-1.0.6.tar.gz
-            tar -xzvf $PKG_DIR/bzip2*.tar.*
-            cd bzip2*
-            make
-            make install
-            make clean
+            echo "ERROR"
+            exit
         fi
         rm -r -f $SRC_DIR/bzip2*
     fi
@@ -219,10 +199,9 @@ function build_bzip2 {
 function build_expat {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
-        if [ "$ENVIRONMENT" == "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
             tar -xzvf $PKG_DIR/expat*.tar.*
             cd expat*
             ./configure $CONFIGURE_ALL_FLAGS
@@ -240,7 +219,6 @@ function build_expat {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/expat-2.1.0.tar.gz
             tar -xzvf $PKG_DIR/expat*.tar.*
             cd expat*
             ./configure $CONFIGURE_ALL_FLAGS
@@ -256,7 +234,8 @@ function build_expat {
                 export EXPAT_LIBS="-L/usr/local/lib -lexpat"
             fi
         else
-            echo ERROR
+            echo "ERROR"
+            exit
         fi
         rm -r -f $SRC_DIR/expat*
     fi
@@ -265,10 +244,9 @@ function build_expat {
 function build_xml2 {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libbluray" ]]
     then
-        if [ "$ENVIRONMENT" == "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
             tar -xzvf $PKG_DIR/libxml2*.tar.*
             cd libxml2*
             ./configure $CONFIGURE_ALL_FLAGS --without-debug
@@ -292,7 +270,6 @@ function build_xml2 {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/libxml2-2.9.0.tar.gz
             tar -xzvf $PKG_DIR/libxml2*.tar.*
             cd libxml2*
             ./configure $CONFIGURE_ALL_FLAGS --without-debug
@@ -314,7 +291,8 @@ function build_xml2 {
                 sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static libxml-2.0)|g" $PKG_CONFIG_PATH/libxml-2.0.pc
             fi
         else
-            echo ERROR
+            echo "ERROR"
+            exit
         fi
         rm -r -f $SRC_DIR/libxml2*
     fi
@@ -323,10 +301,9 @@ function build_xml2 {
 function build_freetype {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfreetype" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
-        if [ "$ENVIRONMENT" == "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
             tar -xjvf $PKG_DIR/freetype*.tar.*
             cd freetype*
             ./configure $CONFIGURE_ALL_FLAGS
@@ -347,7 +324,6 @@ function build_freetype {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/freetype-2.4.11.tar.bz2
             tar -xjvf $PKG_DIR/freetype*.tar.*
             cd freetype*
             ./configure $CONFIGURE_ALL_FLAGS
@@ -366,7 +342,8 @@ function build_freetype {
                 sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static freetype2)|g" $PKG_CONFIG_PATH/freetype2.pc
             fi
         else
-            echo ERROR
+            echo "ERROR"
+            exit
         fi
         rm -r -f $SRC_DIR/freetype*
     fi
@@ -375,14 +352,11 @@ function build_freetype {
 function build_fribidi {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
-        if [ "$ENVIRONMENT" == "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
             tar -xjvf $PKG_DIR/fribidi*.tar.*
             cd fribidi*
-            # fix for static build
-            #sed -i -e  's/__declspec(dllimport)//g' lib/fribidi-common.h
             ./configure $CONFIGURE_ALL_FLAGS --disable-debug
             make -C charset
             # fixing lib/Makefile directly before make -C lib, or it will be overwritten by another configure process
@@ -401,7 +375,6 @@ function build_fribidi {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
             tar -xjvf $PKG_DIR/fribidi*.tar.*
             cd fribidi*
             # fix for static build
@@ -422,22 +395,8 @@ function build_fribidi {
                 export FRIBIDI_LIBS="-L/usr/local/lib -lfribidi"
             fi
         else
-            cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/fribidi-0.19.5.tar.bz2
-            tar -xjvf $PKG_DIR/fribidi*.tar.*
-            cd fribidi*
-            ./configure $CONFIGURE_ALL_FLAGS --disable-debug
-            make
-            make install
-            make clean
-
-            pkg-config fribidi >/dev/null 2>&1
-            # NOTE: when package config fails, export the lib dependencies to variables
-            if [ $? != 0 ]
-            then
-                export FRIBIDI_CFLAGS="-I/usr/local/include/fribidi"
-                export FRIBIDI_LIBS="-L/usr/local/lib -lfribidi"
-            fi
+            echo "ERROR"
+            exit
         fi
         rm -r -f $SRC_DIR/fribidi*
     fi
@@ -446,10 +405,9 @@ function build_fribidi {
 function build_fontconfig {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-fontconfig" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
-        if [ "$ENVIRONMENT" == "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
             tar -xjvf $PKG_DIR/fontconfig*.tar.*
             cd fontconfig*
             ./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
@@ -475,7 +433,6 @@ function build_fontconfig {
             # TODO: important note about the font configuration directory in windows:
             # http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=10&t=318&start=10
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/fontconfig-2.10.92.tar.bz2
             tar -xjvf $PKG_DIR/fontconfig*.tar.*
             cd fontconfig*
             ./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
@@ -496,7 +453,8 @@ function build_fontconfig {
                 sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static fontconfig)|g" $PKG_CONFIG_PATH/fontconfig.pc
             fi
         else
-            echo ERROR
+            echo "ERROR"
+            exit
         fi
         rm -r -f $SRC_DIR/fontconfig*
     fi
@@ -506,7 +464,6 @@ function build_ass {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
         cd $SRC_DIR
-        #wget -N http://ffmpeg-builder.googlecode.com/files/libass-0.10.1.tar.xz
         tar -xJvf $PKG_DIR/libass*.tar.*
         cd libass*
         ./configure $CONFIGURE_ALL_FLAGS
@@ -522,7 +479,6 @@ function build_faac {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfaac" ]]
     then
         cd $SRC_DIR
-        #wget -N http://ffmpeg-builder.googlecode.com/files/faac-1.28.tar.bz2
         tar -xjvf $PKG_DIR/faac*.tar.*
         cd faac*
         ./configure $CONFIGURE_ALL_FLAGS --without-mp4v2
@@ -538,7 +494,6 @@ function build_fdkaac {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfdk_aac" ]]
     then
         cd $SRC_DIR
-        #wget -N http://ffmpeg-builder.googlecode.com/files/fdk-aac-0.1.2.tar.gz
         tar -xzvf $PKG_DIR/fdk-aac*
         cd fdk-aac*
         ./configure $CONFIGURE_ALL_FLAGS
@@ -554,7 +509,6 @@ function build_lame {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libmp3lame" ]]
     then
         cd $SRC_DIR
-        #wget -N http://ffmpeg-builder.googlecode.com/files/lame-3.99.5.tar.gz
         tar -xzvf $PKG_DIR/lame*.tar.*
         cd lame*
         ./configure $CONFIGURE_ALL_FLAGS --disable-frontend
@@ -570,7 +524,6 @@ function build_ogg {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvorbis" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
         cd $SRC_DIR
-        #wget -N http://ffmpeg-builder.googlecode.com/files/libogg-1.3.1.tar.xz
         tar -xJvf $PKG_DIR/libogg*.tar.*
         cd libogg*
         ./configure $CONFIGURE_ALL_FLAGS
@@ -594,7 +547,6 @@ function build_vorbis {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvorbis" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
         cd $SRC_DIR
-        #wget -N http://ffmpeg-builder.googlecode.com/files/libvorbis-1.3.3.tar.xz
         tar -xJvf $PKG_DIR/libvorbis*.tar.*
         cd libvorbis*
         ./configure $CONFIGURE_ALL_FLAGS
@@ -618,7 +570,6 @@ function build_theora {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
         cd $SRC_DIR
-        #wget -N http://ffmpeg-builder.googlecode.com/files/libtheora-1.1.1.tar.bz2
         tar -xjvf $PKG_DIR/libtheora*.tar.*
         cd libtheora*
         ./configure $CONFIGURE_ALL_FLAGS --disable-examples
@@ -633,10 +584,9 @@ function build_theora {
 function build_xvid {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libxvid" ]]
     then
-        if [ "$ENVIRONMENT" == "deb" ]
+        if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
             tar -xjvf $PKG_DIR/xvid*.tar.*
             cd xvid*/build/generic
             ./configure $CONFIGURE_ALL_FLAGS
@@ -646,7 +596,6 @@ function build_xvid {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
-            #wget -N http://ffmpeg-builder.googlecode.com/files/xvidcore-1.3.2.tar.bz2
             tar -xjvf $PKG_DIR/xvid*.tar.*
             cd xvid*/build/generic
             ./configure $CONFIGURE_ALL_FLAGS
@@ -657,7 +606,8 @@ function build_xvid {
             rm /usr/local/lib/xvidcore.dll
             ln -s /usr/local/lib/xvidcore.a /usr/local/lib/libxvidcore.a
         else
-            echo ERROR
+            echo "ERROR"
+            exit
         fi
         rm -r -f $SRC_DIR/xvid*
     fi
@@ -667,7 +617,6 @@ function build_vpx {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvpx" ]]
     then
         cd $SRC_DIR
-        #wget -N http://ffmpeg-builder.googlecode.com/files/libvpx-1.2.0.tar.bz2
         tar -xjvf $PKG_DIR/libvpx*.tar.*
         cd libvpx*
         # FIXME: dependency loop in mingw32
@@ -684,7 +633,6 @@ function build_x264 {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libx264" ]]
     then
         cd $SRC_DIR
-        #wget -N http://ffmpeg-builder.googlecode.com/files/x264-0.136.tar.bz2
         tar -xjvf $PKG_DIR/x264*.tar.*
         cd x264-snapshot*
         # NOTE: x264 threads must be same regarding to ffmpeg
@@ -717,7 +665,6 @@ function build_bluray {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libbluray" ]]
     then
         cd $SRC_DIR
-        #wget -N http://ffmpeg-builder.googlecode.com/files/libbluray-0.2.3.tar.bz2
         tar -xjvf $PKG_DIR/libbluray*.tar.*
         cd libbluray*
         ./configure $CONFIGURE_ALL_FLAGS --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
@@ -733,17 +680,17 @@ function build_bluray {
 
 function build_ffmpeg {
     cd $SRC_DIR
-    #wget -N http://ffmpeg-builder.googlecode.com/files/ffmpeg-2.1.tar.bz2
     tar -xjvf $PKG_DIR/ffmpeg*.tar.*
     cd ffmpeg*
-    if [ "$ENVIRONMENT" == "deb" ]
+    if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then
         ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
     elif [ "$ENVIRONMENT" == "mingw" ]
     then
         ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --enable-w32threads --cpu=i686 --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
     else
-        echo ERROR
+        echo "ERROR"
+        exit
     fi
     make
     make install
@@ -780,7 +727,7 @@ function build_all {
     BITDEPTH=10
     build_x264
     build_ffmpeg
-    if [ "$ENVIRONMENT" == "deb" ]
+    if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then
         mv -f /usr/local/bin/ffmpeg $BIN_DIR/ffmpeg-hi10-heaac
     elif [ "$ENVIRONMENT" == "mingw" ]
@@ -796,7 +743,7 @@ function build_all {
     BITDEPTH=8
     build_x264
     build_ffmpeg
-    if [ "$ENVIRONMENT" == "deb" ]
+    if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then
         mv -f /usr/local/bin/ffmpeg $BIN_DIR/ffmpeg-hi8-heaac
     elif [ "$ENVIRONMENT" == "mingw" ]
@@ -834,9 +781,7 @@ function build_pkg {
         dpkg-deb -v -b $DIST_DIR $DEBPKG
         rm -f -r $DIST_DIR/DEBIAN
         lintian --profile debian $DEBPKG
-    fi
-
-    if [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
+    elif [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then
         if [[ $(grep '^DISTRIB_' /etc/*release | wc -l) > 1 ]]
         then
@@ -861,11 +806,9 @@ function build_pkg {
         echo '%files' >> rpm/SPECS/specfile.spec
         find rpm/BUILDROOT -type f | sed 's|rpm/BUILDROOT||g' >> rpm/SPECS/specfile.spec
         rpmbuild -bb --noclean --define '_topdir $CWD/rpm' --define 'buildroot %{_topdir}/BUILDROOT' 'rpm/SPECS/specfile.spec'
-        mv -f rpm/RPMS/*/*.rpm \$(RPMPKG)
+        mv -f rpm/RPMS/*/*.rpm $(RPMPKG)
         rm -r -f rpm
-    fi
-
-    if [ "$ENVIRONMENT" == "mingw" ]
+    elif [ "$ENVIRONMENT" == "mingw" ]
     then
         # TODO: create iss...
         ZIPPKG=$CWD/$(PKGNAME)_$(PKGVERSION)_windows-portable_$(uname -m).zip
@@ -873,16 +816,17 @@ function build_pkg {
         cp -r $(DIST_DIR)/* $(PKGNAME)
         zip -r $(ZIPPKG) $(PKGNAME)
         rm -r -f $(PKGNAME)
+    else
+        echo "ERROR"
+        exit
     fi
 
 }
 
 function build_clean {
 
-    if [ "$ENVIRONMENT" == "deb" ]
-    then
-        rm -r -f $BIN_DIR/*
-    fi
+    # remove build binaries
+    rm -r -f $BIN_DIR/*
 
     #remove sources
     rm -r -f $SRC_DIR/*
@@ -900,19 +844,19 @@ function build_clean {
 
 }
 
-apt-get --version 2>&1 > /dev/null
+apt-get --version > /dev/null 2>&1
 if [ $? == 0 ]
 then
     ENVIRONMENT="deb"
 fi
 
-yum --version 2>&1 > /dev/null
+yum --version > /dev/null 2>&1
 if [ $? = 0 ]
 then
     ENVIRONMENT="fedora"
 fi
 
-zypper --version 2>&1 > /dev/null
+zypper --version > /dev/null 2>&1
 if [ $? = 0 ]
 then
     ENVIRONMENT="opensuse"
@@ -923,6 +867,7 @@ then
     ENVIRONMENT="mingw"
 fi
 
+set -e
 build_all
 build_pkg
 build_clean

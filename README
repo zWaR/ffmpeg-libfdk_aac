@@ -1,7 +1,3 @@
-##############
-### Debian ###
-##############
-
-# to create a deb package run the following commands and follow the instructions on the screen:
+# to create a package run the following commands and follow the instructions on the screen:
 ./configure
-sudo make deb
+sudo make

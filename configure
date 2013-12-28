@@ -1,52 +1,51 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "all:"  > Makefile
 
-apt-get --version 2>&1 > /dev/null
+apt-get --version > /dev/null 2>&1
 if [ $? == 0 ]
 then
-    echo "\t@apt-get autoremove --yes yasm" >> Makefile
-    echo "\t@apt-get autoremove --yes zlib1g-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libbz2-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes liblzma-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libexpat1-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libxml2-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libfreetype6-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libfribidi-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libfontconfig1-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libass-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libfaac-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libfdk-aac-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libmp3lame-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libtheora-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libvorbis-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libogg-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libxvidcore-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libvpx-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libx264.*-dev" >> Makefile
-    echo "\t@apt-get autoremove --yes libbluray-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes yasm" >> Makefile
+    echo -e "\t@apt-get autoremove --yes zlib1g-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libbz2-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes liblzma-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libexpat1-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libxml2-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libfreetype6-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libfribidi-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libfontconfig1-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libass-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libfaac-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libfdk-aac-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libmp3lame-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libtheora-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libvorbis-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libogg-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libxvidcore-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libvpx-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libx264.*-dev" >> Makefile
+    echo -e "\t@apt-get autoremove --yes libbluray-dev" >> Makefile
+    echo -e "\t@apt-get install --yes pkg-config" >> Makefile
 fi
 
-yum --version 2>&1 > /dev/null
-if [ $? = 0 ]
-then
-    echo "\t@echo Fedora currently not supported" >> Makefile
-    echo "\t@exit" >> Makefile
-fi
+#yum --version > /dev/null 2>&1
+#if [ $? = 0 ]
+#then
+#    echo -e "\t@echo Fedora currently not supported" >> Makefile
+#fi
 
-zypper --version 2>&1 > /dev/null
-if [ $? = 0 ]
-then
-    echo "\t@echo OpenSUSE currently not supported" >> Makefile
-    echo "\t@exit" >> Makefile
-fi
+#zypper --version > /dev/null 2>&1
+#if [ $? = 0 ]
+#then
+#    echo -e "\t@echo OpenSUSE currently not supported" >> Makefile
+#fi
 
-if [ "$(uname -o)" = "Msys" ]
-then
-    echo "..."
-fi
+#if [ "$(uname -o)" = "Msys" ]
+#then
+#    echo -e "\t@echo MinGW currently not supported" >> Makefile
+#fi
 
-echo "\t@./build.sh" >> Makefile
-echo "" >> Makefile
-echo "clean:" >> Makefile
-echo "\t@rm -r -f *.tar.gz *.changes *.dsc *.deb *.rpm *.zip *.exe" >> Makefile
+echo -e "\t@./build.sh" >> Makefile
+echo -e "" >> Makefile
+echo -e "clean:" >> Makefile
+echo -e "\t@rm -r -f *.tar.gz *.changes *.dsc *.deb *.rpm *.zip *.exe" >> Makefile

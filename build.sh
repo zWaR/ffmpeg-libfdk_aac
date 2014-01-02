@@ -675,16 +675,16 @@ function build_x264 {
         then
             if [ "$BITDEPTH" == "10" ]
             then
-                ./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli --enable-win32thread
+                ./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli --disable-opencl --disable-avs --disable-ffms --enable-win32thread
             else
-                ./configure $CONFIGURE_ALL_FLAGS --enable-strip --disable-cli --enable-win32thread
+                ./configure $CONFIGURE_ALL_FLAGS --enable-strip --disable-cli --disable-opencl --disable-avs --disable-ffms --enable-win32thread
             fi
         else
             if [ "$BITDEPTH" == "10" ]
             then
-                ./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli
+                ./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli --disable-opencl --disable-avs --disable-ffms
             else
-                ./configure $CONFIGURE_ALL_FLAGS --enable-strip --disable-cli
+                ./configure $CONFIGURE_ALL_FLAGS --enable-strip --disable-cli --disable-opencl --disable-avs --disable-ffms
             fi
         fi
         make

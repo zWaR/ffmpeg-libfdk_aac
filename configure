@@ -5,7 +5,7 @@ echo "all:"  > Makefile
 apt-get --version > /dev/null 2>&1
 if [ $? == 0 ]
 then
-    echo -e "\t@apt-get update --yes" >> Makefile
+    echo -e "\t-@apt-get update --yes" >> Makefile
     echo -e "\t-@apt-get autoremove --yes yasm" >> Makefile
     echo -e "\t-@apt-get autoremove --yes zlib1g-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libbz2-dev" >> Makefile
@@ -32,16 +32,16 @@ fi
 yum --version > /dev/null 2>&1
 if [ $? = 0 ]
 then
-    echo -e "\t@yum makecache" >> Makefile
-    echo -e "\t@yum --assumeyes update" >> Makefile
-    echo -e "\t@yum --assumeyes install pkgconfig" >> Makefile
+    echo -e "\t-@yum makecache" >> Makefile
+    echo -e "\t-@yum --assumeyes update" >> Makefile
+    echo -e "\t-@yum --assumeyes install pkgconfig" >> Makefile
 fi
 
 zypper --version > /dev/null 2>&1
 if [ $? = 0 ]
 then
-    echo -e "\t@zypper --non-interactive --no-gpg-checks update" >> Makefile
-    echo -e "\t@zypper --non-interactive install pkg-config" >> Makefile
+    echo -e "\t-@zypper --non-interactive --no-gpg-checks update" >> Makefile
+    echo -e "\t-@zypper --non-interactive install pkg-config" >> Makefile
 fi
 
 if [ "$(uname -o)" = "Msys" ]

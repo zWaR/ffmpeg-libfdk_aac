@@ -3,7 +3,7 @@
 # pkg configuration
 
 PKGNAME="ffmpeg-hi"
-PKGVERSION="2.1.1"
+PKGVERSION="2.2"
 PKGSECTION="video"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://ffmpeg-hi.sourceforge.net"

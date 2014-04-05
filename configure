@@ -25,9 +25,14 @@ then
     echo -e "\t-@apt-get autoremove --yes libxvidcore-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libvpx-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libx264.*-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libx265.*-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libbluray-dev" >> Makefile
     echo -e "\t-@apt-get install --yes pkg-config" >> Makefile
+    # cmake required to build x265
+    echo -e "\t-@apt-get install --yes cmake" >> Makefile
 fi
+
+# FIXME: add cmake to other distributions
 
 yum --version > /dev/null 2>&1
 if [ $? = 0 ]

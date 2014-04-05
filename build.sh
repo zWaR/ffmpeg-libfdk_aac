@@ -51,6 +51,7 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 --enable-libtheora \
 --enable-libxvid \
 --enable-libx264 \
+--enable-libx265 \
 --enable-libvpx \
 --enable-libbluray \
 "
@@ -693,6 +694,32 @@ function build_x264 {
     fi
 }
 
+function build_x265 {
+    if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libx265" ]]
+    then
+        cd $SRC_DIR
+        tar -xjvf $PKG_DIR/x265*.tar.*
+        cd multicoreware-x265*
+        if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
+        then
+            cd build/linux
+            cmake -G "Unix Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" ../../source
+        elif [ "$ENVIRONMENT" == "mingw" ]
+        then
+            cd build/msys
+            # native script (32bit target/32bit msys or 64bit target/64bit msys)
+            cmake -G "MSYS Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" ../../source
+        fi
+        make
+        make install
+        make clean
+        CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -L/usr/local/lib -lx265 -lstdc++ -lm -lrt"
+        # TODO: delete src directory
+        cd $SRC_DIR
+        rm -r -f multicoreware-x265*
+    fi
+}
+
 function build_bluray {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libbluray" ]]
     then
@@ -756,6 +783,7 @@ function build_all {
     build_xvid
     build_vpx
     build_bluray
+    build_x265
 
     BITDEPTH=10
     build_x264
@@ -864,15 +892,15 @@ function build_clean {
     rm -r -f $SRC_DIR/*
 
     # remove binaries
-    rm -f /usr/local/bin/*asm* /usr/local/bin/bunzip2 /usr/local/bin/bz* /usr/local/bin/fc-* /usr/local/bin/freetype* /usr/local/bin/xml* /usr/local/bin/faac /usr/local/bin/fribidi /usr/local/bin/ff*
+    rm -f /usr/local/bin/*asm* /usr/local/bin/bunzip2 /usr/local/bin/bz* /usr/local/bin/fc-* /usr/local/bin/freetype* /usr/local/bin/xml* /usr/local/bin/faac /usr/local/bin/fribidi /usr/local/bin/ff* /usr/local/bin/x26*
 
     #remove includes
     rm -r -f /usr/local/include/ass /usr/local/include/libbluray /usr/local/include/fdk-aac /usr/local/include/libswscale /usr/local/include/vorbis /usr/local/include/libavutil /usr/local/include/libavfilter /usr/local/include/lame /usr/local/include/ogg /usr/local/include/libxml2 /usr/local/include/vpx /usr/local/include/freetype2 /usr/local/include/fontconfig /usr/local/include/fribidi /usr/local/include/libpostproc /usr/local/include/theora /usr/local/include/libavcodec /usr/local/include/libavformat /usr/local/include/libyasm /usr/local/include/libavdevice /usr/local/include/libswresample /usr/local/include/harfbuzz
-    rm -f /usr/local/include/expat.h /usr/local/include/bzlib.h /usr/local/include/faaccfg.h /usr/local/include/ft2build.h /usr/local/include/zconf.h /usr/local/include/xvid.h /usr/local/include/libyasm.h /usr/local/include/zlib.h /usr/local/include/expat_external.h /usr/local/include/x264_config.h /usr/local/include/libyasm-stdint.h /usr/local/include/faac.h /usr/local/include/x264.h
+    rm -f /usr/local/include/expat.h /usr/local/include/bzlib.h /usr/local/include/faaccfg.h /usr/local/include/ft2build.h /usr/local/include/zconf.h /usr/local/include/xvid.h /usr/local/include/libyasm.h /usr/local/include/zlib.h /usr/local/include/expat_external.h /usr/local/include/libyasm-stdint.h /usr/local/include/faac.h /usr/local/include/x264*.h /usr/local/include/x265*.h
 
     # remove libraries
     rm -f /usr/local/lib/pkgconfig/fribidi.pc /usr/local/lib/pkgconfig/libavfilter.pc /usr/local/lib/pkgconfig/vpx.pc /usr/local/lib/pkgconfig/zlib.pc /usr/local/lib/pkgconfig/theoradec.pc /usr/local/lib/pkgconfig/theoraenc.pc /usr/local/lib/pkgconfig/theora.pc /usr/local/lib/pkgconfig/libbluray.pc /usr/local/lib/pkgconfig/ogg.pc /usr/local/lib/pkgconfig/vorbisenc.pc /usr/local/lib/pkgconfig/libavcodec.pc /usr/local/lib/pkgconfig/libpostproc.pc /usr/local/lib/pkgconfig/expat.pc /usr/local/lib/pkgconfig/libswscale.pc /usr/local/lib/pkgconfig/libavdevice.pc /usr/local/lib/pkgconfig/fontconfig.pc /usr/local/lib/pkgconfig/fdk-aac.pc /usr/local/lib/pkgconfig/libavutil.pc /usr/local/lib/pkgconfig/freetype2.pc /usr/local/lib/pkgconfig/libavformat.pc /usr/local/lib/pkgconfig/vorbisfile.pc /usr/local/lib/pkgconfig/x264.pc /usr/local/lib/pkgconfig/libass.pc /usr/local/lib/pkgconfig/vorbis.pc /usr/local/lib/pkgconfig/libswresample.pc /usr/local/lib/pkgconfig/libxml-2.0.pc /usr/local/lib/pkgconfig/harfbuzz.pc
-    rm -f /usr/local/lib/libyasm.a /usr/local/lib/libz.a /usr/local/lib/libtheoraenc.a /usr/local/lib/libfdk-aac.la /usr/local/lib/libogg.a /usr/local/lib/libtheoradec.la /usr/local/lib/libavfilter.a /usr/local/lib/libmp3lame.a /usr/local/lib/libtheoradec.a /usr/local/lib/libfaac.a /usr/local/lib/libvorbisenc.a /usr/local/lib/libvorbis.a /usr/local/lib/libogg.la /usr/local/lib/libavdevice.a /usr/local/lib/libfdk-aac.a /usr/local/lib/libxvidcore.so.4 /usr/local/lib/libfribidi.a /usr/local/lib/libvpx.a /usr/local/lib/libfreetype.a /usr/local/lib/libvorbis.la /usr/local/lib/libvorbisfile.a /usr/local/lib/libx264.a /usr/local/lib/libavformat.a /usr/local/lib/libtheoraenc.la /usr/local/lib/libbluray.la /usr/local/lib/libfontconfig.la /usr/local/lib/libswresample.a /usr/local/lib/libfreetype.la /usr/local/lib/libxml2.a /usr/local/lib/libfaac.la /usr/local/lib/libfribidi.la /usr/local/lib/libxml2.la /usr/local/lib/libpostproc.a /usr/local/lib/libxvidcore.so.4.3 /usr/local/lib/libbluray.a /usr/local/lib/libexpat.a /usr/local/lib/libxvidcore.a /usr/local/lib/libavutil.a /usr/local/lib/libexpat.la /usr/local/lib/libbz2.a /usr/local/lib/libtheora.la /usr/local/lib/libass.a /usr/local/lib/libvorbisfile.la /usr/local/lib/libvorbisenc.la /usr/local/lib/libfontconfig.a /usr/local/lib/libswscale.a /usr/local/lib/xml2Conf.sh /usr/local/lib/libtheora.a /usr/local/lib/libass.la /usr/local/lib/libmp3lame.la /usr/local/lib/libavcodec.a /usr/local/lib/libharfbuzz.a /usr/local/lib/libharfbuzz.la
+    rm -f /usr/local/lib/libyasm.a /usr/local/lib/libz.a /usr/local/lib/libtheoraenc.a /usr/local/lib/libfdk-aac.la /usr/local/lib/libogg.a /usr/local/lib/libtheoradec.la /usr/local/lib/libavfilter.a /usr/local/lib/libmp3lame.a /usr/local/lib/libtheoradec.a /usr/local/lib/libfaac.a /usr/local/lib/libvorbisenc.a /usr/local/lib/libvorbis.a /usr/local/lib/libogg.la /usr/local/lib/libavdevice.a /usr/local/lib/libfdk-aac.a /usr/local/lib/libxvidcore.so.4 /usr/local/lib/libfribidi.a /usr/local/lib/libvpx.a /usr/local/lib/libfreetype.a /usr/local/lib/libvorbis.la /usr/local/lib/libvorbisfile.a /usr/local/lib/libx264* /usr/local/lib/libx265* /usr/local/lib/libavformat.a /usr/local/lib/libtheoraenc.la /usr/local/lib/libbluray.la /usr/local/lib/libfontconfig.la /usr/local/lib/libswresample.a /usr/local/lib/libfreetype.la /usr/local/lib/libxml2.a /usr/local/lib/libfaac.la /usr/local/lib/libfribidi.la /usr/local/lib/libxml2.la /usr/local/lib/libpostproc.a /usr/local/lib/libxvidcore.so.4.3 /usr/local/lib/libbluray.a /usr/local/lib/libexpat.a /usr/local/lib/libxvidcore.a /usr/local/lib/libavutil.a /usr/local/lib/libexpat.la /usr/local/lib/libbz2.a /usr/local/lib/libtheora.la /usr/local/lib/libass.a /usr/local/lib/libvorbisfile.la /usr/local/lib/libvorbisenc.la /usr/local/lib/libfontconfig.a /usr/local/lib/libswscale.a /usr/local/lib/xml2Conf.sh /usr/local/lib/libtheora.a /usr/local/lib/libass.la /usr/local/lib/libmp3lame.la /usr/local/lib/libavcodec.a /usr/local/lib/libharfbuzz.a /usr/local/lib/libharfbuzz.la
 }
 
 apt-get --version > /dev/null 2>&1

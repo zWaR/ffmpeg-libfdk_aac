@@ -28,8 +28,8 @@ cd $(dirname $0)
 CWD=$(pwd)
 PKG_DIR=$CWD/archive
 SRC_DIR=$CWD/src
-BIN_DIR=$CWD/build/usr/bin
 DIST_DIR=$CWD/build
+BIN_DIR=$DIST_DIR/usr/bin
 CONFIGURE_ALL_FLAGS="--enable-static --disable-shared"
 CONFIGURE_FFMPEG_LIBS=""
 CONFIGURE_FFMPEG_FLAGS="\
@@ -765,7 +765,8 @@ function build_x265 {
             cd build/msys
             # native script (32bit target/32bit msys or 64bit target/64bit msys)
             cmake -G "MSYS Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" -D "CMAKE_INSTALL_PREFIX:PATH=/usr/local" ../../source
-            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -L/usr/local/lib -lx265 -lstdc++ -lm"
+            # TODO: check why pkg-config x265 is not working for ffmpeg (reason why we need to add lib manually)
+            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -L/usr/local/lib -lx265 -lstdc++"
         fi
         make
         make install
@@ -785,8 +786,11 @@ function build_bluray {
         make
         make install
         make clean
-        # NOTE: libbluray depends on "-lxml2 -ldl" so we need to link ffmpeg against those libs
-        CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lxml2 -ldl"
+        if [ "$ENVIRONMENT" != "mingw" ]
+        then
+            # NOTE: libbluray depends on "-lxml2 -ldl" so we need to link ffmpeg against those libs
+            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lxml2 -ldl"
+        fi
         cd $SRC_DIR
         rm -r -f libbluray*
     fi
@@ -850,7 +854,7 @@ function build_all {
 
     cd $SRC_DIR
     rm -r -f x264* ffmpeg*
-exit
+
     BITDEPTH=8
     build_x264
     build_ffmpeg
@@ -924,7 +928,7 @@ function build_pkg {
         # TODO: create iss...
         ZIPPKG=$CWD/$PKGNAME\_$PKGVERSION\_windows-portable_$(uname -m).zip
         mkdir -p $CWD/$PKGNAME 2> /dev/null
-        cp -r $DIST_DIR/* $CWD/$PKGNAME
+        cp -r $BIN_DIR/* $CWD/$PKGNAME
         zip -r $ZIPPKG $CWD/$PKGNAME
         rm -r -f $CWD/$PKGNAME
     else

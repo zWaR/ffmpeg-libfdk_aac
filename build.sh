@@ -112,6 +112,55 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 #~ [-] --enable-x11grab         enable X11 grabbing [no]
 #~ [+] --enable-zlib            enable zlib [autodetect]
 
+function check_app {
+    $1 --version > /dev/null 2>&1
+    if [ $? != 0 ]
+    then
+        echo "ERROR: $1 is missing"
+        exit
+    fi
+}
+
+function check_environment {
+    #check_app tar
+    #check_app bzip2
+    check_app xz
+    #check_app make
+    check_app cmake
+    #check_app ld
+    #check_app gcc
+}
+
+function init_environment {
+    #mkdir -p $PKG_DIR
+    mkdir -p $SRC_DIR
+    mkdir -p $BIN_DIR
+
+    apt-get --version > /dev/null 2>&1
+    if [ $? == 0 ]
+    then
+        ENVIRONMENT="deb"
+    fi
+    yum --version > /dev/null 2>&1
+    if [ $? = 0 ]
+    then
+        ENVIRONMENT="fedora"
+    fi
+    zypper --version > /dev/null 2>&1
+    if [ $? = 0 ]
+    then
+        ENVIRONMENT="opensuse"
+    fi
+    if [ "$(uname -o)" = "Msys" ]
+    then
+        ENVIRONMENT="mingw"
+    else
+        set -e
+    fi
+
+    check_environment
+}
+
 function build_yasm {
     cd $SRC_DIR
     rm -r -f yasm*
@@ -123,18 +172,6 @@ function build_yasm {
     make clean
     cd $SRC_DIR
     rm -r -f yasm*
-}
-
-function install_pkgconfig {
-    if [ "$ENVIRONMENT" == "mingw" ]
-    then
-        cd /usr/local
-        tar -xjvf $PKG_DIR/pkg-config-lite-*.tar.*
-        mkdir -p /usr/local
-        cp -r pkg-config*/* /usr/local
-        rm -r -f pkg-config*
-        echo
-    fi
 }
 
 function build_zlib {
@@ -722,17 +759,17 @@ function build_x265 {
         then
             cd build/linux
             cmake -G "Unix Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" ../../source
+            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -L/usr/local/lib -lx265 -lstdc++ -lm -lrt"
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd build/msys
             # native script (32bit target/32bit msys or 64bit target/64bit msys)
-            cmake -G "MSYS Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" ../../source
+            cmake -G "MSYS Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" -D "CMAKE_INSTALL_PREFIX:PATH=/usr/local" ../../source
+            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -L/usr/local/lib -lx265 -lstdc++ -lm"
         fi
         make
         make install
         make clean
-        CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -L/usr/local/lib -lx265 -lstdc++ -lm -lrt"
-        # TODO: delete src directory
         cd $SRC_DIR
         rm -r -f multicoreware-x265*
     fi
@@ -771,39 +808,32 @@ function build_ffmpeg {
     fi
     make
     make install
-exit
     make clean
 }
 
 function build_all {
-
-    #mkdir -p $PKG_DIR
-    mkdir -p $SRC_DIR
-    mkdir -p $BIN_DIR
-
-#    build_yasm
-#    install_pkgconfig
-#    build_zlib
-#    build_bzip2
-#    build_expat
-#    build_xml2
-#    build_freetype
-#    build_fribidi
-#    build_fontconfig
-#    #build_harfbuzz
-#    # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
-#    build_iconv
-#    build_ass
-#    build_faac
-#    build_fdkaac
-#    build_lame
-#    build_ogg
-#    build_vorbis
-#    build_theora
-#    build_xvid
-#    build_vpx
-#    build_bluray
-#    build_x265
+    build_yasm
+    build_zlib
+    build_bzip2
+    build_expat
+    build_xml2
+    build_freetype
+    build_fribidi
+    build_fontconfig
+    #build_harfbuzz
+    # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
+    build_iconv
+    build_ass
+    build_faac
+    build_fdkaac
+    build_lame
+    build_ogg
+    build_vorbis
+    build_theora
+    build_xvid
+    build_vpx
+    build_bluray
+    build_x265
 
     BITDEPTH=10
     build_x264
@@ -820,7 +850,7 @@ function build_all {
 
     cd $SRC_DIR
     rm -r -f x264* ffmpeg*
-
+exit
     BITDEPTH=8
     build_x264
     build_ffmpeg
@@ -923,52 +953,7 @@ function build_clean {
     rm -f /usr/local/lib/libyasm.a /usr/local/lib/libz.a /usr/local/lib/libtheoraenc.a /usr/local/lib/libfdk-aac.la /usr/local/lib/libogg.a /usr/local/lib/libtheoradec.la /usr/local/lib/libavfilter.a /usr/local/lib/libmp3lame.a /usr/local/lib/libtheoradec.a /usr/local/lib/libfaac.a /usr/local/lib/libvorbisenc.a /usr/local/lib/libvorbis.a /usr/local/lib/libogg.la /usr/local/lib/libavdevice.a /usr/local/lib/libfdk-aac.a /usr/local/lib/libxvidcore.so.4 /usr/local/lib/libfribidi.a /usr/local/lib/libvpx.a /usr/local/lib/libfreetype.a /usr/local/lib/libvorbis.la /usr/local/lib/libvorbisfile.a /usr/local/lib/libx264* /usr/local/lib/libx265* /usr/local/lib/libavformat.a /usr/local/lib/libtheoraenc.la /usr/local/lib/libbluray.la /usr/local/lib/libfontconfig.la /usr/local/lib/libswresample.a /usr/local/lib/libfreetype.la /usr/local/lib/libxml2.a /usr/local/lib/libfaac.la /usr/local/lib/libfribidi.la /usr/local/lib/libxml2.la /usr/local/lib/libpostproc.a /usr/local/lib/libxvidcore.so.4.3 /usr/local/lib/libbluray.a /usr/local/lib/libexpat.a /usr/local/lib/libxvidcore.a /usr/local/lib/libxvidcore.so /usr/local/lib/libavutil.a /usr/local/lib/libexpat.la /usr/local/lib/libbz2.a /usr/local/lib/libtheora.la /usr/local/lib/libass.a /usr/local/lib/libvorbisfile.la /usr/local/lib/libvorbisenc.la /usr/local/lib/libfontconfig.a /usr/local/lib/libswscale.a /usr/local/lib/xml2Conf.sh /usr/local/lib/libtheora.a /usr/local/lib/libass.la /usr/local/lib/libmp3lame.la /usr/local/lib/libavcodec.a /usr/local/lib/libharfbuzz.a /usr/local/lib/libharfbuzz.la
 }
 
-tar --version > /dev/null 2>&1
-if [ $? != 0 ]
-then
-    echo "ERROR: tar missing"
-    exit
-fi
-
-bzip2 --help > /dev/null 2>&1
-if [ $? != 0 ]
-then
-    echo "ERROR: bzip2 missing"
-    exit
-fi
-
-xz --version > /dev/null 2>&1
-if [ $? != 0 ]
-then
-    echo "ERROR: xz missing"
-    exit
-fi
-
-apt-get --version > /dev/null 2>&1
-if [ $? == 0 ]
-then
-    ENVIRONMENT="deb"
-fi
-
-yum --version > /dev/null 2>&1
-if [ $? = 0 ]
-then
-    ENVIRONMENT="fedora"
-fi
-
-zypper --version > /dev/null 2>&1
-if [ $? = 0 ]
-then
-    ENVIRONMENT="opensuse"
-fi
-
-if [ "$(uname -o)" = "Msys" ]
-then
-    ENVIRONMENT="mingw"
-else
-    set -e
-fi
-
+init_environment
 build_all
 build_pkg
 build_clean

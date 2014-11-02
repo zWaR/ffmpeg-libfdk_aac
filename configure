@@ -1,11 +1,14 @@
 #!/bin/bash
 
-echo "all:"  > Makefile
+echo "PWD = \$(shell pwd)/archive"  > Makefile
+echo -e "" >> Makefile
+echo "all:"  >> Makefile
 
 apt-get --version > /dev/null 2>&1
 if [ $? == 0 ]
 then
     echo -e "\t-@apt-get update --yes" >> Makefile
+    echo -e "\t-@apt-get upgrade --yes" >> Makefile
     echo -e "\t-@apt-get autoremove --yes yasm" >> Makefile
     echo -e "\t-@apt-get autoremove --yes zlib1g-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libbz2-dev" >> Makefile
@@ -28,7 +31,6 @@ then
     echo -e "\t-@apt-get autoremove --yes libx265.*-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libbluray-dev" >> Makefile
     echo -e "\t-@apt-get install --yes pkg-config" >> Makefile
-    # cmake required to build x265
     echo -e "\t-@apt-get install --yes cmake" >> Makefile
 fi
 
@@ -51,7 +53,13 @@ fi
 
 if [ "$(uname -o)" = "Msys" ]
 then
-    echo -e "\t@echo TODO: Install pkg-config here instead of build script..." >> Makefile
+    echo -e "\t@cd /usr/local" >> Makefile
+    echo -e "\t@tar -xjvf \${PWD}/cmake-*.tar.*" >> Makefile
+    echo -e "\t@cp -r cmake*/* /usr/local" >> Makefile
+    echo -e "\t@rm -r -f cmake*" >> Makefile
+    echo -e "\t@tar -xjvf \${PWD}/pkg-config-lite-*.tar.*" >> Makefile
+    echo -e "\t@cp -r pkg-config*/* /usr/local" >> Makefile
+    echo -e "\t@rm -r -f pkg-config*" >> Makefile
 fi
 
 echo -e "\t@./build.sh" >> Makefile

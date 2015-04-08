@@ -3,7 +3,7 @@
 # pkg configuration
 
 PKGNAME="ffmpeg-hi"
-PKGVERSION="2.4.2"
+PKGVERSION="2.6.1"
 PKGSECTION="video"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://ffmpeg-hi.sourceforge.net"
@@ -701,7 +701,7 @@ function build_vpx {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvpx" ]]
     then
         cd $SRC_DIR
-        tar -xJvf $PKG_DIR/libvpx*.tar.*
+        tar -xzvf $PKG_DIR/libvpx*.tar.*
         cd libvpx*
         if [ "$ENVIRONMENT" == "mingw" ]
         then

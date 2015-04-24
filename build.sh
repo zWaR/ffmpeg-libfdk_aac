@@ -3,7 +3,7 @@
 # pkg configuration
 
 PKGNAME="ffmpeg-hi"
-PKGVERSION="2.6.1"
+PKGVERSION="2.6.2"
 PKGSECTION="video"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://ffmpeg-hi.sourceforge.net"
@@ -403,7 +403,7 @@ function build_fribidi {
             ./configure $CONFIGURE_ALL_FLAGS --disable-debug
             make -C charset
             # fixing lib/Makefile directly before make -C lib, or it will be overwritten by another configure process
-            sed -i -e  's/am__append_1 =/#am__append_1 =/g' lib/Makefile
+            sed -i -e 's/am__append_1 =/#am__append_1 =/g' lib/Makefile
             make -C lib
             make
             make install
@@ -421,11 +421,11 @@ function build_fribidi {
             tar -xjvf $PKG_DIR/fribidi*.tar.*
             cd fribidi*
             # fix for static build
-            sed -i -e  's/__declspec(dllimport)//g' lib/fribidi-common.h
+            sed -i -e 's/__declspec(dllimport)//g' lib/fribidi-common.h
             ./configure $CONFIGURE_ALL_FLAGS --disable-debug
             make -C charset
             # fixing lib/Makefile directly before make -C lib, or it will be overwritten by another configure process
-            sed -i -e  's/am__append_1 =/#am__append_1 =/g' lib/Makefile
+            sed -i -e 's/am__append_1 =/#am__append_1 =/g' lib/Makefile
             make -C lib
             make
             make install
@@ -534,6 +534,8 @@ function build_iconv {
         cd $SRC_DIR
         tar -xzvf $PKG_DIR/libiconv*.tar.*
         cd libiconv*
+        # derivative fix for disabling gets error when glibc is undefined (http://www.itkb.ro/kb/linux/patch-libiconv-pentru-glibc-216)
+        sed -i -e 's/_GL_WARN_ON_USE (gets,.*//g' srclib/stdio.in.h
         ./configure $CONFIGURE_ALL_FLAGS
         make
         make install
@@ -753,8 +755,8 @@ function build_x265 {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libx265" ]]
     then
         cd $SRC_DIR
-        tar -xjvf $PKG_DIR/x265*.tar.*
-        cd multicoreware-x265*
+        tar -xzvf $PKG_DIR/x265*.tar.*
+        cd x265*
         if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd build/linux
@@ -772,7 +774,7 @@ function build_x265 {
         make install
         make clean
         cd $SRC_DIR
-        rm -r -f multicoreware-x265*
+        rm -r -f x265*
     fi
 }
 

@@ -128,7 +128,8 @@ function check_environment {
     #check_app make
     check_app cmake
     #check_app ld
-    #check_app gcc
+    check_app gcc
+    check_app python
 }
 
 function init_environment {
@@ -765,8 +766,12 @@ function build_x265 {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd build/msys
+            # disable yasm, or build will fail (error in intrapred16.asm)
+            mv -f /usr/local/bin/yasm.exe /usr/local/bin/_yasm.exe
             # native script (32bit target/32bit msys or 64bit target/64bit msys)
             cmake -G "MSYS Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" -D "CMAKE_INSTALL_PREFIX:PATH=/usr/local" ../../source
+            # re-enable yasm
+            mv -f /usr/local/bin/_yasm.exe /usr/local/bin/yasm.exe
             # TODO: check why pkg-config x265 is not working for ffmpeg (reason why we need to add lib manually)
             CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -L/usr/local/lib -lx265 -lstdc++"
         fi
@@ -807,7 +812,7 @@ function build_ffmpeg {
         ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
     elif [ "$ENVIRONMENT" == "mingw" ]
     then
-        ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --enable-w32threads --cpu=i686 --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
+        ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --enable-w32threads --cpu=$(gcc -dumpmachine | cut -d '-' -f 1) --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
     else
         echo "ERROR"
         exit
@@ -928,7 +933,7 @@ function build_pkg {
     elif [ "$ENVIRONMENT" == "mingw" ]
     then
         # TODO: create iss...
-        ZIPPKG=$CWD/$PKGNAME\_$PKGVERSION\_windows-portable_$(uname -m).zip
+        ZIPPKG=$CWD/$PKGNAME\_$PKGVERSION\_windows-portable_$(gcc -dumpmachine | cut -d '-' -f 1).zip
         mkdir -p $CWD/$PKGNAME 2> /dev/null
         cp -r $BIN_DIR/* $CWD/$PKGNAME
         zip -r $ZIPPKG $CWD/$PKGNAME

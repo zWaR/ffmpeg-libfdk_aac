@@ -1,0 +1,5 @@
+syntax: glob
+src/*
+build/*
+*.deb
+Makefile

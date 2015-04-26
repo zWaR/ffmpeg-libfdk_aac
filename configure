@@ -1,0 +1,68 @@
+#!/bin/bash
+
+echo "PWD = \$(shell pwd)/archive"  > Makefile
+echo -e "" >> Makefile
+echo "all:"  >> Makefile
+
+apt-get --version > /dev/null 2>&1
+if [ $? == 0 ]
+then
+    echo -e "\t-@apt-get update --yes" >> Makefile
+    echo -e "\t-@apt-get upgrade --yes" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes yasm" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes zlib1g-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libbz2-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes liblzma-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libexpat1-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libxml2-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libfreetype6-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libfribidi-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libfontconfig1-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libass-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libfaac-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libfdk-aac-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libmp3lame-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libtheora-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libvorbis-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libogg-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libxvidcore-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libvpx-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libx264.*-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libx265.*-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libbluray-dev" >> Makefile
+    echo -e "\t-@apt-get install --yes pkg-config" >> Makefile
+    echo -e "\t-@apt-get install --yes cmake" >> Makefile
+fi
+
+# FIXME: add cmake to other distributions
+
+yum --version > /dev/null 2>&1
+if [ $? = 0 ]
+then
+    echo -e "\t-@yum makecache" >> Makefile
+    echo -e "\t-@yum --assumeyes update" >> Makefile
+    echo -e "\t-@yum --assumeyes install pkgconfig" >> Makefile
+fi
+
+zypper --version > /dev/null 2>&1
+if [ $? = 0 ]
+then
+    echo -e "\t-@zypper --non-interactive --no-gpg-checks update" >> Makefile
+    echo -e "\t-@zypper --non-interactive install pkg-config" >> Makefile
+fi
+
+if [ "$(uname -o)" = "Msys" ]
+then
+    echo -e "\t@cd /usr/local" >> Makefile
+    echo -e "\t@tar -xjvf \${PWD}/cmake-*.tar.*" >> Makefile
+    echo -e "\t@cp -r cmake*/* /usr/local" >> Makefile
+    echo -e "\t@rm -r -f cmake*" >> Makefile
+    echo -e "\t@tar -xjvf \${PWD}/pkg-config-lite-*.tar.*" >> Makefile
+    echo -e "\t@cp -r pkg-config*/* /usr/local" >> Makefile
+    echo -e "\t@rm -r -f pkg-config*" >> Makefile
+fi
+
+echo -e "\t@./build.sh" >> Makefile
+echo -e "" >> Makefile
+echo -e "clean:" >> Makefile
+echo -e "\t@rm -r -f *.tar.gz *.changes *.dsc *.deb *.rpm *.zip *.exe" >> Makefile

@@ -3,7 +3,7 @@
 # pkg configuration
 
 PKGNAME="ffmpeg-hi"
-PKGVERSION="2.6.2"
+PKGVERSION="2.8.1"
 PKGSECTION="video"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://ffmpeg-hi.sourceforge.net"
@@ -160,6 +160,53 @@ function init_environment {
     fi
 
     check_environment
+}
+
+get_lsb_release()
+{
+    # FIXME: Fedora/OpenSuse/CentOS/Redhat do not use lsb-release, they use e.g. fedora-release
+
+    RELEASE_FILE=/dev/null
+    if [ -f /etc/os-release ]
+    then
+        RELEASE_FILE=/etc/os-release
+    fi
+    if [ -f /etc/lsb-release ]
+    then
+        RELEASE_FILE=/etc/lsb-release
+    fi
+    if [ -f /etc/upstream-release/os-release ]
+    then
+        RELEASE_FILE=/etc/upstream-release/os-release
+    fi
+    if [ -f /etc/upstream-release/lsb-release ]
+    then
+        RELEASE_FILE=/etc/upstream-release/lsb-release
+    fi
+    DIST=linux
+    VER=$(date +%y.%m)
+    if [[ $(grep '^ID=' $RELEASE_FILE | wc -l) > 1 ]]
+    then
+        DIST=$(grep '^ID=' $RELEASE_FILE | sed 's|\"||g;s|\s|-|g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')
+        DIST=$(grep '^VERSION_ID=' $RELEASE_FILE | sed 's|\"||g' | cut -d '=' -f 2)
+    fi
+    if [[ $(grep '^DISTRIB_' $RELEASE_FILE | wc -l) > 1 ]]
+    then
+        DIST=$(grep '^DISTRIB_ID=' $RELEASE_FILE | sed 's|\"||g;s|\s|-|g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')
+        VER=$(grep '^DISTRIB_RELEASE=' $RELEASE_FILE | sed 's|\"||g' | cut -d '=' -f 2)
+    fi
+    ARCH=x86
+    rpm --version > /dev/null 2>&1
+    if [ $? == 0 ]
+    then
+        ARCH=$(rpm --eval %_target_cpu)
+    fi
+    apt-get --version > /dev/null 2>&1
+    if [ $? == 0 ]
+    then
+        ARCH=$(dpkg --print-architecture)
+    fi
+    echo "${DIST}-${VER}_${ARCH}"
 }
 
 function build_yasm {
@@ -677,7 +724,7 @@ function build_xvid {
             cd xvid*/build/generic
             ./configure $CONFIGURE_ALL_FLAGS
             make
-            make install
+            make install && :
             make clean
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
@@ -690,7 +737,7 @@ function build_xvid {
             make install
             make clean
             rm /usr/local/lib/xvidcore.dll
-            ln -s /usr/local/lib/xvidcore.a /usr/local/lib/libxvidcore.a
+            ln -s -f /usr/local/lib/xvidcore.a /usr/local/lib/libxvidcore.a
         else
             echo "ERROR"
             exit
@@ -789,7 +836,7 @@ function build_bluray {
         cd $SRC_DIR
         tar -xjvf $PKG_DIR/libbluray*.tar.*
         cd libbluray*
-        ./configure $CONFIGURE_ALL_FLAGS --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
+        ./configure $CONFIGURE_ALL_FLAGS --disable-bdjava --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
         make
         make install
         make clean
@@ -881,12 +928,7 @@ function build_pkg {
     cd $CWD
     if [ "$ENVIRONMENT" == "deb" ]
     then
-        if [[ $(grep '^DISTRIB_' /etc/*release | wc -l) > 1 ]]
-        then
-            DEBPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(grep '^DISTRIB_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^DISTRIB_RELEASE=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(dpkg --print-architecture).deb
-        else
-            DEBPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(grep '^ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^VERSION_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(dpkg --print-architecture).deb
-        fi
+        DEBPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(get_lsb_release).deb
         mkdir -p $DIST_DIR/DEBIAN
         md5sum $(find $BIN_DIR -type f) | sed "s|$BIN_DIR|usr/bin|g" > $DIST_DIR/DEBIAN/md5sums
         echo "Package: $PKGNAME" > $DIST_DIR/DEBIAN/control
@@ -905,12 +947,7 @@ function build_pkg {
         lintian --profile debian $DEBPKG
     elif [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then
-        if [[ $(grep '^DISTRIB_' /etc/*release | wc -l) > 1 ]]
-        then
-            RPMPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(grep '^DISTRIB_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^DISTRIB_RELEASE=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(rpm --eval %_target_cpu).rpm
-        else
-            RPMPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(grep '^ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2 | tr '[:upper:]' '[:lower:]')-$(grep '^VERSION_ID=' /etc/*release | sed 's|"||g' | cut -d '=' -f 2)_$(rpm --eval %_target_cpu).rpm
-        fi
+        RPMPKG=$CWD/$PKGNAME\_$PKGVERSION\_$(get_lsb_release).rpm
         mkdir -p $CWD/rpm/BUILDROOT 2> /dev/null
         mkdir -p $CWD/rpm/SPECS 2> /dev/null
         cp -r $DIST_DIR/* $CWD/rpm/BUILDROOT
@@ -951,6 +988,8 @@ function build_clean {
 
     #remove sources
     rm -r -f $SRC_DIR/*
+
+    # TODO: in msys delete all content in /usr/local/* (e.g. cmake, doc, man, ...)
 
     # remove binaries
     rm -f /usr/local/bin/*asm* /usr/local/bin/bunzip2 /usr/local/bin/bz* /usr/local/bin/fc-* /usr/local/bin/freetype* /usr/local/bin/xml* /usr/local/bin/faac /usr/local/bin/fribidi /usr/local/bin/ff* /usr/local/bin/x26*

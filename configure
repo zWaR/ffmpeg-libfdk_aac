@@ -65,4 +65,4 @@ fi
 echo -e "\t@./build.sh" >> Makefile
 echo -e "" >> Makefile
 echo -e "clean:" >> Makefile
-echo -e "\t@rm -r -f *.tar.gz *.changes *.dsc *.deb *.rpm *.zip *.exe" >> Makefile
+echo -e "\t@rm -r -f build/usr/bin/* *.tar.gz *.changes *.dsc *.deb *.rpm *.zip *.exe" >> Makefile

@@ -3,7 +3,7 @@
 # pkg configuration
 
 PKGNAME="ffmpeg-hi"
-PKGVERSION="2.8.1"
+PKGVERSION="2.8.6"
 PKGSECTION="video"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://ffmpeg-hi.sourceforge.net"
@@ -856,10 +856,10 @@ function build_ffmpeg {
     cd ffmpeg*
     if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then
-        ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
+        ./configure $(echo $CONFIGURE_ALL_FLAGS | cut -d' ' -f1 --complement) $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
     elif [ "$ENVIRONMENT" == "mingw" ]
     then
-        ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --enable-w32threads --cpu=$(gcc -dumpmachine | cut -d '-' -f 1) --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
+        ./configure $(echo $CONFIGURE_ALL_FLAGS | cut -d' ' -f1 --complement) $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --enable-w32threads --cpu=$(gcc -dumpmachine | cut -d '-' -f 1) --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
     else
         echo "ERROR"
         exit

@@ -3,7 +3,7 @@
 # pkg configuration
 
 PKGNAME="ffmpeg-hi"
-PKGVERSION="2.8.6"
+PKGVERSION="2.8.7"
 PKGSECTION="video"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://ffmpeg-hi.sourceforge.net"
@@ -759,7 +759,7 @@ function build_vpx {
             sed -i 's|which yasm.*AS=yasm|AS=yasm|g' ./build/make/configure.sh
         fi
         # FIXME: dependency loop in mingw32
-        ./configure $CONFIGURE_ALL_FLAGS --enable-runtime-cpu-detect --enable-vp8 --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
+        ./configure $(echo $CONFIGURE_ALL_FLAGS | sed 's|-build|-target|g;s|gnu|gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
         make
         make install
         make clean

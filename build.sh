@@ -52,6 +52,7 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 --enable-libxvid \
 --enable-libx264 \
 --enable-libx265 \
+--enable-libvpx \
 --enable-libbluray \
 "
 

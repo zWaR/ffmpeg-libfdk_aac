@@ -156,6 +156,7 @@ function init_environment {
     if [ "$(uname -o)" = "Msys" ]
     then
         ENVIRONMENT="mingw"
+        set -e
     else
         set -e
     fi

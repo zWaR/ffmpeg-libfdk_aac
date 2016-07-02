@@ -53,6 +53,7 @@ fi
 
 if [ "$(uname -o)" = "Msys" ]
 then
+    echo -e "\t@mkdir -p /usr/local" >> Makefile
     echo -e "\t@cd /usr/local" >> Makefile
     echo -e "\t@tar -xjvf \${PWD}/cmake-*.tar.*" >> Makefile
     echo -e "\t@cp -r cmake*/* /usr/local" >> Makefile

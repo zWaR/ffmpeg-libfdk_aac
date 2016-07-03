@@ -30,7 +30,7 @@ PKG_DIR=$CWD/archive
 SRC_DIR=$CWD/src
 DIST_DIR=$CWD/build
 BIN_DIR=$DIST_DIR/usr/bin
-CONFIGURE_ALL_FLAGS="--build=$(gcc -dumpmachine) --enable-static --disable-shared"
+CONFIGURE_ALL_FLAGS="--build=$(gcc -dumpmachine | sed 's|-msys|-mingw32|g') --enable-static --disable-shared"
 CONFIGURE_FFMPEG_LIBS=""
 CONFIGURE_FFMPEG_FLAGS="\
 --enable-runtime-cpudetect \
@@ -213,45 +213,16 @@ get_lsb_release()
     echo "${DIST}-${VER}_${ARCH}"
 }
 
-function build_yasm {
-    cd $SRC_DIR
-    rm -r -f yasm*
-    tar -xzvf $PKG_DIR/yasm*.tar.*
-    cd yasm*
-    ./configure
-    make
-    make install
-    make clean
-    cd $SRC_DIR
-    rm -r -f yasm*
-}
-
 function build_zlib {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-zlib" ]]
     then
-        if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
-        then
-            cd $SRC_DIR
-            tar -xJvf $PKG_DIR/zlib*.tar.*
-            cd zlib*
-            ./configure --static
-            make libz.a
-            make install
-            make clean
-        elif [ "$ENVIRONMENT" == "mingw" ]
-        then
-            cd $SRC_DIR
-            tar -xJvf $PKG_DIR/zlib*.tar.*
-            cd zlib*
-            make -f win32/Makefile.gcc
-            mkdir -p /usr/local/include
-            cp zlib.h zconf.h /usr/local/include
-            mkdir -p /usr/local/lib
-            cp libz.a /usr/local/lib
-        else
-            echo "ERROR"
-            exit
-        fi
+	cd $SRC_DIR
+	tar -xJvf $PKG_DIR/zlib*.tar.*
+	cd zlib*
+	./configure --static
+	make libz.a
+	make install
+	make clean
         cd $SRC_DIR
         rm -r -f zlib*
     fi
@@ -273,7 +244,7 @@ function build_bzip2 {
             cd $SRC_DIR
             tar -xzvf $PKG_DIR/bzip2*.tar.*
             cd bzip2*
-            make
+            make libbz2.a
             mkdir -p /usr/local/include
             cp bzlib.h /usr/local/include
             mkdir -p /usr/local/lib
@@ -761,7 +732,7 @@ function build_vpx {
         then
             sed -i 's|which yasm.*AS=yasm|AS=yasm|g' ./build/make/configure.sh
             # FIXME: infinite dependency loop in mingw32 (trapped)
-            ./configure $(echo $CONFIGURE_ALL_FLAGS | sed 's|--build|--target|g;s|i686-pc-msys|x86-win32-gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
+            ./configure $(echo $CONFIGURE_ALL_FLAGS | sed 's|--build|--target|g;s|i686-pc-mingw32|x86-win32-gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
         else
             ./configure $(echo $CONFIGURE_ALL_FLAGS | sed 's|--build|--target|g;s|gnu|gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
         fi
@@ -876,7 +847,6 @@ function build_ffmpeg {
 }
 
 function build_all {
-    build_yasm
     build_zlib
     build_bzip2
     build_expat

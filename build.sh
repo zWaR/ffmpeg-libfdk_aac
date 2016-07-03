@@ -216,14 +216,14 @@ get_lsb_release()
 function build_zlib {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-zlib" ]]
     then
-	cd $SRC_DIR
-	tar -xJvf $PKG_DIR/zlib*.tar.*
-	cd zlib*
-	./configure --static
-	make libz.a
-	make install
-	#make clean
-	pkg-config zlib >/dev/null 2>&1
+    cd $SRC_DIR
+    tar -xJvf $PKG_DIR/zlib*.tar.*
+    cd zlib*
+    ./configure --static
+    make libz.a
+    make install
+    #make clean
+    pkg-config zlib >/dev/null 2>&1
         # NOTE: when package config fails, export the lib dependencies to variables
         if [ $? != 0 ]
         then
@@ -278,8 +278,8 @@ function build_expat {
             make
             make install
             #make clean
-	    
-	    pkg-config expat >/dev/null 2>&1
+
+        pkg-config expat >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
             if [ $? != 0 ]
             then
@@ -295,8 +295,8 @@ function build_expat {
             make
             make install
             #make clean
-	    
-	    pkg-config expat >/dev/null 2>&1
+
+        pkg-config expat >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
             if [ $? != 0 ]
             then
@@ -566,7 +566,12 @@ function build_iconv {
         cd libiconv*
         # derivative fix for disabling gets error when glibc is undefined (http://www.itkb.ro/kb/linux/patch-libiconv-pentru-glibc-216)
         sed -i -e 's/_GL_WARN_ON_USE (gets,.*//g' srclib/stdio.in.h
-        ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32
+        if [ "$ENVIRONMENT" == "mingw" ]
+        then
+            ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32
+        else
+            ./configure $CONFIGURE_ALL_FLAGS
+        fi
         make
         make install
         #make clean
@@ -596,7 +601,12 @@ function build_faac {
         cd $SRC_DIR
         tar -xjvf $PKG_DIR/faac*.tar.*
         cd faac*
-        ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32 --without-mp4v2
+        if [ "$ENVIRONMENT" == "mingw" ]
+        then
+            ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32 --without-mp4v2
+        else
+            ./configure $CONFIGURE_ALL_FLAGS --without-mp4v2
+        fi
         make
         make install
         #make clean
@@ -626,8 +636,14 @@ function build_lame {
         cd $SRC_DIR
         tar -xzvf $PKG_DIR/lame*.tar.*
         cd lame*
-        ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32 --disable-frontend
-        make "CFLAGS=-msse"
+        if [ "$ENVIRONMENT" == "mingw" ]
+        then
+            ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32 --disable-frontend
+            make "CFLAGS=-msse"
+        else
+            ./configure $CONFIGURE_ALL_FLAGS --disable-frontend
+            make
+        fi
         make install
         #make clean
         cd $SRC_DIR
@@ -687,7 +703,12 @@ function build_theora {
         cd $SRC_DIR
         tar -xjvf $PKG_DIR/libtheora*.tar.*
         cd libtheora*
-        ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32 --disable-examples
+        if [ "$ENVIRONMENT" == "mingw" ]
+        then
+            ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32 --disable-examples
+        else
+            ./configure $CONFIGURE_ALL_FLAGS --disable-examples
+        fi
         make
         make install
         #make clean
@@ -741,16 +762,16 @@ function build_vpx {
             #if [ "$BITDEPTH" == "10" ]
             #then
             #    ./configure $CONFIGURE_ALL_FLAGS --target=$(arch | sed 's|i.86|x86|g')-win$(arch | sed 's|i.86|32|g;s|x86_64|64|g')-gcc --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests --disable-dependency-tracking --enable-vp9-highbitdepth
-	    #else
+        #else
                 ./configure $CONFIGURE_ALL_FLAGS --target=$(arch | sed 's|i.86|x86|g')-win$(arch | sed 's|i.86|32|g;s|x86_64|64|g')-gcc --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests --disable-dependency-tracking
-	    #fi
+        #fi
         else
             #if [ "$BITDEPTH" == "10" ]
             #then
             #    ./configure $CONFIGURE_ALL_FLAGS --target=$(gcc -dumpmachine | sed 's|gnu|gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests --enable-vp9-highbitdepth
-	    #else
+        #else
                 ./configure $CONFIGURE_ALL_FLAGS --target=$(gcc -dumpmachine | sed 's|gnu|gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
-	    #fi
+        #fi
         fi
         make
         make install
@@ -873,29 +894,29 @@ function build_ffmpeg {
 }
 
 function build_all {
-#    build_zlib
-#    build_bzip2
-#    build_expat
-#    build_xml2
-#    build_freetype
-#    build_fribidi
-#    build_fontconfig
-#    #build_harfbuzz
-#    # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
-#    build_iconv
-#    build_ass
-#    build_faac
-#    build_fdkaac
-#    build_lame
-#    build_ogg
-#    build_vorbis
-#    build_theora
-#    build_xvid
-#    build_bluray
+    build_zlib
+    build_bzip2
+    build_expat
+    build_xml2
+    build_freetype
+    build_fribidi
+    build_fontconfig
+    #build_harfbuzz
+    # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
+    build_iconv
+    build_ass
+    build_faac
+    build_fdkaac
+    build_lame
+    build_ogg
+    build_vorbis
+    build_theora
+    build_xvid
+    build_bluray
 
     BITDEPTH=10
-#    build_vpx
-#    build_x264
+    build_vpx
+    build_x264
     build_x265
     build_ffmpeg
     if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]

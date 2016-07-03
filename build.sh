@@ -30,7 +30,7 @@ PKG_DIR=$CWD/archive
 SRC_DIR=$CWD/src
 DIST_DIR=$CWD/build
 BIN_DIR=$DIST_DIR/usr/bin
-CONFIGURE_ALL_FLAGS="--build=$(gcc -dumpmachine | sed 's|-msys|-mingw32|g') --enable-static --disable-shared"
+CONFIGURE_ALL_FLAGS="--enable-static --disable-shared"
 CONFIGURE_FFMPEG_LIBS=""
 CONFIGURE_FFMPEG_FLAGS="\
 --enable-runtime-cpudetect \
@@ -222,7 +222,14 @@ function build_zlib {
 	./configure --static
 	make libz.a
 	make install
-	make clean
+	#make clean
+	pkg-config zlib >/dev/null 2>&1
+        # NOTE: when package config fails, export the lib dependencies to variables
+        if [ $? != 0 ]
+        then
+            export ZLIB_CFLAGS="-I/usr/local/include"
+            export ZLIB_LIBS="-L/usr/local/lib -lz"
+        fi
         cd $SRC_DIR
         rm -r -f zlib*
     fi
@@ -238,7 +245,7 @@ function build_bzip2 {
             cd bzip2*
             make
             make install
-            make clean
+            #make clean
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
@@ -249,7 +256,7 @@ function build_bzip2 {
             cp bzlib.h /usr/local/include
             mkdir -p /usr/local/lib
             cp libbz2.a /usr/local/lib
-            make clean
+            #make clean
         else
             echo "ERROR"
             exit
@@ -270,9 +277,9 @@ function build_expat {
             ./configure $CONFIGURE_ALL_FLAGS
             make
             make install
-            make clean
-
-            pkg-config expat >/dev/null 2>&1
+            #make clean
+	    
+	    pkg-config expat >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
             if [ $? != 0 ]
             then
@@ -284,12 +291,12 @@ function build_expat {
             cd $SRC_DIR
             tar -xzvf $PKG_DIR/expat*.tar.*
             cd expat*
-            ./configure $CONFIGURE_ALL_FLAGS
+            ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32
             make
             make install
-            make clean
-
-            pkg-config expat >/dev/null 2>&1
+            #make clean
+	    
+	    pkg-config expat >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
             if [ $? != 0 ]
             then
@@ -315,8 +322,8 @@ function build_xml2 {
             cd libxml2*
             ./configure $CONFIGURE_ALL_FLAGS --without-debug --without-python
             make
-            make install
-            make clean
+            make install-strip
+            #make clean
 
             pkg-config libxml-2.0 >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -336,10 +343,10 @@ function build_xml2 {
             cd $SRC_DIR
             tar -xzvf $PKG_DIR/libxml2*.tar.*
             cd libxml2*
-            ./configure $CONFIGURE_ALL_FLAGS --without-debug --without-python
+            ./configure $CONFIGURE_ALL_FLAGS --with-zlib=/usr/local --without-debug --without-python
             make
-            make install
-            make clean
+            make install-strip
+            #make clean
 
             pkg-config libxml-2.0 >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -374,7 +381,7 @@ function build_freetype {
             ./configure $CONFIGURE_ALL_FLAGS
             make
             make install
-            make clean
+            #make clean
 
             pkg-config freetype2 >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -394,7 +401,7 @@ function build_freetype {
             ./configure $CONFIGURE_ALL_FLAGS
             make
             make install
-            make clean
+            #make clean
 
             pkg-config freetype2 >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -430,7 +437,7 @@ function build_fribidi {
             make -C lib
             make
             make install
-            make clean
+            #make clean
 
             pkg-config fribidi >/dev/null 2>&1
             if [ $? != 0 ]
@@ -452,7 +459,7 @@ function build_fribidi {
             make -C lib
             make
             make install
-            make clean
+            #make clean
 
             pkg-config fribidi >/dev/null 2>&1
             if [ $? != 0 ]
@@ -480,7 +487,7 @@ function build_fontconfig {
             ./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
             make
             make install
-            make clean
+            #make clean
 
             pkg-config fontconfig >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -505,7 +512,7 @@ function build_fontconfig {
             ./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
             make
             make install
-            make clean
+            #make clean
 
             pkg-config fontconfig >/dev/null 2>&1
             # NOTE: when package config fails, export the lib dependencies to variables
@@ -537,7 +544,7 @@ function build_harfbuzz {
         ./configure $CONFIGURE_ALL_FLAGS
         make
         make install
-        make clean
+        #make clean
 
         pkg-config harfbuzz >/dev/null 2>&1
         # NOTE: when package config fails, export the lib dependencies to variables
@@ -559,10 +566,10 @@ function build_iconv {
         cd libiconv*
         # derivative fix for disabling gets error when glibc is undefined (http://www.itkb.ro/kb/linux/patch-libiconv-pentru-glibc-216)
         sed -i -e 's/_GL_WARN_ON_USE (gets,.*//g' srclib/stdio.in.h
-        ./configure $CONFIGURE_ALL_FLAGS
+        ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32
         make
         make install
-        make clean
+        #make clean
         cd $SRC_DIR
         rm -r -f libiconv*
     fi
@@ -574,10 +581,10 @@ function build_ass {
         cd $SRC_DIR
         tar -xJvf $PKG_DIR/libass*.tar.*
         cd libass*
-        ./configure $CONFIGURE_ALL_FLAGS --disable-harfbuzz
+        ./configure $CONFIGURE_ALL_FLAGS --disable-asm --disable-harfbuzz
         make
         make install
-        make clean
+        #make clean
         cd $SRC_DIR
         rm -r -f libass*
     fi
@@ -589,10 +596,10 @@ function build_faac {
         cd $SRC_DIR
         tar -xjvf $PKG_DIR/faac*.tar.*
         cd faac*
-        ./configure $CONFIGURE_ALL_FLAGS --without-mp4v2
+        ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32 --without-mp4v2
         make
         make install
-        make clean
+        #make clean
         cd $SRC_DIR
         rm -r -f faac*
     fi
@@ -607,7 +614,7 @@ function build_fdkaac {
         ./configure $CONFIGURE_ALL_FLAGS
         make
         make install
-        make clean
+        #make clean
         cd $SRC_DIR
         rm -r -f fdk-aac*
     fi
@@ -619,10 +626,10 @@ function build_lame {
         cd $SRC_DIR
         tar -xzvf $PKG_DIR/lame*.tar.*
         cd lame*
-        ./configure $CONFIGURE_ALL_FLAGS --disable-frontend
-        make
+        ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32 --disable-frontend
+        make "CFLAGS=-msse"
         make install
-        make clean
+        #make clean
         cd $SRC_DIR
         rm -r -f lame*
     fi
@@ -637,7 +644,7 @@ function build_ogg {
         ./configure $CONFIGURE_ALL_FLAGS
         make
         make install
-        make clean
+        #make clean
 
         pkg-config ogg >/dev/null 2>&1
         # NOTE: when package config fails, export the lib dependencies to variables
@@ -660,7 +667,7 @@ function build_vorbis {
         ./configure $CONFIGURE_ALL_FLAGS
         make
         make install
-        make clean
+        #make clean
 
         pkg-config vorbis >/dev/null 2>&1
         # NOTE: when package config fails, export the lib dependencies to variables
@@ -680,10 +687,10 @@ function build_theora {
         cd $SRC_DIR
         tar -xjvf $PKG_DIR/libtheora*.tar.*
         cd libtheora*
-        ./configure $CONFIGURE_ALL_FLAGS --disable-examples
+        ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32 --disable-examples
         make
         make install
-        make clean
+        #make clean
         cd $SRC_DIR
         rm -r -f libtheora*
     fi
@@ -700,17 +707,17 @@ function build_xvid {
             ./configure $CONFIGURE_ALL_FLAGS
             make
             make install && :
-            make clean
+            #make clean
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
             tar -xjvf $PKG_DIR/xvid*.tar.*
             cd xvid*/build/generic
-            ./configure $CONFIGURE_ALL_FLAGS
-            sed -i -e 's/-mno-cygwin//g' platform.inc
+            ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32
+            #sed -i -e 's|-mno-cygwin||g' platform.inc
             make
             make install
-            make clean
+            #make clean
             rm -f /usr/local/lib/xvidcore.dll
             ln -s -f /usr/local/lib/xvidcore.a /usr/local/lib/libxvidcore.a
         else
@@ -731,14 +738,23 @@ function build_vpx {
         if [ "$ENVIRONMENT" == "mingw" ]
         then
             sed -i 's|which yasm.*AS=yasm|AS=yasm|g' ./build/make/configure.sh
-            # FIXME: infinite dependency loop in mingw32 (trapped)
-            ./configure $(echo $CONFIGURE_ALL_FLAGS | sed 's|--build|--target|g;s|i686-pc-mingw32|x86-win32-gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
+            #if [ "$BITDEPTH" == "10" ]
+            #then
+            #    ./configure $CONFIGURE_ALL_FLAGS --target=$(arch | sed 's|i.86|x86|g')-win$(arch | sed 's|i.86|32|g;s|x86_64|64|g')-gcc --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests --disable-dependency-tracking --enable-vp9-highbitdepth
+	    #else
+                ./configure $CONFIGURE_ALL_FLAGS --target=$(arch | sed 's|i.86|x86|g')-win$(arch | sed 's|i.86|32|g;s|x86_64|64|g')-gcc --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests --disable-dependency-tracking
+	    #fi
         else
-            ./configure $(echo $CONFIGURE_ALL_FLAGS | sed 's|--build|--target|g;s|gnu|gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
+            #if [ "$BITDEPTH" == "10" ]
+            #then
+            #    ./configure $CONFIGURE_ALL_FLAGS --target=$(gcc -dumpmachine | sed 's|gnu|gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests --enable-vp9-highbitdepth
+	    #else
+                ./configure $CONFIGURE_ALL_FLAGS --target=$(gcc -dumpmachine | sed 's|gnu|gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
+	    #fi
         fi
         make
         make install
-        make clean
+        #make clean
         cd $SRC_DIR
         rm -r -f libvpx*
     fi
@@ -772,7 +788,7 @@ function build_x264 {
         fi
         make
         make install
-        make clean
+        #make clean
     fi
 }
 
@@ -785,7 +801,12 @@ function build_x265 {
         if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd build/linux
-            cmake -G "Unix Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" ../../source
+            if [ "$BITDEPTH" == "10" ]
+            then
+                cmake -G "Unix Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" ../../source
+            else
+                cmake -G "Unix Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=OFF" ../../source
+            fi
             CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -L/usr/local/lib -lx265 -lstdc++ -lm -lrt"
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
@@ -793,7 +814,12 @@ function build_x265 {
             # disable yasm, or build will fail (error in intrapred16.asm)
             mv -f /usr/local/bin/yasm.exe /usr/local/bin/_yasm.exe
             # native script (32bit target/32bit msys or 64bit target/64bit msys)
-            cmake -G "MSYS Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" -D "CMAKE_INSTALL_PREFIX:PATH=/usr/local" ../../source
+            if [ "$BITDEPTH" == "10" ]
+            then
+                cmake -G "MSYS Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" -D "CMAKE_INSTALL_PREFIX:PATH=/usr/local" ../../source
+            else
+                cmake -G "MSYS Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=OFF" -D "CMAKE_INSTALL_PREFIX:PATH=/usr/local" ../../source
+            fi
             # re-enable yasm
             mv -f /usr/local/bin/_yasm.exe /usr/local/bin/yasm.exe
             # TODO: check why pkg-config x265 is not working for ffmpeg (reason why we need to add lib manually)
@@ -801,7 +827,7 @@ function build_x265 {
         fi
         make
         make install
-        make clean
+        #make clean
         cd $SRC_DIR
         rm -r -f x265*
     fi
@@ -816,7 +842,7 @@ function build_bluray {
         ./configure $CONFIGURE_ALL_FLAGS --disable-bdjava --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
         make
         make install
-        make clean
+        #make clean
         if [ "$ENVIRONMENT" != "mingw" ]
         then
             # NOTE: libbluray depends on "-lxml2 -ldl" so we need to link ffmpeg against those libs
@@ -843,34 +869,34 @@ function build_ffmpeg {
     fi
     make
     make install
-    make clean
+    #make clean
 }
 
 function build_all {
-    build_zlib
-    build_bzip2
-    build_expat
-    build_xml2
-    build_freetype
-    build_fribidi
-    build_fontconfig
-    #build_harfbuzz
-    # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
-    build_iconv
-    build_ass
-    build_faac
-    build_fdkaac
-    build_lame
-    build_ogg
-    build_vorbis
-    build_theora
-    build_xvid
-    build_vpx
-    build_bluray
-    build_x265
+#    build_zlib
+#    build_bzip2
+#    build_expat
+#    build_xml2
+#    build_freetype
+#    build_fribidi
+#    build_fontconfig
+#    #build_harfbuzz
+#    # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
+#    build_iconv
+#    build_ass
+#    build_faac
+#    build_fdkaac
+#    build_lame
+#    build_ogg
+#    build_vorbis
+#    build_theora
+#    build_xvid
+#    build_bluray
 
     BITDEPTH=10
-    build_x264
+#    build_vpx
+#    build_x264
+    build_x265
     build_ffmpeg
     if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then
@@ -886,7 +912,9 @@ function build_all {
     rm -r -f x264* ffmpeg*
 
     BITDEPTH=8
+    build_vpx
     build_x264
+    build_x265
     build_ffmpeg
     if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then

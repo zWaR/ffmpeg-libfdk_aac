@@ -55,15 +55,15 @@ if [ "$(uname -o)" = "Msys" ]
 then
     echo -e "\t@mkdir -p /usr/local" >> Makefile
     echo -e "\t@cd /usr/local" >> Makefile
-    echo -e "\t@tar -xjvf \${PWD}/yasm-*.tar.*" >> Makefile
-    echo -e "\t@cp -r yasm*/* /usr/local" >> Makefile
-    echo -e "\t@rm -r -f yasm*" >> Makefile
+    echo -e "\t@tar -xJvf \${PWD}/yasm-*.tar.*" >> Makefile
+    echo -e "\t@cp -r usr/bin /usr/local" >> Makefile
+    echo -e "\t@rm -r -f usr" >> Makefile
     echo -e "\t@tar -xjvf \${PWD}/cmake-*.tar.*" >> Makefile
     echo -e "\t@cp -r cmake*/* /usr/local" >> Makefile
     echo -e "\t@rm -r -f cmake*" >> Makefile
-    echo -e "\t@tar -xjvf \${PWD}/pkg-config-lite-*.tar.*" >> Makefile
-    echo -e "\t@cp -r pkg-config*/* /usr/local" >> Makefile
-    echo -e "\t@rm -r -f pkg-config*" >> Makefile
+    echo -e "\t@tar -xJvf \${PWD}/pkg-config-*.tar.*" >> Makefile
+    echo -e "\t@cp -r usr/bin /usr/local" >> Makefile
+    echo -e "\t@rm -r -f usr" >> Makefile
 fi
 
 echo -e "\t@./build.sh" >> Makefile

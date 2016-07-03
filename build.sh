@@ -114,6 +114,7 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 #~ [+] --enable-zlib            enable zlib [autodetect]
 
 function check_app {
+    echo "CHECK: $1"
     $1 --version > /dev/null 2>&1
     if [ $? != 0 ]
     then
@@ -123,13 +124,14 @@ function check_app {
 }
 
 function check_environment {
-    #check_app tar
+    check_app tar
     #check_app bzip2
     check_app xz
-    #check_app make
+    check_app make
     check_app cmake
     #check_app ld
     check_app gcc
+    check_app perl
     check_app python
 }
 
@@ -738,7 +740,7 @@ function build_xvid {
             make
             make install
             make clean
-            rm /usr/local/lib/xvidcore.dll
+            rm -f /usr/local/lib/xvidcore.dll
             ln -s -f /usr/local/lib/xvidcore.a /usr/local/lib/libxvidcore.a
         else
             echo "ERROR"
@@ -758,9 +760,11 @@ function build_vpx {
         if [ "$ENVIRONMENT" == "mingw" ]
         then
             sed -i 's|which yasm.*AS=yasm|AS=yasm|g' ./build/make/configure.sh
+            # FIXME: infinite dependency loop in mingw32 (trapped)
+            ./configure $(echo $CONFIGURE_ALL_FLAGS | sed 's|--build|--target|g;s|i686-pc-msys|x86-win32-gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
+        else
+            ./configure $(echo $CONFIGURE_ALL_FLAGS | sed 's|--build|--target|g;s|gnu|gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
         fi
-        # FIXME: dependency loop in mingw32
-        ./configure $(echo $CONFIGURE_ALL_FLAGS | sed 's|-build|-target|g;s|gnu|gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
         make
         make install
         make clean

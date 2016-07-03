@@ -9,7 +9,6 @@ if [ $? == 0 ]
 then
     echo -e "\t-@apt-get update --yes" >> Makefile
     echo -e "\t-@apt-get upgrade --yes" >> Makefile
-    echo -e "\t-@apt-get autoremove --yes yasm" >> Makefile
     echo -e "\t-@apt-get autoremove --yes zlib1g-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libbz2-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes liblzma-dev" >> Makefile
@@ -32,6 +31,7 @@ then
     echo -e "\t-@apt-get autoremove --yes libbluray-dev" >> Makefile
     echo -e "\t-@apt-get install --yes pkg-config" >> Makefile
     echo -e "\t-@apt-get install --yes cmake" >> Makefile
+    echo -e "\t-@apt-get install --yes yasm" >> Makefile
 fi
 
 # FIXME: add cmake to other distributions
@@ -55,6 +55,9 @@ if [ "$(uname -o)" = "Msys" ]
 then
     echo -e "\t@mkdir -p /usr/local" >> Makefile
     echo -e "\t@cd /usr/local" >> Makefile
+    echo -e "\t@tar -xjvf \${PWD}/yasm-*.tar.*" >> Makefile
+    echo -e "\t@cp -r yasm*/* /usr/local" >> Makefile
+    echo -e "\t@rm -r -f yasm*" >> Makefile
     echo -e "\t@tar -xjvf \${PWD}/cmake-*.tar.*" >> Makefile
     echo -e "\t@cp -r cmake*/* /usr/local" >> Makefile
     echo -e "\t@rm -r -f cmake*" >> Makefile

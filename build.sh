@@ -343,7 +343,7 @@ function build_xml2 {
             cd $SRC_DIR
             tar -xzvf $PKG_DIR/libxml2*.tar.*
             cd libxml2*
-            ./configure $CONFIGURE_ALL_FLAGS --with-zlib=/usr/local --without-debug --without-python
+            ./configure $CONFIGURE_ALL_FLAGS --build=$(gcc -dumpmachine) --with-zlib=/usr/local --without-debug --without-python
             make
             make install-strip
             #make clean

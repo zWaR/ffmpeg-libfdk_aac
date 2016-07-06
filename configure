@@ -54,16 +54,15 @@ fi
 if [ "$(uname -o)" = "Msys" ]
 then
     echo -e "\t@mkdir -p /usr/local" >> Makefile
-    echo -e "\t@cd /usr/local" >> Makefile
-    echo -e "\t@tar -xJvf \${PWD}/yasm-*.tar.*" >> Makefile
-    echo -e "\t@cp -r usr/bin /usr/local" >> Makefile
-    echo -e "\t@rm -r -f usr" >> Makefile
-    echo -e "\t@tar -xjvf \${PWD}/cmake-*.tar.*" >> Makefile
-    echo -e "\t@cp -r cmake*/* /usr/local" >> Makefile
-    echo -e "\t@rm -r -f cmake*" >> Makefile
-    echo -e "\t@tar -xJvf \${PWD}/pkg-config-*.tar.*" >> Makefile
-    echo -e "\t@cp -r usr/bin /usr/local" >> Makefile
-    echo -e "\t@rm -r -f usr" >> Makefile
+    echo -e "\t@pacman -S --noconfirm grep" >> Makefile
+    echo -e "\t@pacman -S --noconfirm sed" >> Makefile
+    echo -e "\t@pacman -S --noconfirm awk" >> Makefile
+    echo -e "\t@pacman -S --noconfirm cmake" >> Makefile
+    echo -e "\t@pacman -S --noconfirm yasm" >> Makefile
+    echo -e "\t@pacman -S --noconfirm gcc" >> Makefile
+    echo -e "\t@pacman -S --noconfirm pkg-config" >> Makefile
+    echo -e "\t@pacman -S --noconfirm python" >> Makefile
+    echo -e "\t@pacman -S --noconfirm perl" >> Makefile
 fi
 
 echo -e "\t@./build.sh" >> Makefile

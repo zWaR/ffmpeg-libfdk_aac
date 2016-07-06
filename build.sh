@@ -621,7 +621,7 @@ function build_fdkaac {
         cd $SRC_DIR
         tar -xzvf $PKG_DIR/fdk-aac*
         cd fdk-aac*
-        ./configure $CONFIGURE_ALL_FLAGS
+        ./configure $CONFIGURE_ALL_FLAGS --build=$(gcc -dumpmachine)
         make
         make install
         #make clean
@@ -657,7 +657,7 @@ function build_ogg {
         cd $SRC_DIR
         tar -xJvf $PKG_DIR/libogg*.tar.*
         cd libogg*
-        ./configure $CONFIGURE_ALL_FLAGS
+        ./configure $CONFIGURE_ALL_FLAGS --build=$(gcc -dumpmachine)
         make
         make install
         #make clean
@@ -680,7 +680,7 @@ function build_vorbis {
         cd $SRC_DIR
         tar -xJvf $PKG_DIR/libvorbis*.tar.*
         cd libvorbis*
-        ./configure $CONFIGURE_ALL_FLAGS
+        ./configure $CONFIGURE_ALL_FLAGS --build=$(gcc -dumpmachine)
         make
         make install
         #make clean
@@ -795,9 +795,9 @@ function build_x264 {
         then
             if [ "$BITDEPTH" == "10" ]
             then
-                ./configure $CONFIGURE_ALL_FLAGS --bit-depth=10 --enable-strip --disable-cli --disable-opencl --disable-avs --disable-ffms --enable-win32thread
+                ./configure $CONFIGURE_ALL_FLAGS --host=$(gcc -dumpmachine) --bit-depth=10 --enable-strip --disable-cli --disable-opencl --disable-avs --disable-ffms --enable-win32thread
             else
-                ./configure $CONFIGURE_ALL_FLAGS --enable-strip --disable-cli --disable-opencl --disable-avs --disable-ffms --enable-win32thread
+                ./configure $CONFIGURE_ALL_FLAGS --host=$(gcc -dumpmachine) --enable-strip --disable-cli --disable-opencl --disable-avs --disable-ffms --enable-win32thread
             fi
         else
             if [ "$BITDEPTH" == "10" ]

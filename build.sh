@@ -11,7 +11,7 @@ PKGDEPENDS=""
 PKGDESCRIPTION="Multimedia encoder
  Customized ffmpeg build for use with FFmpegYAG.
  Statically linked to reduce dependencies.
- Supports 8 and 10 bit encoding with x264.
+ Supports 8 and 10 bit encoding for x264, x265 and VP9 codec.
  Supports HE-AAC profiles with fdkaac."
 
 # environment variables

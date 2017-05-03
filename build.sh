@@ -3,7 +3,7 @@
 # pkg configuration
 
 PKGNAME="ffmpeg-hi"
-PKGVERSION="2.8.7"
+PKGVERSION="3.2.4"
 PKGSECTION="video"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://ffmpeg-hi.sourceforge.net"
@@ -272,7 +272,7 @@ function build_expat {
         if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            tar -xzvf $PKG_DIR/expat*.tar.*
+            tar -xjvf $PKG_DIR/expat*.tar.*
             cd expat*
             ./configure $CONFIGURE_ALL_FLAGS
             make
@@ -289,7 +289,7 @@ function build_expat {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
-            tar -xzvf $PKG_DIR/expat*.tar.*
+            tar -xjvf $PKG_DIR/expat*.tar.*
             cd expat*
             ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32
             make
@@ -754,7 +754,7 @@ function build_vpx {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvpx" ]]
     then
         cd $SRC_DIR
-        tar -xzvf $PKG_DIR/libvpx*.tar.*
+        tar -xjvf $PKG_DIR/libvpx*.tar.*
         cd libvpx*
         if [ "$ENVIRONMENT" == "mingw" ]
         then
@@ -817,8 +817,8 @@ function build_x265 {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libx265" ]]
     then
         cd $SRC_DIR
-        tar -xzvf $PKG_DIR/x265*.tar.*
-        cd x265*
+        tar -xjvf $PKG_DIR/multicoreware-x265*.tar.*
+        cd multicoreware-x265*
         if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd build/linux
@@ -833,16 +833,16 @@ function build_x265 {
         then
             cd build/msys
             # disable yasm, or build will fail (error in intrapred16.asm)
-            mv -f /usr/local/bin/yasm.exe /usr/local/bin/_yasm.exe
+            #mv -f /usr/local/bin/yasm.exe /usr/local/bin/_yasm.exe
             # native script (32bit target/32bit msys or 64bit target/64bit msys)
             if [ "$BITDEPTH" == "10" ]
             then
-                cmake -G "MSYS Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" -D "CMAKE_INSTALL_PREFIX:PATH=/usr/local" ../../source
+                cmake -G "Unix Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=ON" -D "CMAKE_INSTALL_PREFIX:PATH=/usr/local" ../../source
             else
-                cmake -G "MSYS Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=OFF" -D "CMAKE_INSTALL_PREFIX:PATH=/usr/local" ../../source
+                cmake -G "Unix Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=OFF" -D "CMAKE_INSTALL_PREFIX:PATH=/usr/local" ../../source
             fi
             # re-enable yasm
-            mv -f /usr/local/bin/_yasm.exe /usr/local/bin/yasm.exe
+            #mv -f /usr/local/bin/_yasm.exe /usr/local/bin/yasm.exe
             # TODO: check why pkg-config x265 is not working for ffmpeg (reason why we need to add lib manually)
             CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -L/usr/local/lib -lx265 -lstdc++"
         fi
@@ -850,7 +850,7 @@ function build_x265 {
         make install
         #make clean
         cd $SRC_DIR
-        rm -r -f x265*
+        rm -r -f multicoreware-x265*
     fi
 }
 
@@ -880,10 +880,10 @@ function build_ffmpeg {
     cd ffmpeg*
     if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then
-        ./configure $(echo $CONFIGURE_ALL_FLAGS | cut -d' ' -f1 --complement) $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
+        ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
     elif [ "$ENVIRONMENT" == "mingw" ]
     then
-        ./configure $(echo $CONFIGURE_ALL_FLAGS | cut -d' ' -f1 --complement) $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --enable-w32threads --cpu=$(gcc -dumpmachine | cut -d '-' -f 1) --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
+        ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --enable-w32threads --target-os=mingw32 --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
     else
         echo "ERROR"
         exit

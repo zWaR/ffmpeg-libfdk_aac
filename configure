@@ -57,6 +57,7 @@ then
     echo -e "\t@pacman -S --noconfirm grep" >> Makefile
     echo -e "\t@pacman -S --noconfirm sed" >> Makefile
     echo -e "\t@pacman -S --noconfirm awk" >> Makefile
+    echo -e "\t@pacman -S --noconfirm diffutils" >> Makefile
     echo -e "\t@pacman -S --noconfirm cmake" >> Makefile
     echo -e "\t@pacman -S --noconfirm yasm" >> Makefile
     echo -e "\t@pacman -S --noconfirm gcc" >> Makefile

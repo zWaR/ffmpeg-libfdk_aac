@@ -44,7 +44,6 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 --enable-libfreetype \
 --enable-fontconfig \
 --enable-libass \
---enable-libfaac \
 --enable-libfdk_aac \
 --enable-libmp3lame \
 --enable-libvorbis \
@@ -76,7 +75,6 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 #~ [ ] --enable-libcelt         enable CELT decoding via libcelt [no]
 #~ [ ] --enable-libcdio         enable audio CD grabbing with libcdio
 #~ [-] --enable-libdc1394       enable IIDC-1394 grabbing using libdc1394 and libraw1394 [no]
-#~ [+] --enable-libfaac         enable AAC encoding via libfaac [no]
 #~ [+] --enable-libfdk-aac      enable AAC encoding via libfdk-aac [no]
 #~ [-] --enable-libflite        enable flite (voice synthesis) support via libflite [no]
 #~ [+] --enable-libfreetype     enable libfreetype [no]

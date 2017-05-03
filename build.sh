@@ -595,26 +595,6 @@ function build_ass {
     fi
 }
 
-function build_faac {
-    if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfaac" ]]
-    then
-        cd $SRC_DIR
-        tar -xjvf $PKG_DIR/faac*.tar.*
-        cd faac*
-        if [ "$ENVIRONMENT" == "mingw" ]
-        then
-            ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32 --without-mp4v2
-        else
-            ./configure $CONFIGURE_ALL_FLAGS --without-mp4v2
-        fi
-        make
-        make install
-        #make clean
-        cd $SRC_DIR
-        rm -r -f faac*
-    fi
-}
-
 function build_fdkaac {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libfdk_aac" ]]
     then

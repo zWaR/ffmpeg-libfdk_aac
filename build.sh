@@ -788,6 +788,8 @@ function build_x264 {
         make
         make install
         #make clean
+        cd $SRC_DIR
+        rm -r -f x264-snapshot*
     fi
 }
 
@@ -869,6 +871,8 @@ function build_ffmpeg {
     make
     make install
     #make clean
+    cd $SRC_DIR
+    rm -r -f ffmpeg*
 }
 
 function build_all {
@@ -883,7 +887,6 @@ function build_all {
     # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
     build_iconv
     build_ass
-    build_faac
     build_fdkaac
     build_lame
     build_ogg
@@ -906,9 +909,6 @@ function build_all {
     else
         echo "ERROR"
     fi
-
-    cd $SRC_DIR
-    rm -r -f x264* ffmpeg*
 
     BITDEPTH=8
     build_vpx

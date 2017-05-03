@@ -18,7 +18,6 @@ then
     echo -e "\t-@apt-get autoremove --yes libfribidi-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libfontconfig1-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libass-dev" >> Makefile
-    echo -e "\t-@apt-get autoremove --yes libfaac-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libfdk-aac-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libmp3lame-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libtheora-dev" >> Makefile

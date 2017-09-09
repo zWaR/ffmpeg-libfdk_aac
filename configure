@@ -64,6 +64,7 @@ then
     echo -e "\t@pacman -S --noconfirm pkg-config" >> Makefile
     echo -e "\t@pacman -S --noconfirm python" >> Makefile
     echo -e "\t@pacman -S --noconfirm perl" >> Makefile
+    echo -e "\t@pacman -S --noconfirm gperf" >> Makefile
 fi
 
 echo -e "\t@./build.sh" >> Makefile

@@ -32,7 +32,6 @@ then
     echo -e "\t-@apt-get install --yes cmake" >> Makefile
     echo -e "\t-@apt-get install --yes yasm" >> Makefile
     echo -e "\t-@apt-get install --yes gperf" >> Makefile
-    echo -e "\t-@apt-get install --yes ant" >> Makefile
 fi
 
 # FIXME: add cmake to other distributions

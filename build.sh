@@ -3,7 +3,7 @@
 # pkg configuration
 
 PKGNAME="ffmpeg-hi"
-PKGVERSION="3.2.4"
+PKGVERSION="$(ls archive | grep ffmpeg | sed 's/ffmpeg-//g;s/.tar.*//g')"
 PKGSECTION="video"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://ffmpeg-hi.sourceforge.net"
@@ -840,7 +840,7 @@ function build_bluray {
         cd $SRC_DIR
         tar -xjvf $PKG_DIR/libbluray*.tar.*
         cd libbluray*
-        ./configure $CONFIGURE_ALL_FLAGS --disable-bdjava --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
+        ./configure $CONFIGURE_ALL_FLAGS --disable-bdjava-jar --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
         make
         make install
         #make clean

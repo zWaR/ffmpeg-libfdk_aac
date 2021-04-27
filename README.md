@@ -1,3 +1,11 @@
+# Original location of the repository
+
+https://sourceforge.net/p/ffmpeg-hi/code/ci/master/tree/
+
+## Purpose of forking
+
+* Creating an AWS Lambda compatible static ffmpeg binary with `libfdk_aac` and `openssl` support.
+
 # Title
 
 # Build

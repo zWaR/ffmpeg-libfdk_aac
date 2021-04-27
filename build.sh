@@ -748,7 +748,7 @@ function build_vpx {
             #then
             #    ./configure $CONFIGURE_ALL_FLAGS --target=$(gcc -dumpmachine | sed 's|gnu|gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests --enable-vp9-highbitdepth
         #else
-                ./configure $CONFIGURE_ALL_FLAGS --target=$(gcc -dumpmachine | sed 's|gnu|gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests
+                ./configure $CONFIGURE_ALL_FLAGS --target=$(gcc -dumpmachine | sed 's|redhat-linux|linux-gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests --disable-mmx
         #fi
         fi
         make

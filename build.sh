@@ -19,7 +19,7 @@ PKGDESCRIPTION="Multimedia encoder
 export PATH="/usr/local/bin:$PATH"
 export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
 export CFLAGS="-g -O2 -I/usr/local/include"
-export LDFLAGS="-s -L/usr/local/lib"
+export LDFLAGS="-s -L/usr/local/lib -L/usr/lib64"
 
 # local variables
 

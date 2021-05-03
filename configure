@@ -47,6 +47,7 @@ then
     echo -e "\t-@yum --assumeyes install nasm" >> Makefile
     echo -e "\t-@yum --assumeyes install yasm" >> Makefile
     echo -e "\t-@yum --assumeyes install cmake" >> Makefile
+    echo -e "\t-@yum --assumeyes install glibc-static" >> Makefile
     echo -e "\t-@yum --assumeyes groupinstall 'Development Tools'" >> Makefile
 fi
 

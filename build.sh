@@ -859,7 +859,7 @@ function build_openssl {
   cd $SRC_DIR
   tar -xvzf $PKG_DIR/openssl*.tar.*
   cd openssl*
-  ./configure
+  ./config
   make
   make install
   cd $SRC_DIR

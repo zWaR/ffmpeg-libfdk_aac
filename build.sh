@@ -53,6 +53,7 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 --enable-libx265 \
 --enable-libvpx \
 --enable-libbluray \
+--enable-openssl \
 "
 
 #~ TODO: include additional libraries into ffmpeg build
@@ -107,7 +108,7 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 #~ [ ] --enable-libxavs         enable AVS encoding via xavs [no]
 #~ [+] --enable-libxvid         enable Xvid encoding via xvidcore, native MPEG-4/Xvid encoder exists [no]
 #~ [-] --enable-openal          enable OpenAL 1.1 capture support [no]
-#~ [-] --enable-openssl         enable openssl [no]
+#~ [+] --enable-openssl         enable openssl [no]
 #~ [-] --enable-x11grab         enable X11 grabbing [no]
 #~ [+] --enable-zlib            enable zlib [autodetect]
 
@@ -854,6 +855,17 @@ function build_bluray {
     fi
 }
 
+function build_openssl {
+  cd $SRC_DIR
+  tar -xvzf $PKG_DIR/openssl*.tar.*
+  cd openssl*
+  ./configure
+  make
+  make install
+  cd $SRC_DIR
+  rm -r -f openssl*
+}
+
 function build_ffmpeg {
     cd $SRC_DIR
     tar -xjvf $PKG_DIR/ffmpeg*.tar.*
@@ -894,6 +906,7 @@ function build_all {
     build_theora
     build_xvid
     build_bluray
+    build_openssl
 
     BITDEPTH=10
     build_vpx
@@ -987,7 +1000,7 @@ function build_pkg {
 function build_clean {
 
     # remove build binaries
-    rm -r -f $BIN_DIR/*
+    # rm -r -f $BIN_DIR/*
 
     #remove sources
     rm -r -f $SRC_DIR/*
@@ -1008,5 +1021,5 @@ function build_clean {
 
 init_environment
 build_all
-build_pkg
+# build_pkg
 build_clean

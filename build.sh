@@ -923,20 +923,20 @@ function build_all {
         echo "ERROR"
     fi
 
-    BITDEPTH=8
-    build_vpx
-    build_x264
-    build_x265
-    build_ffmpeg
-    if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
-    then
-        mv -f /usr/local/bin/ffmpeg $BIN_DIR/ffmpeg-hi8-heaac
-    elif [ "$ENVIRONMENT" == "mingw" ]
-    then
-        mv -f /usr/local/bin/ffmpeg.exe $BIN_DIR/ffmpeg-hi8-heaac.exe
-    else
-        echo "ERROR"
-    fi
+    # BITDEPTH=8
+    # build_vpx
+    # build_x264
+    # build_x265
+    # build_ffmpeg
+    # if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
+    # then
+    #     mv -f /usr/local/bin/ffmpeg $BIN_DIR/ffmpeg-hi8-heaac
+    # elif [ "$ENVIRONMENT" == "mingw" ]
+    # then
+    #     mv -f /usr/local/bin/ffmpeg.exe $BIN_DIR/ffmpeg-hi8-heaac.exe
+    # else
+    #     echo "ERROR"
+    # fi
 }
 
 function build_pkg {

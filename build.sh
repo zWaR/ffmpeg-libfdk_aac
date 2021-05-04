@@ -52,7 +52,6 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 --enable-libx264 \
 --enable-libx265 \
 --enable-libvpx \
---enable-libbluray \
 --enable-openssl \
 "
 
@@ -71,7 +70,7 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 #~ [ ] --enable-iconv           enable iconv [autodetect]
 #~ [-] --enable-libaacplus      enable AAC+ encoding via libaacplus [no]
 #~ [o] --enable-libass          enable libass subtitles rendering [no]
-#~ [+] --enable-libbluray       enable BluRay reading using libbluray [no]
+#~ [-] --enable-libbluray       enable BluRay reading using libbluray [no]
 #~ [-] --enable-libcaca         enable textual display using libcaca
 #~ [ ] --enable-libcelt         enable CELT decoding via libcelt [no]
 #~ [ ] --enable-libcdio         enable audio CD grabbing with libcdio
@@ -550,7 +549,7 @@ function build_harfbuzz {
         if [ $? != 0 ]
         then
             export HARFBUZZ_CFLAGS="-I/usr/local/include"
-            export HARFBUZZ_LIBS="-L/usr/local/lib -lharfbuzz -lm"
+            export HARFBUZZ_LIBS="-L/usr/local/lib -L/usr/lib64 -lharfbuzz -lm"
         fi
         cd $SRC_DIR
         rm -r -f harfbuzz*
@@ -577,6 +576,20 @@ function build_iconv {
         cd $SRC_DIR
         rm -r -f libiconv*
     fi
+}
+
+function build_libpng {
+  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
+  then
+    cd $SRC_DIR
+    tar -xvzf $PKG_DIR/libpng*.tar.*
+    cd libpng*
+    ./configure $CONFIGURE_ALL_FLAGS
+    make
+    make install
+    cd $SRC_DIR
+    rm -r -f libpng*
+  fi
 }
 
 function build_ass {
@@ -898,7 +911,7 @@ function build_all {
     build_freetype
     build_fribidi
     build_fontconfig
-    #build_harfbuzz
+    build_harfbuzz
     # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
     build_iconv
     build_ass

@@ -30,7 +30,6 @@ sudo make
 | [harfbuzz](https://www.freedesktop.org/software/harfbuzz/release/) | Text Shaping Engine                 |
 | [lame](https://sourceforge.net/projects/lame/files/lame/) | Audio Codec                         |
 | [libass](https://github.com/libass/libass/releases) | Subtitle Renderer                   |
-| [libbluray](ftp://ftp.videolan.org/pub/videolan/libbluray/) | Blu-Ray Disc Reader                 |
 | [libiconv](https://ftp.gnu.org/pub/gnu/libiconv/) | Font Character Encoding Converter   |
 | [libogg](https://www.xiph.org/downloads/) | Multimedia Container Format         |
 | [libtheora](https://www.xiph.org/downloads/) | Video Codec                         |

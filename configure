@@ -52,6 +52,8 @@ then
     echo -e "\t-@yum --assumeyes install libtemplate-perl" >> Makefile
     echo -e "\t-@yum --assumeyes install zlib-devel" >> Makefile
     echo -e "\t-@yum --assumeyes install openssl-devel" >> Makefile
+    echo -e "\t-@yum --assumeyes install fontconfig-devel" >> Makefile
+    echo -e "\t-@yum --assumeyes install libass-devel" >> Makefile
     echo -e "\t-@yum --assumeyes groupinstall 'Development Tools'" >> Makefile
 fi
 

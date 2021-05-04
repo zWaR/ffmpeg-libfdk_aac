@@ -914,6 +914,7 @@ function build_all {
     build_harfbuzz
     # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
     build_iconv
+    build_libpng
     build_ass
     build_fdkaac
     build_lame

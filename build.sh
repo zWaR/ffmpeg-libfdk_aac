@@ -856,14 +856,17 @@ function build_bluray {
 }
 
 function build_openssl {
-  cd $SRC_DIR
-  tar -xvzf $PKG_DIR/openssl*.tar.*
-  cd openssl*
-  ./config
-  make
-  make install
-  cd $SRC_DIR
-  rm -r -f openssl*
+  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-openssl" ]]
+  then
+    cd $SRC_DIR
+    tar -xvzf $PKG_DIR/openssl*.tar.*
+    cd openssl*
+    ./config
+    make
+    make install
+    cd $SRC_DIR
+    rm -r -f openssl*
+  fi
 }
 
 function build_ffmpeg {

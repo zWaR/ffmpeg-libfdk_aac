@@ -400,7 +400,7 @@ function build_freetype {
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
-            tar -xjvf $PKG_DIR/freetype*.tar.*
+            tar -xvf $PKG_DIR/freetype*.tar.*
             cd freetype*
             ./configure $CONFIGURE_ALL_FLAGS
             make
@@ -486,9 +486,9 @@ function build_fontconfig {
         if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            tar -xjvf $PKG_DIR/fontconfig*.tar.*
+            tar -xzvf $PKG_DIR/fontconfig*.tar.*
             cd fontconfig*
-            ./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
+            ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no --disable-docs --enable-libxml2
             make
             make install
             #make clean
@@ -511,9 +511,9 @@ function build_fontconfig {
             # TODO: important note about the font configuration directory in windows:
             # http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=10&t=318&start=10
             cd $SRC_DIR
-            tar -xjvf $PKG_DIR/fontconfig*.tar.*
+            tar -xzvf $PKG_DIR/fontconfig*.tar.*
             cd fontconfig*
-            ./configure $CONFIGURE_ALL_FLAGS --disable-docs --enable-libxml2
+            ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no --disable-docs --enable-libxml2
             make
             make install
             #make clean

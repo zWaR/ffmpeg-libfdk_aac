@@ -32,7 +32,7 @@ DIST_DIR=$CWD/build
 BIN_DIR=$DIST_DIR/usr/bin
 MESON_ALL_FLAGS="-Ddefault_library=static -Dselinux=disabled"
 CONFIGURE_ALL_FLAGS="--enable-static --disable-shared"
-CONFIGURE_FFMPEG_LIBS="-L/usr/lib64"
+CONFIGURE_FFMPEG_LIBS=""
 CONFIGURE_FFMPEG_FLAGS="\
 --disable-debug \
 --enable-version3 \
@@ -380,9 +380,9 @@ function build_freetype {
         if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            tar -xjvf $PKG_DIR/freetype*.tar.*
+            tar -xvf $PKG_DIR/freetype*.tar.*
             cd freetype*
-            ./configure $CONFIGURE_ALL_FLAGS
+            ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no --prefix=/usr/
             make
             make install
             #make clean

@@ -387,16 +387,11 @@ function build_freetype {
             make install
             #make clean
 
-            pkg-config freetype2 >/dev/null 2>&1
-            # NOTE: when package config fails, export the lib dependencies to variables
-            if [ $? != 0 ]
-            then
-                export FREETYPE_CFLAGS="-I/usr/local/include -I/usr/local/include/freetype2"
-                export FREETYPE_LIBS="-L/usr/local/lib -lfreetype -lz"
-            else
-                # NOTE: modify lfreetype.pc so it will return private libs even when called without --static
-                sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static freetype2)|g" $PKG_CONFIG_PATH/freetype2.pc
-            fi
+            # pkg-config freetype2 >/dev/null 2>&1
+            export FREETYPE_CFLAGS="-I/usr/local/include -I/usr/local/include/freetype2"
+            export FREETYPE_LIBS="-L/usr/local/lib -lfreetype -lz"
+            # NOTE: modify lfreetype.pc so it will return private libs even when called without --static
+            sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static freetype2)|g" $PKG_CONFIG_PATH/freetype2.pc
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR

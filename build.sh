@@ -593,17 +593,17 @@ function build_libpng {
   fi
 }
 
-function build_pcre2 {
+function build_pcre {
   if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
   then
     cd $SRC_DIR
-    tar -xvf $PKG_DIR/pcre2*.tar.*
-    cd pcre2*
+    tar -xvf $PKG_DIR/pcre*.tar.*
+    cd pcre*
     ./configure $CONFIGURE_ALL_FLAGS
     make
     make install
     cd $SRC_DIR
-    rm -r -f pcre2*
+    rm -r -f pcre*
   fi
 }
 
@@ -944,7 +944,7 @@ function build_all {
     # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
     build_iconv
     build_libpng
-    build_pcre2
+    build_pcre
     build_ass
     build_fdkaac
     build_lame

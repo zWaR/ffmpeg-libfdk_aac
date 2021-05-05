@@ -32,7 +32,7 @@ DIST_DIR=$CWD/build
 BIN_DIR=$DIST_DIR/usr/bin
 MESON_ALL_FLAGS="-Ddefault_library=static -Dselinux=disabled"
 CONFIGURE_ALL_FLAGS="--enable-static --disable-shared"
-CONFIGURE_FFMPEG_LIBS=""
+CONFIGURE_FFMPEG_LIBS="-L/usr/lib64"
 CONFIGURE_FFMPEG_FLAGS="\
 --disable-debug \
 --enable-version3 \
@@ -42,7 +42,7 @@ CONFIGURE_FFMPEG_FLAGS="\
 --disable-outdev=sndio \
 --cc=gcc \
 "
-CONFIGURE_FFMPEG_CODEC_FLAGS="\
+CONFIGURE_FFMPEG_CODEC_FLAGS="\-L/usr/lib64
 --enable-gpl \
 --enable-nonfree \
 --enable-zlib \
@@ -916,13 +916,27 @@ function build_openssl {
   fi
 }
 
+function build_gmp {
+  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-gnutls" ]]
+  then
+    cd $SRC_DIR
+    tar --lzip -xvf $PKG_DIR/gmp*.tar.*
+    cd gmp*
+    ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no
+    make
+    make install
+    cd $SRC_DIR
+    rm -r -f gmp*
+  fi
+}
+
 function build_nettle {
   if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-gnutls" ]]
   then
     cd $SRC_DIR
     tar -xvzf $PKG_DIR/nettle*.tar.*
     cd nettle*
-    ./configure $CONFIGURE_ALL_FLAGS --prefix=/usr/ --enable-mini-gmp
+    ./configure $CONFIGURE_ALL_FLAGS --prefix=/usr/ --disable-documentation
     make
     make install
     cd $SRC_DIR
@@ -936,7 +950,8 @@ function build_gnutls {
     cd $SRC_DIR
     tar -xvf $PKG_DIR/gnutls*.tar.*
     cd gnutls*
-    ./configure $CONFIGURE_ALL_FLAGS --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-rpath
+    unbound-anchor -a "/etc/unbound/root.key" > /dev/null 2>&1
+    ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-rpath --disable-doc
     make
     make install
     cd $SRC_DIR
@@ -986,7 +1001,7 @@ function build_all {
     build_theora
     build_xvid
     build_bluray
-    build_openssl
+    build_gmp
     build_nettle
     build_gnutls
 

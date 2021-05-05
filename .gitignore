@@ -2,3 +2,4 @@
 /build/*
 *.deb
 /Makefile
+.DS_Store

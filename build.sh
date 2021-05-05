@@ -30,6 +30,7 @@ PKG_DIR=$CWD/archive
 SRC_DIR=$CWD/src
 DIST_DIR=$CWD/build
 BIN_DIR=$DIST_DIR/usr/bin
+MESON_ALL_FLAGS="-Ddefault_library=static -Dselinux=disabled"
 CONFIGURE_ALL_FLAGS="--enable-static --disable-shared"
 CONFIGURE_FFMPEG_LIBS=""
 CONFIGURE_FFMPEG_FLAGS="\
@@ -563,7 +564,7 @@ function build_iconv {
         tar -xzvf $PKG_DIR/libiconv*.tar.*
         cd libiconv*
         # derivative fix for disabling gets error when glibc is undefined (http://www.itkb.ro/kb/linux/patch-libiconv-pentru-glibc-216)
-        sed -i -e 's/_GL_WARN_ON_USE (gets,.*//g' srclib/stdio.in.h
+        # sed -i -e 's/_GL_WARN_ON_USE (gets,.*//g' srclib/stdio.in.h
         if [ "$ENVIRONMENT" == "mingw" ]
         then
             ./configure $CONFIGURE_ALL_FLAGS --build=$(arch)-pc-mingw32
@@ -589,6 +590,34 @@ function build_libpng {
     make install
     cd $SRC_DIR
     rm -r -f libpng*
+  fi
+}
+
+function build_pcre2 {
+  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
+  then
+    cd $SRC_DIR
+    tar -xvf $PKG_DIR/pcre2*.tar.*
+    cd pcre2*
+    ./configure $CONFIGURE_ALL_FLAGS
+    make
+    make install
+    cd $SRC_DIR
+    rm -r -f pcre2*
+  fi
+}
+
+function build_glib {
+  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
+  then
+    cd $SRC_DIR
+    tar -xvzf $PKG_DIR/glib*.tar.*
+    cd glib*
+    meson _build $MESON_ALL_FLAGS -Dc_args=$CFLAGS -Dc_link_args=$LDFLAGS
+    ninja -C _build
+    ninja -C _build install
+    cd $SRC_DIR
+    rm -r -f glib*
   fi
 }
 
@@ -915,6 +944,7 @@ function build_all {
     # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
     build_iconv
     build_libpng
+    build_pcre2
     build_ass
     build_fdkaac
     build_lame

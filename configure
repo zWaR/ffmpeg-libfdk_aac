@@ -54,6 +54,10 @@ then
     echo -e "\t-@yum --assumeyes install openssl-devel" >> Makefile
     echo -e "\t-@yum --assumeyes install fontconfig-devel" >> Makefile
     echo -e "\t-@yum --assumeyes install libass-devel" >> Makefile
+    echo -e "\t-@yum --assumeyes install glib2-devel" >> Makefile
+    echo -e "\t-@yum --assumeyes install libmount-devel" >> Makefile
+    echo -e "\t-@pip3 install meson" >> Makefile
+    echo -e "\t-@pip3 install ninja" >> Makefile
     echo -e "\t-@yum --assumeyes groupinstall 'Development Tools'" >> Makefile
 fi
 

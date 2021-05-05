@@ -934,7 +934,7 @@ function build_gnutls {
   if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-gnutls" ]]
   then
     cd $SRC_DIR
-    tar -xvzf $PKG_DIR/gnutls*.tar.*
+    tar -xvf $PKG_DIR/gnutls*.tar.*
     cd gnutls*
     ./configure $CONFIGURE_ALL_FLAGS --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-rpath
     make

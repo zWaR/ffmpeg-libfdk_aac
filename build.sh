@@ -34,8 +34,13 @@ MESON_ALL_FLAGS="-Ddefault_library=static -Dselinux=disabled"
 CONFIGURE_ALL_FLAGS="--enable-static --disable-shared"
 CONFIGURE_FFMPEG_LIBS=""
 CONFIGURE_FFMPEG_FLAGS="\
---enable-runtime-cpudetect \
 --disable-debug \
+--enable-version3 \
+--enable-static \
+--disable-ffplay \
+--disable-indev=sndio \
+--disable-outdev=sndio \
+--cc=gcc \
 "
 CONFIGURE_FFMPEG_CODEC_FLAGS="\
 --enable-gpl \
@@ -53,7 +58,7 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="\
 --enable-libx264 \
 --enable-libx265 \
 --enable-libvpx \
---enable-openssl \
+--enable-gnutls \
 "
 
 #~ TODO: include additional libraries into ffmpeg build
@@ -898,7 +903,7 @@ function build_bluray {
 }
 
 function build_openssl {
-  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-openssl" ]]
+  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-gnutls" ]]
   then
     cd $SRC_DIR
     tar -xvzf $PKG_DIR/openssl*.tar.*
@@ -908,6 +913,34 @@ function build_openssl {
     make install
     cd $SRC_DIR
     rm -r -f openssl*
+  fi
+}
+
+function build_nettle {
+  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-gnutls" ]]
+  then
+    cd $SRC_DIR
+    tar -xvzf $PKG_DIR/nettle*.tar.*
+    cd nettle*
+    ./configure $CONFIGURE_ALL_FLAGS --prefix=/usr/ --enable-mini-gmp
+    make
+    make install
+    cd $SRC_DIR
+    rm -r -f nettle*
+  fi
+}
+
+function build_gnutls {
+  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-gnutls" ]]
+  then
+    cd $SRC_DIR
+    tar -xvzf $PKG_DIR/gnutls*.tar.*
+    cd gnutls*
+    ./configure $CONFIGURE_ALL_FLAGS --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-rpath
+    make
+    make install
+    cd $SRC_DIR
+    rm -r -f gnutls*
   fi
 }
 
@@ -954,6 +987,8 @@ function build_all {
     build_xvid
     build_bluray
     build_openssl
+    build_nettle
+    build_gnutls
 
     # BITDEPTH=10
     # build_vpx

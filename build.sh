@@ -901,7 +901,7 @@ function build_openssl {
     cd $SRC_DIR
     tar -xvzf $PKG_DIR/openssl*.tar.*
     cd openssl*
-    ./config
+    ./config -static no-shared
     make
     make install
     cd $SRC_DIR
@@ -943,7 +943,7 @@ function build_ffmpeg {
     cd $SRC_DIR
     tar -xjvf $PKG_DIR/ffmpeg*.tar.*
     cd ffmpeg*
-    CONFIGURE_FFMPEG_LIBS="${CONFIGURE_FFMPEG_LIBS} -lphtread"
+    CONFIGURE_FFMPEG_LIBS="${CONFIGURE_FFMPEG_LIBS} -lpthread"
     if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then
         ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"

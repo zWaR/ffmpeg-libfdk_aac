@@ -40,7 +40,7 @@ yum --version > /dev/null 2>&1
 if [ $? = 0 ]
 then
     echo -e "\t-@yum makecache" >> Makefile
-    echo -e "\t-@amazon-linux-extras install epel" >> Makefile
+    echo -e "\t-@amazon-linux-extras install -y epel" >> Makefile
     echo -e "\t-@yum --assumeyes update" >> Makefile
     echo -e "\t-@yum --assumeyes install pkgconfig" >> Makefile
     echo -e "\t-@yum --assumeyes install gperf" >> Makefile

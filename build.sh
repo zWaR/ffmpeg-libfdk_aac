@@ -919,7 +919,7 @@ function build_gnutls {
     ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-rpath --disable-doc --disable-openssl-compatibility --disable-srp-authentication --with-nettle-mini
     make
     make install
-    CONFIGURE_FFMPEG_FLAGS="$CONFIGURE_FFMPEG_FLAGS -lnettle"
+    CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lnettle"
     cd $SRC_DIR
     rm -r -f gnutls*
   fi

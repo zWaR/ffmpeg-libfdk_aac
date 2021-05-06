@@ -12,6 +12,7 @@ https://sourceforge.net/p/ffmpeg-hi/code/ci/master/tree/
 
 to create a package run the following commands and follow the instructions on the screen:
 ```sh
+sudo su
 ./configure
 sudo make
 ```

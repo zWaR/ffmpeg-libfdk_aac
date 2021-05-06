@@ -32,7 +32,7 @@ DIST_DIR=$CWD/build
 BIN_DIR=$DIST_DIR/usr/bin
 MESON_ALL_FLAGS="-Ddefault_library=static -Dselinux=disabled"
 CONFIGURE_ALL_FLAGS="--enable-static --disable-shared"
-CONFIGURE_FFMPEG_LIBS=""
+CONFIGURE_FFMPEG_LIBS="-L/usr/lib64"
 CONFIGURE_FFMPEG_FLAGS="\
 --disable-debug \
 --enable-version3 \
@@ -42,7 +42,7 @@ CONFIGURE_FFMPEG_FLAGS="\
 --disable-outdev=sndio \
 --cc=gcc \
 "
-CONFIGURE_FFMPEG_CODEC_FLAGS="\-L/usr/lib64
+CONFIGURE_FFMPEG_CODEC_FLAGS="
 --enable-gpl \
 --enable-nonfree \
 --enable-zlib \
@@ -382,7 +382,7 @@ function build_freetype {
             cd $SRC_DIR
             tar -xvf $PKG_DIR/freetype*.tar.*
             cd freetype*
-            ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no --prefix=/usr/
+            ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no
             make
             make install
             #make clean
@@ -390,14 +390,12 @@ function build_freetype {
             # pkg-config freetype2 >/dev/null 2>&1
             export FREETYPE_CFLAGS="-I/usr/local/include -I/usr/local/include/freetype2"
             export FREETYPE_LIBS="-L/usr/local/lib -lfreetype -lz"
-            # NOTE: modify lfreetype.pc so it will return private libs even when called without --static
-            sed -i -e "s|Libs:.*|Libs: $(pkg-config --libs --static freetype2)|g" $PKG_CONFIG_PATH/freetype2.pc
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
             tar -xvf $PKG_DIR/freetype*.tar.*
             cd freetype*
-            ./configure $CONFIGURE_ALL_FLAGS
+            ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no
             make
             make install
             #make clean
@@ -897,41 +895,13 @@ function build_bluray {
     fi
 }
 
-function build_openssl {
-  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-gnutls" ]]
-  then
-    cd $SRC_DIR
-    tar -xvzf $PKG_DIR/openssl*.tar.*
-    cd openssl*
-    ./config
-    make
-    make install
-    cd $SRC_DIR
-    rm -r -f openssl*
-  fi
-}
-
-function build_gmp {
-  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-gnutls" ]]
-  then
-    cd $SRC_DIR
-    tar --lzip -xvf $PKG_DIR/gmp*.tar.*
-    cd gmp*
-    ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no
-    make
-    make install
-    cd $SRC_DIR
-    rm -r -f gmp*
-  fi
-}
-
 function build_nettle {
   if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-gnutls" ]]
   then
     cd $SRC_DIR
     tar -xvzf $PKG_DIR/nettle*.tar.*
     cd nettle*
-    ./configure $CONFIGURE_ALL_FLAGS --prefix=/usr/ --disable-documentation
+    ./configure $CONFIGURE_ALL_FLAGS --prefix=/usr/ --disable-documentation --disable-openssl --enable-mini-gmp
     make
     make install
     cd $SRC_DIR
@@ -946,9 +916,10 @@ function build_gnutls {
     tar -xvf $PKG_DIR/gnutls*.tar.*
     cd gnutls*
     unbound-anchor -a "/etc/unbound/root.key" > /dev/null 2>&1
-    ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-rpath --disable-doc
+    ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-rpath --disable-doc --disable-openssl-compatibility --disable-srp-authentication --with-nettle-mini
     make
     make install
+    CONFIGURE_FFMPEG_FLAGS="$CONFIGURE_FFMPEG_FLAGS -lnettle"
     cd $SRC_DIR
     rm -r -f gnutls*
   fi
@@ -958,6 +929,7 @@ function build_ffmpeg {
     cd $SRC_DIR
     tar -xjvf $PKG_DIR/ffmpeg*.tar.*
     cd ffmpeg*
+    CONFIGURE_FFMPEG_LIBS="${CONFIGURE_FFMPEG_LIBS} -lphtread"
     if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then
         ./configure $CONFIGURE_ALL_FLAGS $CONFIGURE_FFMPEG_CODEC_FLAGS $CONFIGURE_FFMPEG_FLAGS --extra-libs="$CONFIGURE_FFMPEG_LIBS" --extra-cflags="-static" --extra-ldflags="-static"
@@ -996,7 +968,6 @@ function build_all {
     build_theora
     build_xvid
     build_bluray
-    build_gmp
     build_nettle
     build_gnutls
 

@@ -49,7 +49,6 @@ then
     echo -e "\t-@yum --assumeyes install cmake" >> Makefile
     echo -e "\t-@yum --assumeyes install glibc-static" >> Makefile
     echo -e "\t-@yum --assumeyes install perl-core" >> Makefile
-    echo -e "\t-@yum --assumeyes install lzip" >> Makefile
     echo -e "\t-@yum --assumeyes install unbound" >> Makefile
     echo -e "\t-@pip3 install --user meson" >> Makefile
     echo -e "\t-@pip3 install --user ninja" >> Makefile
@@ -83,3 +82,4 @@ echo -e "\t@./build.sh" >> Makefile
 echo -e "" >> Makefile
 echo -e "clean:" >> Makefile
 echo -e "\t@rm -r -f build/usr/bin/* *.tar.gz *.changes *.dsc *.deb *.rpm *.zip *.exe" >> Makefile
+echo -e "\t@rm -r -f src/*" >> Makefile

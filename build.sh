@@ -32,7 +32,7 @@ DIST_DIR=$CWD/build
 BIN_DIR=$DIST_DIR/usr/bin
 MESON_ALL_FLAGS="-Ddefault_library=static -Dselinux=disabled"
 CONFIGURE_ALL_FLAGS="--enable-static --disable-shared"
-CONFIGURE_FFMPEG_LIBS="-L/usr/lib64"
+CONFIGURE_FFMPEG_LIBS="-L/usr/lib64 -L/usr/local/lib"
 CONFIGURE_FFMPEG_FLAGS="\
 --disable-debug \
 --enable-version3 \
@@ -228,6 +228,7 @@ function build_zlib {
     make install
     #make clean
     pkg-config zlib >/dev/null 2>&1
+    CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lz"
         # NOTE: when package config fails, export the lib dependencies to variables
         if [ $? != 0 ]
         then
@@ -250,6 +251,7 @@ function build_bzip2 {
             make
             make install
             #make clean
+            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lbz2"
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
@@ -390,6 +392,7 @@ function build_freetype {
             # pkg-config freetype2 >/dev/null 2>&1
             export FREETYPE_CFLAGS="-I/usr/local/include -I/usr/local/include/freetype2"
             export FREETYPE_LIBS="-L/usr/local/lib -lfreetype -lz"
+            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lpng"
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
@@ -704,6 +707,7 @@ function build_vorbis {
         make install
         #make clean
 
+        CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lvorbis -lvorbisfile -lvorbisenc -logg"
         pkg-config vorbis >/dev/null 2>&1
         # NOTE: when package config fails, export the lib dependencies to variables
         if [ $? != 0 ]
@@ -849,7 +853,7 @@ function build_x265 {
             else
                 cmake -G "Unix Makefiles" -D "ENABLE_SHARED:BOOL=OFF" -D "ENABLE_CLI:BOOL=OFF" -D "HIGH_BIT_DEPTH:BOOL=OFF" ../../source
             fi
-            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -L/usr/local/lib -lx265 -lstdc++ -lm -lrt"
+            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lx265 -ldl -lstdc++ -lm -lrt"
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd build/msys
@@ -865,7 +869,7 @@ function build_x265 {
             # re-enable yasm
             #mv -f /usr/local/bin/_yasm.exe /usr/local/bin/yasm.exe
             # TODO: check why pkg-config x265 is not working for ffmpeg (reason why we need to add lib manually)
-            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -L/usr/local/lib -lx265 -lstdc++"
+            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lx265 -lstdc++"
         fi
         make
         make install

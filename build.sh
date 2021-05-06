@@ -913,36 +913,6 @@ function build_openssl {
   fi
 }
 
-function build_nettle {
-  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-gnutls" ]]
-  then
-    cd $SRC_DIR
-    tar -xvzf $PKG_DIR/nettle*.tar.*
-    cd nettle*
-    ./configure $CONFIGURE_ALL_FLAGS --prefix=/usr/ --disable-documentation --disable-openssl --enable-mini-gmp
-    make
-    make install
-    cd $SRC_DIR
-    rm -r -f nettle*
-  fi
-}
-
-function build_gnutls {
-  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-gnutls" ]]
-  then
-    cd $SRC_DIR
-    tar -xvf $PKG_DIR/gnutls*.tar.*
-    cd gnutls*
-    unbound-anchor -a "/etc/unbound/root.key" > /dev/null 2>&1
-    ./configure $CONFIGURE_ALL_FLAGS --enable-shared=no --with-included-libtasn1 --with-included-unistring --without-p11-kit --disable-guile --disable-rpath --disable-doc --disable-openssl-compatibility --disable-srp-authentication --with-nettle-mini
-    make
-    make install
-    CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lnettle"
-    cd $SRC_DIR
-    rm -r -f gnutls*
-  fi
-}
-
 function build_ffmpeg {
     cd $SRC_DIR
     tar -xjvf $PKG_DIR/ffmpeg*.tar.*

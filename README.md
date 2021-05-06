@@ -41,4 +41,4 @@ sudo make
 | [x265](https://bitbucket.org/multicoreware/x265/downloads/?tab=tags) | Video Codec                         |
 | [xvidcore](https://labs.xvid.com/source/) | Video Codec                         |
 | [zlib](https://sourceforge.net/projects/libpng/files/zlib/) | Data Compressor                     |
-| [gnutls](https://www.gnutls.org/download.html) | GnuTLS |
+| [openssl](https://www.openssl.org/source/) | OpenSSL |

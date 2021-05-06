@@ -58,7 +58,7 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="
 --enable-libx264 \
 --enable-libx265 \
 --enable-libvpx \
---enable-gnutls \
+--enable-openssl \
 "
 
 #~ TODO: include additional libraries into ffmpeg build
@@ -895,6 +895,20 @@ function build_bluray {
     fi
 }
 
+function build_openssl {
+  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-openssl" ]]
+  then
+    cd $SRC_DIR
+    tar -xvzf $PKG_DIR/openssl*.tar.*
+    cd openssl*
+    ./config
+    make
+    make install
+    cd $SRC_DIR
+    rm -r -f openssl*
+  fi
+}
+
 function build_nettle {
   if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-gnutls" ]]
   then
@@ -967,9 +981,7 @@ function build_all {
     build_vorbis
     build_theora
     build_xvid
-    build_bluray
-    build_nettle
-    build_gnutls
+    build_openssl
 
     # BITDEPTH=10
     # build_vpx

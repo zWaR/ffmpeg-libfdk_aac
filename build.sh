@@ -882,26 +882,6 @@ function build_x265 {
     fi
 }
 
-function build_bluray {
-    if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libbluray" ]]
-    then
-        cd $SRC_DIR
-        tar -xjvf $PKG_DIR/libbluray*.tar.*
-        cd libbluray*
-        ./configure $CONFIGURE_ALL_FLAGS --disable-bdjava-jar --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
-        make
-        make install
-        #make clean
-        if [ "$ENVIRONMENT" != "mingw" ]
-        then
-            # NOTE: libbluray depends on "-lxml2 -ldl" so we need to link ffmpeg against those libs
-            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lxml2 -ldl"
-        fi
-        cd $SRC_DIR
-        rm -r -f libbluray*
-    fi
-}
-
 function build_openssl {
   if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-openssl" ]]
   then

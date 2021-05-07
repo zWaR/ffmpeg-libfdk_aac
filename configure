@@ -53,7 +53,7 @@ then
     echo -e "\t-@yum --assumeyes groupinstall 'Development Tools'" >> Makefile
 
     # Install yasm if we're not in a docker environment
-    if [ -z $DOCKER_ENVIRONMENT ]
+    if [ -z "$DOCKER_ENVIRONMENT" ]
     then
       echo -e "\t-@amazon-linux-extras install -y epel" >> Makefile
       echo -e "\t-@yum --assumeyes install yasm" >> Makefile

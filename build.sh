@@ -611,20 +611,6 @@ function build_pcre {
   fi
 }
 
-function build_glib {
-  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
-  then
-    cd $SRC_DIR
-    tar -xvzf $PKG_DIR/glib*.tar.*
-    cd glib*
-    meson _build $MESON_ALL_FLAGS -Dc_args=$CFLAGS -Dc_link_args=$LDFLAGS
-    ninja -C _build
-    ninja -C _build install
-    cd $SRC_DIR
-    rm -r -f glib*
-  fi
-}
-
 function build_ass {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then

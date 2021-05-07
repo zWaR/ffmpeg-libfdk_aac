@@ -50,8 +50,6 @@ then
     echo -e "\t-@yum --assumeyes install glibc-static" >> Makefile
     echo -e "\t-@yum --assumeyes install perl-core" >> Makefile
     echo -e "\t-@yum --assumeyes install unbound" >> Makefile
-    echo -e "\t-@pip3 install --user meson" >> Makefile
-    echo -e "\t-@pip3 install --user ninja" >> Makefile
     echo -e "\t-@yum --assumeyes groupinstall 'Development Tools'" >> Makefile
 fi
 

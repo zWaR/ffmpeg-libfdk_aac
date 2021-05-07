@@ -30,7 +30,6 @@ PKG_DIR=$CWD/archive
 SRC_DIR=$CWD/src
 DIST_DIR=$CWD/build
 BIN_DIR=$DIST_DIR/usr/bin
-MESON_ALL_FLAGS="-Ddefault_library=static -Dselinux=disabled"
 CONFIGURE_ALL_FLAGS="--enable-static --disable-shared"
 CONFIGURE_FFMPEG_LIBS="-L/usr/lib64 -L/usr/local/lib"
 CONFIGURE_FFMPEG_FLAGS="\

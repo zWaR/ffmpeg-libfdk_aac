@@ -392,7 +392,6 @@ function build_freetype {
             # pkg-config freetype2 >/dev/null 2>&1
             export FREETYPE_CFLAGS="-I/usr/local/include -I/usr/local/include/freetype2"
             export FREETYPE_LIBS="-L/usr/local/lib -lfreetype -lz"
-            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lpng"
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
@@ -589,6 +588,7 @@ function build_libpng {
     ./configure $CONFIGURE_ALL_FLAGS
     make
     make install
+    CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lpng"
     cd $SRC_DIR
     rm -r -f libpng*
   fi
@@ -979,10 +979,12 @@ function build_all {
     build_ffmpeg
     if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
     then
-        mv -f /usr/local/bin/ffmpeg $BIN_DIR/ffmpeg-hi8-heaac
+        mv -f /usr/local/bin/ffmpeg $BIN_DIR/ffmpeg
+        mv -f /usr/local/bin/ffprobe $BIN_DIR/ffprobe
     elif [ "$ENVIRONMENT" == "mingw" ]
     then
-        mv -f /usr/local/bin/ffmpeg.exe $BIN_DIR/ffmpeg-hi8-heaac.exe
+        mv -f /usr/local/bin/ffmpeg.exe $BIN_DIR/ffmpeg.exe
+        mv -f /usr/local/bin/ffprobe.exe $BIN_DIR/ffprobe.exe
     else
         echo "ERROR"
     fi

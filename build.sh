@@ -392,6 +392,7 @@ function build_freetype {
             # pkg-config freetype2 >/dev/null 2>&1
             export FREETYPE_CFLAGS="-I/usr/local/include -I/usr/local/include/freetype2"
             export FREETYPE_LIBS="-L/usr/local/lib -lfreetype -lz"
+            CONFIGURE_FFMPEG_LIBS="${CONFIGURE_FFMPEG_LIBS} -lfreetype"
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
@@ -439,6 +440,7 @@ function build_fribidi {
             #make clean
 
             pkg-config fribidi >/dev/null 2>&1
+            CONFIGURE_FFMPEG_LIBS="${CONFIGURE_FFMPEG_LIBS} -lfribidi"
             if [ $? != 0 ]
             then
                 export FRIBIDI_CFLAGS="-I/usr/local/include/fribidi"
@@ -547,6 +549,7 @@ function build_harfbuzz {
 
         pkg-config harfbuzz >/dev/null 2>&1
         # NOTE: when package config fails, export the lib dependencies to variables
+        CONFIGURE_FFMPEG_LIBS="${CONFIGURE_FFMPEG_LIBS} -lharfbuzz"
         if [ $? != 0 ]
         then
             export HARFBUZZ_CFLAGS="-I/usr/local/include"
@@ -628,7 +631,7 @@ function build_ass {
         cd $SRC_DIR
         tar -xvf $PKG_DIR/libass*.tar.*
         cd libass*
-        ./configure $CONFIGURE_ALL_FLAGS --disable-asm --disable-harfbuzz
+        ./configure $CONFIGURE_ALL_FLAGS --disable-asm --enable-harfbuzz
         make
         make install
         #make clean

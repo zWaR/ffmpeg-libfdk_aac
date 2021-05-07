@@ -392,6 +392,7 @@ function build_freetype {
             # pkg-config freetype2 >/dev/null 2>&1
             export FREETYPE_CFLAGS="-I/usr/local/include -I/usr/local/include/freetype2"
             export FREETYPE_LIBS="-L/usr/local/lib -lfreetype -lz"
+            CONFIGURE_FFMPEG_LIBS="${CONFIGURE_FFMPEG_LIBS} -lfreetype"
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
             cd $SRC_DIR
@@ -427,10 +428,10 @@ function build_fribidi {
         if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            tar -xjvf $PKG_DIR/fribidi*.tar.*
+            tar -xvf $PKG_DIR/fribidi*.tar.*
             cd fribidi*
             ./configure $CONFIGURE_ALL_FLAGS --disable-debug
-            make -C charset
+            # make -C charset
             # fixing lib/Makefile directly before make -C lib, or it will be overwritten by another configure process
             sed -i -e 's/am__append_1 =/#am__append_1 =/g' lib/Makefile
             make -C lib
@@ -439,6 +440,7 @@ function build_fribidi {
             #make clean
 
             pkg-config fribidi >/dev/null 2>&1
+            CONFIGURE_FFMPEG_LIBS="${CONFIGURE_FFMPEG_LIBS} -lfribidi"
             if [ $? != 0 ]
             then
                 export FRIBIDI_CFLAGS="-I/usr/local/include/fribidi"
@@ -538,7 +540,7 @@ function build_harfbuzz {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
         cd $SRC_DIR
-        tar -xjvf $PKG_DIR/harfbuzz*.tar.*
+        tar -xvf $PKG_DIR/harfbuzz*.tar.*
         cd harfbuzz*
         ./configure $CONFIGURE_ALL_FLAGS
         make
@@ -547,6 +549,7 @@ function build_harfbuzz {
 
         pkg-config harfbuzz >/dev/null 2>&1
         # NOTE: when package config fails, export the lib dependencies to variables
+        CONFIGURE_FFMPEG_LIBS="${CONFIGURE_FFMPEG_LIBS} -lharfbuzz"
         if [ $? != 0 ]
         then
             export HARFBUZZ_CFLAGS="-I/usr/local/include"
@@ -626,9 +629,9 @@ function build_ass {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
         cd $SRC_DIR
-        tar -xJvf $PKG_DIR/libass*.tar.*
+        tar -xvf $PKG_DIR/libass*.tar.*
         cd libass*
-        ./configure $CONFIGURE_ALL_FLAGS --disable-asm --disable-harfbuzz
+        ./configure $CONFIGURE_ALL_FLAGS --disable-asm --enable-harfbuzz
         make
         make install
         #make clean
@@ -677,7 +680,7 @@ function build_ogg {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvorbis" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
         cd $SRC_DIR
-        tar -xJvf $PKG_DIR/libogg*.tar.*
+        tar -xvf $PKG_DIR/libogg*.tar.*
         cd libogg*
         ./configure $CONFIGURE_ALL_FLAGS --build=$(gcc -dumpmachine)
         make
@@ -700,7 +703,7 @@ function build_vorbis {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvorbis" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
         cd $SRC_DIR
-        tar -xJvf $PKG_DIR/libvorbis*.tar.*
+        tar -xvf $PKG_DIR/libvorbis*.tar.*
         cd libvorbis*
         ./configure $CONFIGURE_ALL_FLAGS --build=$(gcc -dumpmachine)
         make
@@ -777,7 +780,7 @@ function build_vpx {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvpx" ]]
     then
         cd $SRC_DIR
-        tar -xjvf $PKG_DIR/libvpx*.tar.*
+        tar -xzvf $PKG_DIR/libvpx*.tar.*
         cd libvpx*
         if [ "$ENVIRONMENT" == "mingw" ]
         then

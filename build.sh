@@ -611,20 +611,6 @@ function build_pcre {
   fi
 }
 
-function build_glib {
-  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
-  then
-    cd $SRC_DIR
-    tar -xvzf $PKG_DIR/glib*.tar.*
-    cd glib*
-    meson _build $MESON_ALL_FLAGS -Dc_args=$CFLAGS -Dc_link_args=$LDFLAGS
-    ninja -C _build
-    ninja -C _build install
-    cd $SRC_DIR
-    rm -r -f glib*
-  fi
-}
-
 function build_ass {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libass" ]]
     then
@@ -749,7 +735,7 @@ function build_xvid {
         if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            tar -xjvf $PKG_DIR/xvid*.tar.*
+            tar -xzvf $PKG_DIR/xvid*.tar.*
             cd xvid*/build/generic
             ./configure $CONFIGURE_ALL_FLAGS
             make
@@ -812,7 +798,7 @@ function build_x264 {
     then
         cd $SRC_DIR
         tar -xjvf $PKG_DIR/x264*.tar.*
-        cd x264-snapshot*
+        cd x264-master*
         # NOTE: x264 threads must be same regarding to ffmpeg
         # i.e.
         # when ffmpeg is compiled with --enable-w32threads [default on mingw]
@@ -837,7 +823,7 @@ function build_x264 {
         make install
         #make clean
         cd $SRC_DIR
-        rm -r -f x264-snapshot*
+        rm -r -f x264-master*
     fi
 }
 
@@ -845,8 +831,8 @@ function build_x265 {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libx265" ]]
     then
         cd $SRC_DIR
-        tar -xjvf $PKG_DIR/multicoreware-x265*.tar.*
-        cd multicoreware-x265*
+        tar -xzvf $PKG_DIR/x265*.tar.*
+        cd x265*
         if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd build/linux
@@ -878,27 +864,7 @@ function build_x265 {
         make install
         #make clean
         cd $SRC_DIR
-        rm -r -f multicoreware-x265*
-    fi
-}
-
-function build_bluray {
-    if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libbluray" ]]
-    then
-        cd $SRC_DIR
-        tar -xjvf $PKG_DIR/libbluray*.tar.*
-        cd libbluray*
-        ./configure $CONFIGURE_ALL_FLAGS --disable-bdjava-jar --disable-examples --disable-debug --disable-doxygen-doc --disable-doxygen-dot # --disable-libxml2
-        make
-        make install
-        #make clean
-        if [ "$ENVIRONMENT" != "mingw" ]
-        then
-            # NOTE: libbluray depends on "-lxml2 -ldl" so we need to link ffmpeg against those libs
-            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lxml2 -ldl"
-        fi
-        cd $SRC_DIR
-        rm -r -f libbluray*
+        rm -r -f x265*
     fi
 }
 

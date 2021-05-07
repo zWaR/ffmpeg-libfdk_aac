@@ -749,7 +749,7 @@ function build_xvid {
         if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd $SRC_DIR
-            tar -xjvf $PKG_DIR/xvid*.tar.*
+            tar -xzvf $PKG_DIR/xvid*.tar.*
             cd xvid*/build/generic
             ./configure $CONFIGURE_ALL_FLAGS
             make
@@ -812,7 +812,7 @@ function build_x264 {
     then
         cd $SRC_DIR
         tar -xjvf $PKG_DIR/x264*.tar.*
-        cd x264-snapshot*
+        cd x264-master*
         # NOTE: x264 threads must be same regarding to ffmpeg
         # i.e.
         # when ffmpeg is compiled with --enable-w32threads [default on mingw]
@@ -837,7 +837,7 @@ function build_x264 {
         make install
         #make clean
         cd $SRC_DIR
-        rm -r -f x264-snapshot*
+        rm -r -f x264-master*
     fi
 }
 
@@ -845,8 +845,8 @@ function build_x265 {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libx265" ]]
     then
         cd $SRC_DIR
-        tar -xjvf $PKG_DIR/multicoreware-x265*.tar.*
-        cd multicoreware-x265*
+        tar -xzvf $PKG_DIR/x265*.tar.*
+        cd x265*
         if [ "$ENVIRONMENT" == "deb" ] || [ "$ENVIRONMENT" == "fedora" ] || [ "$ENVIRONMENT" == "opensuse" ]
         then
             cd build/linux
@@ -878,7 +878,7 @@ function build_x265 {
         make install
         #make clean
         cd $SRC_DIR
-        rm -r -f multicoreware-x265*
+        rm -r -f x265*
     fi
 }
 

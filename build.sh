@@ -952,7 +952,9 @@ function build_all {
         mkdir $BIN_DIR/bin
         cp $BIN_DIR/ffmpeg $BIN_DIR/bin
         cp $BIN_DIR/ffprobe $BIN_DIR/bin
-        zip -r $BIN_DIR/ffmpeg-layer.zip $BIN_DIR/bin
+        cd $BIN_DIR
+        zip -r $BIN_DIR/ffmpeg-layer.zip ./bin
+        cd -
         rm -r -f $BIN_DIR/bin
     elif [ "$ENVIRONMENT" == "mingw" ]
     then

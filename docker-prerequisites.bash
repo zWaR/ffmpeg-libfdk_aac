@@ -10,6 +10,7 @@ function yum_packages {
   yum install -y python3
   yum install -y tar
   yum install -y gzip
+  yum install -y which
 }
 
 function build_yasm {

@@ -949,6 +949,11 @@ function build_all {
     then
         mv -f /usr/local/bin/ffmpeg $BIN_DIR/ffmpeg
         mv -f /usr/local/bin/ffprobe $BIN_DIR/ffprobe
+        mkdir $BIN_DIR/bin
+        cp $BIN_DIR/ffmpeg $BIN_DIR/bin
+        cp $BIN_DIR/ffprobe $BIN_DIR/bin
+        zip -r $BIN_DIR/ffmpeg-layer.zip $BIN_DIR/bin
+        rm -r -f $BIN_DIR/bin
     elif [ "$ENVIRONMENT" == "mingw" ]
     then
         mv -f /usr/local/bin/ffmpeg.exe $BIN_DIR/ffmpeg.exe

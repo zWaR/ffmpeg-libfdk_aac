@@ -51,13 +51,12 @@ then
     echo -e "\t-@yum --assumeyes install perl-core" >> Makefile
     echo -e "\t-@yum --assumeyes install unbound" >> Makefile
     echo -e "\t-@yum --assumeyes groupinstall 'Development Tools'" >> Makefile
+    echo -e "\t-@amazon-linux-extras install -y epel" >> Makefile
+    echo -e "\t-@yum --assumeyes install yasm" >> Makefile
 
-    # Install yasm if we're not in a docker environment
-    if [ -z "$DOCKER_ENVIRONMENT" ]
+    # Operations specific to docker environment
+    if [ -n "$DOCKER_ENVIRONMENT" ]
     then
-      echo -e "\t-@amazon-linux-extras install -y epel" >> Makefile
-      echo -e "\t-@yum --assumeyes install yasm" >> Makefile
-    else
       echo -e "\t-@bash ./docker-prerequisites.bash" >> Makefile
     fi
 fi

@@ -941,15 +941,15 @@ function build_all {
     build_bzip2
     build_expat
     build_xml2
-    #build_freetype
+    build_freetype
     build_fribidi
-    #build_fontconfig
-    #build_harfbuzz
+    build_fontconfig
+    build_harfbuzz
     # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
     build_iconv
     build_libpng
     build_pcre
-    #build_ass
+    build_ass
     build_fdkaac
     build_lame
     build_ogg

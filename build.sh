@@ -40,6 +40,7 @@ CONFIGURE_FFMPEG_FLAGS="\
 --disable-indev=sndio \
 --disable-outdev=sndio \
 --cc=gcc \
+--pkg-config-flags="--static" \
 "
 CONFIGURE_FFMPEG_CODEC_FLAGS="
 --enable-gpl \
@@ -106,6 +107,7 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="
 #~ [-] --enable-libvo-amrwbenc  enable AMR-WB encoding via libvo-amrwbenc [no]
 #~ [+] --enable-libvorbis       enable Vorbis en/decoding via libvorbis, native implementation exists [no]
 #~ [+] --enable-libvpx          enable VP8 and VP9 de/encoding via libvpx [no]
+#~ [+] --enable-libvpl          enable Intel oneVPL code via libvpl if libmfx is not used [no]
 #~ [+] --enable-libx264         enable H.264 encoding via x264 [no]
 #~ [ ] --enable-libxavs         enable AVS encoding via xavs [no]
 #~ [+] --enable-libxvid         enable Xvid encoding via xvidcore, native MPEG-4/Xvid encoder exists [no]
@@ -681,6 +683,23 @@ function build_ogg {
     fi
 }
 
+
+function build_onevpl {
+  if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvpl" ]]
+  then
+    cd $SRC_DIR
+    git clone https://github.com/intel/libvpl
+    cd libvpl
+    VPL_INSTALL_DIR=/usr/local/
+    export VPL_INSTALL_DIR
+    ./script/bootstrap
+    cmake -B _build -DCMAKE_INSTALL_PREFIX="$VPL_INSTALL_DIR" -DBUILD_SHARED_LIBS=OFF
+    cmake --build _build
+    cmake --install _build
+    rm -r -f libvpl
+  fi
+}
+
 function build_vorbis {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvorbis" || "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libtheora" ]]
     then
@@ -736,6 +755,7 @@ function build_xvid {
             ./configure $CONFIGURE_ALL_FLAGS
             make
             make install && :
+            CONFIGURE_FFMPEG_LIBS="$CONFIGURE_FFMPEG_LIBS -lxvidcore"
             #make clean
         elif [ "$ENVIRONMENT" == "mingw" ]
         then
@@ -918,6 +938,7 @@ function build_all {
     build_fdkaac
     build_lame
     build_ogg
+    build_onevpl
     build_vorbis
     build_theora
     build_xvid

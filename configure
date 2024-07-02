@@ -29,6 +29,7 @@ then
     echo -e "\t-@apt-get autoremove --yes libvpx-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libx264.*-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libx265.*-dev" >> Makefile
+    echo -e "\t-@apt-get autoremove --yes libnuma-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libbluray-dev" >> Makefile
     echo -e "\t-@apt-get install --yes zip" >> Makefile
     echo -e "\t-@apt-get install --yes pkg-config" >> Makefile

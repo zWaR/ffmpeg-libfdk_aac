@@ -696,7 +696,7 @@ function build_onevpl {
     cmake -B _build -DCMAKE_INSTALL_PREFIX="$VPL_INSTALL_DIR" -DBUILD_SHARED_LIBS=OFF
     cmake --build _build
     cmake --install _build
-    cd ..
+    cd $SRC_DIR
     rm -r -f libvpl
 
     cd $SRC_DIR
@@ -706,7 +706,7 @@ function build_onevpl {
     cmake ..
     make
     make install
-    cd ..
+    cd $SRC_DIR
     rm -r -f vpl-gnu-rt
 
   fi

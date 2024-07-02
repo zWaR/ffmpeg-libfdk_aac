@@ -46,9 +46,6 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="
 --enable-nonfree \
 --enable-zlib \
 --enable-bzlib \
---enable-libfreetype \
---enable-fontconfig \
---enable-libass \
 --enable-libfdk_aac \
 --enable-libmp3lame \
 --enable-libvorbis \
@@ -58,6 +55,7 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="
 --enable-libx265 \
 --enable-libvpx \
 --enable-openssl \
+--enable-libvpl \
 "
 
 #~ TODO: include additional libraries into ffmpeg build
@@ -135,7 +133,7 @@ function check_environment {
     #check_app ld
     check_app gcc
     check_app perl
-    check_app python
+    check_app python3
 }
 
 function init_environment {
@@ -161,10 +159,9 @@ function init_environment {
     if [ "$(uname -o)" = "Msys" ]
     then
         ENVIRONMENT="mingw"
-        set -e
-    else
-        set -e
     fi
+
+    set -e
 
     check_environment
 }
@@ -220,7 +217,7 @@ function build_zlib {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-zlib" ]]
     then
     cd $SRC_DIR
-    tar -xJvf $PKG_DIR/zlib*.tar.*
+    tar -xvf $PKG_DIR/zlib*.tar.*
     cd zlib*
     ./configure --static
     make libz.a
@@ -764,8 +761,9 @@ function build_xvid {
 function build_vpx {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvpx" ]]
     then
+	mkdir -p $SRC_DIR/libvpx
         cd $SRC_DIR
-        tar -xzvf $PKG_DIR/libvpx*.tar.*
+        tar -xzvf $PKG_DIR/libvpx*.tar.* -C $SRC_DIR/libvpx
         cd libvpx*
         if [ "$ENVIRONMENT" == "mingw" ]
         then
@@ -781,7 +779,7 @@ function build_vpx {
             #then
             #    ./configure $CONFIGURE_ALL_FLAGS --target=$(gcc -dumpmachine | sed 's|gnu|gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests --enable-vp9-highbitdepth
         #else
-                ./configure $CONFIGURE_ALL_FLAGS --target=$(gcc -dumpmachine | sed 's|redhat-linux|linux-gcc|g') --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests --disable-mmx
+                ./configure $CONFIGURE_ALL_FLAGS --target="$(gcc -dumpmachine | sed 's/redhat-linux\|linux-gnu/linux-gcc/g')" --enable-runtime-cpu-detect --enable-vp8 --enable-vp9 --enable-webm-io --enable-postproc --disable-debug --disable-examples --disable-install-bins --disable-docs --disable-unit-tests --disable-mmx
         #fi
         fi
         make
@@ -908,15 +906,15 @@ function build_all {
     build_bzip2
     build_expat
     build_xml2
-    build_freetype
+    #build_freetype
     build_fribidi
-    build_fontconfig
-    build_harfbuzz
+    #build_fontconfig
+    #build_harfbuzz
     # TODO: add harfbuzz shaper to libass (--enable-harfbuzz)
     build_iconv
     build_libpng
     build_pcre
-    build_ass
+    #build_ass
     build_fdkaac
     build_lame
     build_ogg

@@ -39,6 +39,8 @@ then
     echo -e "\t-@apt-get install --yes gperf" >> Makefile
     echo -e "\t-@apt-get install --yes gpg-agent" >> Makefile
     echo -e "\t-@apt-get install --yes wget" >> Makefile
+    echo -e "\t-@apt-get install --yes intel-media-va-driver-non-free" >> Makefile
+    echo -e "\t-@apt-get install --yes i965-va-driver-shaders" >> Makefile
 fi
 
 # FIXME: add cmake to other distributions

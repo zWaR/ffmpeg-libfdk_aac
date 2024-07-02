@@ -696,7 +696,19 @@ function build_onevpl {
     cmake -B _build -DCMAKE_INSTALL_PREFIX="$VPL_INSTALL_DIR" -DBUILD_SHARED_LIBS=OFF
     cmake --build _build
     cmake --install _build
+    cd ..
     rm -r -f libvpl
+
+    cd $SRC_DIR
+    git clone https://github.com/intel/vpl-gpu-rt vpl-gpu-rt
+    cd vpl-gpu-rt
+    mkdir build && cd build
+    cmake ..
+    make
+    make install
+    cd ..
+    rm -r -f vpl-gnu-rt
+
   fi
 }
 

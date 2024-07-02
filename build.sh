@@ -47,6 +47,9 @@ CONFIGURE_FFMPEG_CODEC_FLAGS="
 --enable-nonfree \
 --enable-zlib \
 --enable-bzlib \
+--enable-libfreetype \
+--enable-fontconfig \
+--enable-libass \
 --enable-libfdk_aac \
 --enable-libmp3lame \
 --enable-libvorbis \

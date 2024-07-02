@@ -21,24 +21,26 @@ sudo make
 
 | Source                                   | Description                         |
 | ---------------------------------------- | ----------------------------------- |
-| [bzip2](http://www.bzip.org/downloads.html) | Data Compressor                     |
-| [expat](https://sourceforge.net/projects/expat/files/expat/) | XML Parser                          |
+| [bzip2](https://sourceware.org/bzip2/) | Data Compressor                     |
+| [expat](https://github.com/libexpat/libexpat/releases) | XML Parser                          |
 | [fdk-aac](https://sourceforge.net/projects/opencore-amr/files/fdk-aac/) | High Efficient Advanced Audio Codec |
 | [ffmpeg](http://ffmpeg.org/download.html#releases) | Multimedia Framework                |
 | [fontconfig](https://www.freedesktop.org/software/fontconfig/release/) | Font Accessor                       |
-| [freetype](https://sourceforge.net/projects/freetype/files/freetype2/) | Font Renderer                       |
-| [fribidi](https://fribidi.org/download/) | Unicode Algorithm                   |
-| [harfbuzz](https://www.freedesktop.org/software/harfbuzz/release/) | Text Shaping Engine                 |
+| [freetype](https://download.savannah.gnu.org/releases/freetype/) | Font Renderer                       |
+| [fribidi](https://github.com/fribidi/fribidi/releases) | Unicode Algorithm                   |
+| [harfbuzz](https://github.com/harfbuzz/harfbuzz/releases) | Text Shaping Engine                 |
 | [lame](https://sourceforge.net/projects/lame/files/lame/) | Audio Codec                         |
 | [libass](https://github.com/libass/libass/releases) | Subtitle Renderer                   |
 | [libiconv](https://ftp.gnu.org/pub/gnu/libiconv/) | Font Character Encoding Converter   |
 | [libogg](https://www.xiph.org/downloads/) | Multimedia Container Format         |
+| [libpng](http://www.libpng.org/pub/png/libpng.html) | PNG reference library files |
 | [libtheora](https://www.xiph.org/downloads/) | Video Codec                         |
 | [libvorbis](https://www.xiph.org/downloads/) | Audio Codec                         |
 | [libvpx](http://downloads.webmproject.org/releases/webm/index.html) | Video Codec                         |
-| [libxml2](ftp://xmlsoft.org/libxml2/)    | XML Parser                          |
-| [x264](ftp://ftp.videolan.org/pub/x264/snapshots) | Video Codec                         |
-| [x265](https://bitbucket.org/multicoreware/x265/downloads/?tab=tags) | Video Codec                         |
-| [xvidcore](https://labs.xvid.com/source/) | Video Codec                         |
-| [zlib](https://sourceforge.net/projects/libpng/files/zlib/) | Data Compressor                     |
+| [libxml2](https://gitlab.gnome.org/GNOME/libxml2/-/releases)    | XML Parser                          |
 | [openssl](https://www.openssl.org/source/) | OpenSSL |
+| [pcre2](https://github.com/PCRE2Project/pcre2/releases) | Pearl Compatible Regular Expressions |
+| [x264](https://www.videolan.org/developers/x264.html) | x264 Video Codec                         |
+| [x265](https://bitbucket.org/multicoreware/x265_git/downloads/) | Video Codec                         |
+| [xvidcore](https://labs.xvid.com/source/) | Video Codec                         |
+| [zlib](https://www.zlib.net/) | Data Compressor                     |

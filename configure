@@ -30,10 +30,14 @@ then
     echo -e "\t-@apt-get autoremove --yes libx264.*-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libx265.*-dev" >> Makefile
     echo -e "\t-@apt-get autoremove --yes libbluray-dev" >> Makefile
+    echo -e "\t-@apt-get install --yes zip" >> Makefile
     echo -e "\t-@apt-get install --yes pkg-config" >> Makefile
     echo -e "\t-@apt-get install --yes cmake" >> Makefile
     echo -e "\t-@apt-get install --yes yasm" >> Makefile
+    echo -e "\t-@apt-get install --yes nasm" >> Makefile
     echo -e "\t-@apt-get install --yes gperf" >> Makefile
+    echo -e "\t-@apt-get install --yes gpg-agent" >> Makefile
+    echo -e "\t-@apt-get install --yes wget" >> Makefile
 fi
 
 # FIXME: add cmake to other distributions

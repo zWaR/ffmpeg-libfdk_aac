@@ -761,7 +761,7 @@ function build_xvid {
 function build_vpx {
     if [[ "$CONFIGURE_FFMPEG_CODEC_FLAGS" =~ "--enable-libvpx" ]]
     then
-	mkdir -p $SRC_DIR/libvpx
+        mkdir -p $SRC_DIR/libvpx
         cd $SRC_DIR
         tar -xzvf $PKG_DIR/libvpx*.tar.* -C $SRC_DIR/libvpx
         cd libvpx*
